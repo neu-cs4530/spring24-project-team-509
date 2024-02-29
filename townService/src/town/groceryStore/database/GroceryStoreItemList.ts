@@ -1,6 +1,6 @@
 import { ITEM_NOT_FOUND_ERROR, NEGATIVE_ITEM_QUANTITY_ERROR } from '../errors';
 import { GroceryStoreItemName } from '../types';
-import GroceryStoreItem from './GroceryStoreItem';
+import GroceryStoreItem from './groceryStoreItem';
 
 /**
  * groceryStoreItem is an abstarct class that represents a grocery store item.
