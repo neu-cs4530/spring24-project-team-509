@@ -6,7 +6,7 @@ import {
 } from '../../types/CoveyTownSocket';
 import InteractableArea from '../InteractableArea';
 import GroceryStoreItemList from './database/GroceryStoreItemList';
-import GroceryStoreItem from './database/groceryStoreItem';
+import GroceryStoreItem from './database/GroceryStoreItem';
 
 /**
  * A GroceryStoreArea is an InteractableArea on the map that can host a grocery store.
