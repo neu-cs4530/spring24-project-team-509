@@ -26,7 +26,7 @@ export default class GroceryStoreItemList {
    * If the item is already in the list, it adds to the quantity of the item.
    * If the item is not in the list, it adds the item to the list.
    */
-  public addItem(itemName: GroceryStoreItemName, quantity?: number): void {
+  public addItemQuantity(itemName: GroceryStoreItemName, quantity?: number): void {
     const item = this.itemList.find(element => element.isItem(itemName));
     // If the item is already in the list
     if (item) {
@@ -37,6 +37,28 @@ export default class GroceryStoreItemList {
       // add the item to the list
       this.itemList.push(new GroceryStoreItem(itemName, quantity || 1));
     }
+  }
+
+  /**
+   * TODO: add comment
+   */
+  public addItem(itemToAdd: GroceryStoreItem): void {
+    const item = this.itemList.find(element => element.isItem(itemToAdd.getName()));
+    if (item) {
+      this.addItemQuantity(item.getName(), item.getQuantity());
+    }
+    this.itemList.push(itemToAdd);
+  }
+
+  /**
+   * To go through the list of items and add them to the list.
+   * If the item is already in the list to be added to, it adds to the quantity of the item.
+   * If the item is not in the list, it adds the item to the list.
+   */
+  public addItemList(itemList: GroceryStoreItemList): void {
+    itemList.getItemList().forEach(item => {
+      this.addItem(item.getName(), item.getQuantity());
+    });
   }
 
   /**
