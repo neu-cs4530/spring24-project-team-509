@@ -6,6 +6,7 @@ import {
 } from '../../types/CoveyTownSocket';
 import InteractableArea from '../InteractableArea';
 import GroceryStoreItemList from './database/GroceryStoreItemList';
+import GroceryStoreItem from './database/groceryStoreItem';
 
 /**
  * A GroceryStoreArea is an InteractableArea on the map that can host a grocery store.
@@ -15,6 +16,23 @@ import GroceryStoreItemList from './database/GroceryStoreItemList';
 export default class GroceryStoreArea extends InteractableArea {
   groceryStoreInventory = this._initializeGroceryStoreInventory();
 
+  // TODO: krishna
+  cart = new Map<string, Array<GroceryStoreItemList>>();
+
+  /**
+   * TODO: krishna
+   * cart functions
+   */
+  private _addToCart(item: GroceryStoreItem) {
+    throw new Error('Method not implemented.');
+  }
+
+  /* TODO
+   */
+  private _removeFromCart(item: GroceryStoreItem) {
+    throw new Error('Method not implemented.');
+  }
+
   /**
    * Initializes the grocery store inventory.
    */
@@ -23,11 +41,18 @@ export default class GroceryStoreArea extends InteractableArea {
   }
 
   /**
-   * To add items to the grocery store.
+   * To restock the grocery store with items.
+   */
+  private _restockItems(itemList: GroceryStoreItemList[]) {
+    throw new Error('Method not implemented.');
+  }
+
+  /**
+   * To remove items to the grocery store.
    *
    * @param itemList is the list of items to be removed from the grocery store.
    */
-  public removeItems(itemList: GroceryStoreItemList[]) {
+  private _removeItems(itemList: GroceryStoreItemList[]) {
     throw new Error('Method not implemented.');
   }
 
@@ -55,6 +80,10 @@ export default class GroceryStoreArea extends InteractableArea {
     command: CommandType,
     player: Player,
   ): InteractableCommandReturnType<CommandType> {
+    // Open menu command
+    // Add to cart command
+    // Remove from cart command
+    // Checkout queue command
     throw new Error('Method not implemented.');
   }
 }

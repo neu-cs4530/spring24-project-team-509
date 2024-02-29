@@ -13,7 +13,7 @@ export default class GroceryStoreItem {
 
   constructor(name: GroceryStoreItemName, quantity?: number) {
     this._itemName = name;
-    this._price = groceryStoreItemPrices[name];
+    this._price = groceryStoreItemPrices[name as keyof typeof groceryStoreItemPrices];
     this._quantity = quantity || 0;
   }
 
@@ -41,7 +41,7 @@ export default class GroceryStoreItem {
   /**
    * To get the value of the item (price * quantity).
    */
-  public getValue(): number {
+  public getTotalValue(): number {
     return this._price * this._quantity;
   }
 

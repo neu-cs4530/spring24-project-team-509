@@ -28,7 +28,6 @@ export default class GroceryStoreItemList {
    */
   public addItem(itemName: GroceryStoreItemName, quantity?: number): void {
     const item = this.itemList.find(element => element.isItem(itemName));
-
     // If the item is already in the list
     if (item) {
       item.addQuantity(quantity || 1);
@@ -72,7 +71,8 @@ export default class GroceryStoreItemList {
   /**
    * To get the value of the entire item list (price * quantity).
    */
-  public getItemListValue(): number {
+  public getTotalValue(): number {
+    // TODO
     throw new Error('Not implemented');
   }
 }
