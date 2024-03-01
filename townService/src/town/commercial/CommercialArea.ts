@@ -16,8 +16,6 @@ import GroceryStoreItemList from './database/GroceryStoreItemList';
 export default abstract class CommercialArea extends InteractableArea {
   private _playerInventory = new Map<string, GroceryStoreItemList>();
 
-  private _playerTradingHistory = new Map<string, Array<GroceryStoreItemList>>();
-
   /**
    * To add items to the player's inventory.
    * If the player's inventory is found, it adds the items to the player's inventory.
