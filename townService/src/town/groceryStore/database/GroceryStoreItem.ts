@@ -2,7 +2,15 @@ import { MODIFY_ITEM_QUANTITY_ERROR, NEGATIVE_ITEM_QUANTITY_ERROR } from '../err
 import { GroceryStoreItemName, groceryStoreItemPrices } from '../types';
 
 /**
- * GroceryStoreItem is an abstarct class that represents a grocery store item.
+ * GroceryStoreItem is a class that represents a grocery store item.
+ *
+ * isItem() is a method that checks if the item is the item we are looking for.
+ * addQuantity() is a method that adds quantity to the item.
+ * removeQuantity() is a method that removes quantity to the item.
+ *
+ * @param _itemName is the name of the item.
+ * @param _price is the price of the item.
+ * @param _quantity is the quantity of the item.
  */
 export default class GroceryStoreItem {
   private _itemName: GroceryStoreItemName;
@@ -17,31 +25,19 @@ export default class GroceryStoreItem {
     this._quantity = quantity || 0;
   }
 
-  /**
-   * To get the name of the item.
-   */
-  public getName(): GroceryStoreItemName {
+  public get itemName(): GroceryStoreItemName {
     return this._itemName;
   }
 
-  /**
-   * To get the price of the item.
-   */
-  public getPrice(): number {
+  public get price(): number {
     return this._price;
   }
 
-  /**
-   * To get the quantity of the item.
-   */
-  public getQuantity(): number {
+  public get quantity(): number {
     return this._quantity;
   }
 
-  /**
-   * To get the value of the item (price * quantity).
-   */
-  public getTotalValue(): number {
+  public get itemTotalValue(): number {
     return this._price * this._quantity;
   }
 
@@ -54,6 +50,7 @@ export default class GroceryStoreItem {
 
   /**
    * To add quantity to the item.
+   * Throws an error if the quantity is not positive, since you cannot add a negative quantity or 0 to the item.
    *
    * @param quantity is the quantity to be added to the item.
    */
@@ -65,14 +62,18 @@ export default class GroceryStoreItem {
 
   /**
    * To remove quantity to the item.
+   * Throws an error if the quantity is not positive, since you cannot remove a negative quantity or 0 to the item.
+   * Throws an error if the quantity is greater than the current quantity, since you cannot remove more than the current quantity.
    *
    * @param quantity
    */
   public removeQuantity(quantity: number): void {
     // If the quantity is not positive, throw an error.
     if (quantity <= 0) throw new Error(MODIFY_ITEM_QUANTITY_ERROR);
+
     // If the quantity is greater than the current quantity, throw an error.
     if (quantity > this._quantity) throw new Error(NEGATIVE_ITEM_QUANTITY_ERROR);
+
     this._quantity -= quantity;
   }
 }
