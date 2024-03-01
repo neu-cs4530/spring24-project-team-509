@@ -4,30 +4,40 @@ import GroceryStoreItem from './GroceryStoreItem';
 
 /**
  * groceryStoreItem is an abstarct class that represents a grocery store item.
+ *
+ * addItemWithQuantity() is a method that adds an item to the list using item name and quantity.
+ * addItem() is a method that adds an item to the list.
+ * addItemList() is a method that adds a list of items to the list.
+ * removeItemWithQuantity() is a method that removes an item from the list.
+ * removeItem() is a method that removes an item from the list.
+ * removeItemList() is a method that removes a list of items from the list.
+ *
+ * @param _itemList is the list of items.
  */
 export default class GroceryStoreItemList {
-  itemList: GroceryStoreItem[];
+  private _itemList: GroceryStoreItem[];
 
   constructor(itemList?: GroceryStoreItem[]) {
-    this.itemList = itemList || [];
+    this._itemList = itemList || [];
+  }
+
+  public get itemList(): GroceryStoreItem[] {
+    return this._itemList;
+  }
+
+  public get itemListTotalValue(): number {
+    return this._itemList.reduce((acc, item) => acc + item.itemTotalValue, 0);
   }
 
   /**
-   * Get the item list.
-   *
-   * @returns the item list.
-   */
-  public getItemList(): GroceryStoreItem[] {
-    return this.itemList;
-  }
-
-  /**
-   * To add an item to the list.
+   * To add an item to the list using item name and quantity.
    * If the item is already in the list, it adds to the quantity of the item.
    * If the item is not in the list, it adds the item to the list.
    */
-  public addItemQuantity(itemName: GroceryStoreItemName, quantity?: number): void {
+  public addItemWithQuantity(itemName: GroceryStoreItemName, quantity?: number): void {
+    // To find the item in the list
     const item = this.itemList.find(element => element.isItem(itemName));
+
     // If the item is already in the list
     if (item) {
       item.addQuantity(quantity || 1);
@@ -40,46 +50,42 @@ export default class GroceryStoreItemList {
   }
 
   /**
-   * TODO: add comment
+   * To add an item to the list.
    */
   public addItem(itemToAdd: GroceryStoreItem): void {
-    const item = this.itemList.find(element => element.isItem(itemToAdd.getName()));
-    if (item) {
-      this.addItemQuantity(item.getName(), item.getQuantity());
-    }
-    this.itemList.push(itemToAdd);
+    this.addItemWithQuantity(itemToAdd.itemName, itemToAdd.quantity);
   }
 
   /**
-   * To go through the list of items and add them to the list.
-   * If the item is already in the list to be added to, it adds to the quantity of the item.
-   * If the item is not in the list, it adds the item to the list.
+   * To add a list of items to the list.
    */
   public addItemList(itemList: GroceryStoreItemList): void {
-    itemList.getItemList().forEach(item => {
-      this.addItem(item.getName(), item.getQuantity());
+    itemList.itemList.forEach(item => {
+      this.addItem(item);
     });
   }
 
   /**
-   * To remove an item from the list.
-   * If the item is already in the list, it remove to the quantity of the item.
-   * If the quantity is larger than the item stock, throw an error.
-   * If the item is reduced to 0, it removes the item from the list.
+   * To remove an item from the list based on the item name and quantity.
+   * If the quantity is not provided, it removes 1 item from the list.
+   * If the quantity is larger than the item stock, it throws an error.
+   * If the quantity is reduced to 0, it removes the item from the list.
+   * Else it removes the quantity from the item.
    * If the item is not in the list, it throws an error.
    */
-  public removeItem(itemName: GroceryStoreItemName, quantity?: number): void {
+  public removeItemWithQuantity(itemName: GroceryStoreItemName, quantity?: number): void {
+    // To find the item in the list
     const item = this.itemList.find(element => element.isItem(itemName));
 
     // If the item is already in the list
     if (item) {
       // If the quantity is larger than the item stock, throw an error
-      if (item.getQuantity() - (quantity || 1) < 0) {
+      if (item.quantity - (quantity || 1) < 0) {
         throw new Error(NEGATIVE_ITEM_QUANTITY_ERROR);
       }
       // If the quantity is reduced to 0, remove the item from the list
-      else if (item.getQuantity() - (quantity || 1) === 0) {
-        this.itemList = this.itemList.filter(element => !element.isItem(itemName));
+      else if (item.quantity - (quantity || 1) === 0) {
+        this._itemList = this._itemList.filter(element => !element.isItem(itemName));
       }
       // Else remove the quantity from the item
       else {
@@ -91,10 +97,22 @@ export default class GroceryStoreItemList {
   }
 
   /**
-   * To get the value of the entire item list (price * quantity).
+   * To remove an item from the list.
+   *
+   * @param itemToRemove is the item to be removed from the list.
    */
-  public getTotalValue(): number {
-    // TODO
-    throw new Error('Not implemented');
+  public removeItem(itemToRemove: GroceryStoreItem): void {
+    this.removeItemWithQuantity(itemToRemove.itemName, itemToRemove.quantity);
+  }
+
+  /**
+   * To remove a list of items from the list.
+   *
+   * @param itemList is the list of items to be removed from the list.
+   */
+  public removeItemList(itemList: GroceryStoreItemList): void {
+    itemList.itemList.forEach(item => {
+      this.removeItem(item);
+    });
   }
 }
