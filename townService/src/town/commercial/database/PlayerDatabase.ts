@@ -1,6 +1,5 @@
-import InteractableArea from '../InteractableArea';
-import { PLAYER_INVENTORY_NOT_FOUND_ERROR } from './errors';
-import GroceryStoreItemList from './database/GroceryStoreItemList';
+import { PLAYER_INVENTORY_NOT_FOUND_ERROR } from '../errors';
+import GroceryStoreItemList from './GroceryStoreItemList';
 
 /**
  * PlayerDatabase is a class that stores the player's inventory, purchase history, and trading history.
@@ -13,7 +12,7 @@ import GroceryStoreItemList from './database/GroceryStoreItemList';
  * @param _playerPurchaseHistory is a map that stores the player's purchase history.
  * @param _playerTradingHistory is a map that stores the player's trading history.
  */
-export default abstract class CommercialArea extends InteractableArea {
+export default class PlayerDatabase {
   private _playerInventory = new Map<string, GroceryStoreItemList>();
 
   /**

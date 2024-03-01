@@ -6,15 +6,17 @@ import {
 } from '../../types/CoveyTownSocket';
 import GroceryStoreItemList from './database/GroceryStoreItemList';
 import GroceryStoreItem from './database/GroceryStoreItem';
-import CommercialArea from './CommercialArea';
 import { GroceryStoreItemName, groceryStoreItemPrices } from './types';
+import InteractableArea from '../InteractableArea';
 
 /**
  * A GroceryStoreArea is an InteractableArea on the map that can host a grocery store.
  * There will be only one grocery store in the town.
  * The grocery store will have a list of items that can be bought by the players.
  */
-export default class GroceryStoreArea extends CommercialArea {
+export default class GroceryStoreArea extends InteractableArea {
+  // private _playerDatabase; TODO
+
   private _groceryStoreInventory: GroceryStoreItemList = this._initializeGroceryStoreInventory();
 
   // TODO: krishna
