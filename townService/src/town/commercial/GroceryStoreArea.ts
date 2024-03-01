@@ -4,18 +4,19 @@ import {
   InteractableCommand,
   InteractableCommandReturnType,
 } from '../../types/CoveyTownSocket';
-import InteractableArea from '../InteractableArea';
 import GroceryStoreItemList from './database/GroceryStoreItemList';
 import GroceryStoreItem from './database/GroceryStoreItem';
-import PlayerDatabase from './database/PlayerDatabase';
+import CommercialArea from './CommercialArea';
 
 /**
  * A GroceryStoreArea is an InteractableArea on the map that can host a grocery store.
  * There will be only one grocery store in the town.
  * The grocery store will have a list of items that can be bought by the players.
  */
-export default class GroceryStoreArea extends InteractableArea {
+export default class GroceryStoreArea extends CommercialArea {
   private _groceryStoreInventory = this._initializeGroceryStoreInventory();
+
+  private _playerPurchaseHistory = new Map<string, Array<GroceryStoreItemList>>();
 
   // TODO: krishna
   private _cart = new Map<string, Array<GroceryStoreItemList>>();
@@ -65,6 +66,26 @@ export default class GroceryStoreArea extends InteractableArea {
    */
   private _removeItemsFromInventory(itemList: GroceryStoreItemList[]) {
     throw new Error('Method not implemented.');
+  }
+
+  /**
+   * To add items to the player's purchase history.
+   * If the player's purchase history is found, it adds the items to the player's purchase history.
+   * If the player's purchase history is not found, it creates a new purchase history for the player and adds the items to the player's purchase history.
+   *
+   * @param playerID is the id of the player.
+   * @param itemList is the list of items to be added to the player's purchase history.
+   */
+  protected _addToPlayerPurchaseHistory(playerID: string, itemList: GroceryStoreItemList): void {
+    // If the player's purchase history is found, it adds the items to the player's purchase history.
+    const playerPurchaseHistory = this._playerPurchaseHistory.get(playerID);
+
+    // If the player's purchase history is found
+    if (playerPurchaseHistory) {
+      playerPurchaseHistory.push(itemList);
+    } else {
+      this._playerPurchaseHistory.set(playerID, [itemList]);
+    }
   }
 
   /**
