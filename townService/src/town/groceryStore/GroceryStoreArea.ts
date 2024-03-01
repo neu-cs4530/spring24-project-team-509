@@ -7,6 +7,7 @@ import {
 import InteractableArea from '../InteractableArea';
 import GroceryStoreItemList from './database/GroceryStoreItemList';
 import GroceryStoreItem from './database/GroceryStoreItem';
+import PlayerDatabase from './database/PlayerDatabase';
 
 /**
  * A GroceryStoreArea is an InteractableArea on the map that can host a grocery store.
@@ -14,10 +15,18 @@ import GroceryStoreItem from './database/GroceryStoreItem';
  * The grocery store will have a list of items that can be bought by the players.
  */
 export default class GroceryStoreArea extends InteractableArea {
-  groceryStoreInventory = this._initializeGroceryStoreInventory();
+  private _groceryStoreInventory = this._initializeGroceryStoreInventory();
 
   // TODO: krishna
-  cart = new Map<string, Array<GroceryStoreItemList>>();
+  private _cart = new Map<string, Array<GroceryStoreItemList>>();
+
+  // TODO
+  // constructor(inventory?: GroceryStoreItemList[]) {
+  //   super('groceryStore');
+  //   if (inventory) {
+  //     this._restockItems(inventory);
+  //   }
+  // }
 
   /**
    * TODO: krishna
@@ -35,12 +44,14 @@ export default class GroceryStoreArea extends InteractableArea {
 
   /**
    * Initializes the grocery store inventory.
+   * TODO
    */
   private _initializeGroceryStoreInventory() {
     throw new Error('Method not implemented.');
   }
 
   /**
+   * TODO
    * To restock the grocery store with items.
    */
   private _restockItems(itemList: GroceryStoreItemList[]) {
@@ -52,7 +63,7 @@ export default class GroceryStoreArea extends InteractableArea {
    *
    * @param itemList is the list of items to be removed from the grocery store.
    */
-  private _removeItems(itemList: GroceryStoreItemList[]) {
+  private _removeItemsFromInventory(itemList: GroceryStoreItemList[]) {
     throw new Error('Method not implemented.');
   }
 
