@@ -5,6 +5,8 @@ import GroceryStoreItem from './GroceryStoreItem';
 /**
  * groceryStoreItem is an abstarct class that represents a grocery store item.
  *
+ * getItemListTotalValue() is a method that gets the total value of the items in the list.
+ * isEquals() is a method that checks if the item is equal to another item.
  * addItemWithQuantity() is a method that adds an item to the list using item name and quantity.
  * addItem() is a method that adds an item to the list.
  * addItemList() is a method that adds a list of items to the list.
@@ -25,8 +27,22 @@ export default class GroceryStoreItemList {
     return this._itemList;
   }
 
-  public get itemListTotalValue(): number {
+  /**
+   * To get the total value of the items in the list.
+   *
+   * @returns the total value of the items in the list.
+   */
+  public getItemListTotalValue(): number {
     return this._itemList.reduce((acc, item) => acc + item.itemTotalValue, 0);
+  }
+
+  /**
+   * If the list is empty.
+   *
+   * @returns true if the list is empty, else false.
+   */
+  public isEmpty(): boolean {
+    return this._itemList.length === 0;
   }
 
   /**

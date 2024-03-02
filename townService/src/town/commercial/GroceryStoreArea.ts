@@ -1,31 +1,55 @@
 import Player from '../../lib/Player';
 import {
+  BoundingBox,
   Interactable,
   InteractableCommand,
   InteractableCommandReturnType,
+  TownEmitter,
 } from '../../types/CoveyTownSocket';
 import GroceryStoreItemList from './database/GroceryStoreItemList';
 import GroceryStoreItem from './database/GroceryStoreItem';
 import { GroceryStoreItemName, groceryStoreItemPrices } from './types';
 import InteractableArea from '../InteractableArea';
+import PlayerDatabase from './database/PlayerDatabase';
+import { ITEM_LIST_EMPTY_ERROR } from './errors';
 
 /**
  * A GroceryStoreArea is an InteractableArea on the map that can host a grocery store.
  * There will be only one grocery store in the town.
  * The grocery store will have a list of items that can be bought by the players.
+ *
+ * _initializeGroceryStoreInventory() is a method that initializes the grocery store inventory.
+ * _restockItems() is a method that restocks the grocery store with items.
+ * _addItemToInventory() is a method that adds items to the grocery store inventory.
+ * _removeItemFromInventory() is a method that removes items from the grocery store inventory.
+ * isActive is a getter that checks if the grocery store is active.
+ *
+ * @param _playerDatabase is the player database that stores the player's inventory, purchase history, and trading history.
+ * @param _groceryStoreInventory is the grocery store inventory that stores the list of items that can be bought by the players.
  */
 export default class GroceryStoreArea extends InteractableArea {
-  // private _playerDatabase; TODO
+  private _playerDatabase;
 
   private _groceryStoreInventory: GroceryStoreItemList = this._initializeGroceryStoreInventory();
 
-  // TODO
-  // constructor(inventory?: GroceryStoreItemList[]) {
-  //   super('groceryStore');
-  //   if (inventory) {
-  //     this._restockItems(inventory);
-  //   }
-  // }
+  constructor(
+    id: string,
+    { x, y, width, height }: BoundingBox,
+    townEmitter: TownEmitter,
+    playerDatabase: PlayerDatabase,
+    inventory?: GroceryStoreItemList,
+  ) {
+    // Calls the constructor of the parent class.
+    super(id, { x, y, width, height }, townEmitter);
+
+    // Sets the playerDatabase.
+    this._playerDatabase = playerDatabase;
+
+    // If the inventory is found, it sets the inventory.
+    if (inventory) {
+      this._groceryStoreInventory = inventory;
+    }
+  }
 
   /**
    * Initializes the grocery store inventory.
@@ -51,22 +75,34 @@ export default class GroceryStoreArea extends InteractableArea {
     throw new Error('Method not implemented.');
   }
 
-  /** TODO
+  /**
    * To add items to the grocery store inventory.
+   * If the itemList is empty, it throws an error.
    *
    * @param itemList is the list of items to be added to the grocery store inventory.
    */
-  private _addItemsToInventory(itemList: GroceryStoreItemList[]) {
-    throw new Error('Method not implemented.');
+  private _addItemsToInventory(itemList: GroceryStoreItemList) {
+    // If the itemList is empty, it throws an error.
+    if (itemList.isEmpty()) {
+      throw new Error(ITEM_LIST_EMPTY_ERROR);
+    }
+
+    this._groceryStoreInventory.addItemList(itemList);
   }
 
-  /** TODO
+  /**
    * To remove items to the grocery store.
+   * If the itemList is empty, it throws an error.
    *
    * @param itemList is the list of items to be removed from the grocery store.
    */
-  private _removeItemsFromInventory(itemList: GroceryStoreItemList[]) {
-    throw new Error('Method not implemented.');
+  private _removeItemsFromInventory(itemList: GroceryStoreItemList) {
+    // If the itemList is empty, it throws an error.
+    if (itemList.isEmpty()) {
+      throw new Error(ITEM_LIST_EMPTY_ERROR);
+    }
+
+    this._groceryStoreInventory.removeItemList(itemList);
   }
 
   /**
