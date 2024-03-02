@@ -15,6 +15,12 @@ import GroceryStoreItemList from './GroceryStoreItemList';
 export default class PlayerDatabase {
   private _playerInventory = new Map<string, GroceryStoreItemList>();
 
+  private _playerCart = new Map<string, Array<GroceryStoreItemList>>();
+
+  private _playerPurchaseHistory = new Map<string, Array<GroceryStoreItemList>>();
+
+  private _playerTradingHistory = new Map<string, Array<GroceryStoreItemList>>();
+
   /**
    * To add items to the player's inventory.
    * If the player's inventory is found, it adds the items to the player's inventory.
@@ -23,7 +29,7 @@ export default class PlayerDatabase {
    * @param playerID is the id of the player.
    * @param itemList is the list of items to be added to the player's inventory.
    */
-  protected _addToPlayerInventory(playerID: string, itemList: GroceryStoreItemList): void {
+  public addToPlayerInventory(playerID: string, itemList: GroceryStoreItemList): void {
     // To find the player's inventory
     const playerInventory = this._playerInventory.get(playerID);
 
@@ -43,7 +49,7 @@ export default class PlayerDatabase {
    * @param playerID is the id of the player.
    * @param itemList is the list of items to be removed from the player's inventory.
    */
-  protected _removeFromPlayerInventory(playerID: string, itemList: GroceryStoreItemList): void {
+  public removeFromPlayerInventory(playerID: string, itemList: GroceryStoreItemList): void {
     // To find the player's inventory
     const playerInventory = this._playerInventory.get(playerID);
 
@@ -52,6 +58,60 @@ export default class PlayerDatabase {
       playerInventory.removeItemList(itemList);
     } else {
       throw new Error(PLAYER_INVENTORY_NOT_FOUND_ERROR);
+    }
+  }
+
+  /** TODO: krishna
+   *
+   * @param playerID
+   * @param itemList
+   */
+  public addToPlayerCart(playerID: string, itemList: GroceryStoreItemList): void {
+    // To find the player's cart
+    const playerCart = this._playerCart.get(playerID);
+
+    // If the player's cart is found
+    if (playerCart) {
+      playerCart.push(itemList);
+    } else {
+      this._playerCart.set(playerID, [itemList]);
+    }
+  }
+
+  /** TODD: krishna
+   *
+   * @param playerID
+   * @param itemList
+   */
+  public removeFromPlayerCart(playerID: string, itemList: GroceryStoreItemList): void {
+    // To find the player's cart
+    const playerCart = this._playerCart.get(playerID);
+
+    // If the player's cart is found
+    if (playerCart) {
+      playerCart.pop();
+    } else {
+      throw new Error(PLAYER_INVENTORY_NOT_FOUND_ERROR);
+    }
+  }
+
+  /** TODO
+   * To add items to the player's purchase history.
+   * If the player's purchase history is found, it adds the items to the player's purchase history.
+   * If the player's purchase history is not found, it creates a new purchase history for the player and adds the items to the player's purchase history.
+   *
+   * @param playerID is the id of the player.
+   * @param itemList is the list of items to be added to the player's purchase history.
+   */
+  public _addToPlayerPurchaseHistory(playerID: string, itemList: GroceryStoreItemList): void {
+    // If the player's purchase history is found, it adds the items to the player's purchase history.
+    const playerPurchaseHistory = this._playerPurchaseHistory.get(playerID);
+
+    // If the player's purchase history is found
+    if (playerPurchaseHistory) {
+      playerPurchaseHistory.push(itemList);
+    } else {
+      this._playerPurchaseHistory.set(playerID, [itemList]);
     }
   }
 }

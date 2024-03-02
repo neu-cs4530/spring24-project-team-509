@@ -19,11 +19,6 @@ export default class GroceryStoreArea extends InteractableArea {
 
   private _groceryStoreInventory: GroceryStoreItemList = this._initializeGroceryStoreInventory();
 
-  // TODO: krishna
-  private _cart = new Map<string, Array<GroceryStoreItemList>>();
-
-  private _playerPurchaseHistory = new Map<string, Array<GroceryStoreItemList>>();
-
   // TODO
   // constructor(inventory?: GroceryStoreItemList[]) {
   //   super('groceryStore');
@@ -72,40 +67,6 @@ export default class GroceryStoreArea extends InteractableArea {
    */
   private _removeItemsFromInventory(itemList: GroceryStoreItemList[]) {
     throw new Error('Method not implemented.');
-  }
-
-  /**
-   * TODO: krishna
-   * cart functions
-   */
-  private _addToCart(item: GroceryStoreItem) {
-    throw new Error('Method not implemented.');
-  }
-
-  /* TODO
-   */
-  private _removeFromCart(item: GroceryStoreItem) {
-    throw new Error('Method not implemented.');
-  }
-
-  /**
-   * To add items to the player's purchase history.
-   * If the player's purchase history is found, it adds the items to the player's purchase history.
-   * If the player's purchase history is not found, it creates a new purchase history for the player and adds the items to the player's purchase history.
-   *
-   * @param playerID is the id of the player.
-   * @param itemList is the list of items to be added to the player's purchase history.
-   */
-  protected _addToPlayerPurchaseHistory(playerID: string, itemList: GroceryStoreItemList): void {
-    // If the player's purchase history is found, it adds the items to the player's purchase history.
-    const playerPurchaseHistory = this._playerPurchaseHistory.get(playerID);
-
-    // If the player's purchase history is found
-    if (playerPurchaseHistory) {
-      playerPurchaseHistory.push(itemList);
-    } else {
-      this._playerPurchaseHistory.set(playerID, [itemList]);
-    }
   }
 
   /**
