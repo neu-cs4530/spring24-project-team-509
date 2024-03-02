@@ -16,6 +16,7 @@ export default class TradingArea extends InteractableArea {
         // Return the result of the command execution
         // Example:
         throw new Error();
+    }
     //Design a platform to maintain Trading request and Maintain players's status
     // Implement any additional methods or properties as needed
 }
