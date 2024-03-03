@@ -6,3 +6,7 @@ export const ITEM_LIST_EMPTY_ERROR = 'Item list is empty';
 
 // Errors for PlayerDatabase
 export const PLAYER_INVENTORY_NOT_FOUND_ERROR = 'Player inventory not found.';
+export const PLAYER_CART_NOT_FOUND_ERROR = 'Player cart not found';
+
+// Errors for command
+export const INVALID_COMMAND_MESSAGE = 'Command invalid';

@@ -4,6 +4,7 @@ import {
   Interactable,
   InteractableCommand,
   InteractableCommandReturnType,
+  PlayerID,
   TownEmitter,
 } from '../../types/CoveyTownSocket';
 import GroceryStoreItemList from './database/GroceryStoreItemList';
@@ -11,7 +12,7 @@ import GroceryStoreItem from './database/GroceryStoreItem';
 import { GroceryStoreItemName, groceryStoreItemPrices } from './types';
 import InteractableArea from '../InteractableArea';
 import PlayerDatabase from './database/PlayerDatabase';
-import { ITEM_LIST_EMPTY_ERROR } from './errors';
+import { INVALID_COMMAND_MESSAGE, ITEM_LIST_EMPTY_ERROR } from './errors';
 
 /**
  * A GroceryStoreArea is an InteractableArea on the map that can host a grocery store.
@@ -22,7 +23,7 @@ import { ITEM_LIST_EMPTY_ERROR } from './errors';
  * _restockItems() is a method that restocks the grocery store with items.
  * _addItemToInventory() is a method that adds items to the grocery store inventory.
  * _removeItemFromInventory() is a method that removes items from the grocery store inventory.
- * isActive is a getter that checks if the grocery store is active.
+ * isActive() is a method that checks if the grocery store is active.
  *
  * @param _playerDatabase is the player database that stores the player's inventory, purchase history, and trading history.
  * @param _groceryStoreInventory is the grocery store inventory that stores the list of items that can be bought by the players.
@@ -105,6 +106,16 @@ export default class GroceryStoreArea extends InteractableArea {
     this._groceryStoreInventory.removeItemList(itemList);
   }
 
+  /** TODO
+   * To check out a player's cart.
+   *
+   * @param playerId is the id of the player who is checking out
+   */
+  private _checkOut(playerId: PlayerID): void {
+    // Only if checked out successfully
+    this._emitAreaChanged(); // Maybe?
+  }
+
   /**
    * If the grocery store is active.
    */
@@ -122,6 +133,8 @@ export default class GroceryStoreArea extends InteractableArea {
   /** TODO
    * To handle the command from the player.
    *
+   * Throw an error if the command is invalid.
+   *
    * @param command is the command that the player wants to execute.
    * @param player is the player who wants to execute the command.
    */
@@ -130,9 +143,19 @@ export default class GroceryStoreArea extends InteractableArea {
     player: Player,
   ): InteractableCommandReturnType<CommandType> {
     // Open menu command
-    // Add to cart command
-    // Remove from cart command
-    // Checkout queue command
-    throw new Error('Method not implemented.');
+    switch (command.type) {
+      case 'OpenGroceryStore': // TODO
+        throw new Error('Not implemented');
+      case 'AddToCart':
+        this._playerDatabase.addToPlayerCart(player.id, command.item);
+        return undefined as InteractableCommandReturnType<CommandType>;
+      case 'RemoveFromCart':
+        this._playerDatabase.removeFromPlayerCart(player.id, command.item);
+        return undefined as InteractableCommandReturnType<CommandType>;
+      case 'CheckOut': // TODO
+        throw new Error('Not implemented');
+      default:
+        throw new Error(INVALID_COMMAND_MESSAGE);
+    }
   }
 }

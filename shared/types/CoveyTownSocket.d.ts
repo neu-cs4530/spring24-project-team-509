@@ -17,6 +17,7 @@ export type TownJoinResponse = {
   interactables: TypedInteractable[];
 }
 
+// TODO: maybe add GroceryStoreArea and TradingArea?
 export type InteractableType = 'ConversationArea' | 'ViewingArea' | 'TicTacToeArea' | 'ConnectFourArea';
 export interface Interactable {
   type: InteractableType;
@@ -194,6 +195,8 @@ export interface GameArea<T extends GameState> extends Interactable {
   history: GameResult[];
 }
 
+// TODO: GroceryStoreArea and TradingArea extends Interactable? 
+
 export type CommandID = string;
 
 /**
@@ -216,7 +219,26 @@ interface InteractableCommandBase {
   type: string;
 }
 
-export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | GameMoveCommand<ConnectFourMove> | StartGameCommand | LeaveGameCommand;
+export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | GameMoveCommand<ConnectFourMove> | StartGameCommand | LeaveGameCommand
+  // TODO: Modified by Jiaying 221-238, commands for GroceryStoreArea, but not trading area yet
+  | OpenGroceryStoreCommand
+  | AddToCartCommand
+  | RemoveFromCartCommand
+  | CheckOutCommand;;
+export interface OpenGroceryStoreCommand {
+  type: 'OpenGroceryStore';
+}
+export interface AddToCartCommand {
+  type: 'AddToCart';
+  item: GroceryStoreItem;
+}
+export interface RemoveFromCartCommand {
+  type: 'RemoveFromCart';
+  item: GroceryStoreItem;
+}
+export interface CheckOutCommand {
+  type: 'CheckOut';
+}
 export interface ViewingAreaUpdateCommand  {
   type: 'ViewingAreaUpdate';
   update: ViewingArea;
@@ -237,6 +259,8 @@ export interface GameMoveCommand<MoveType> {
   gameID: GameInstanceID;
   move: MoveType;
 }
+
+// TODO? What are the command returning?
 export type InteractableCommandReturnType<CommandType extends InteractableCommand> = 
   CommandType extends JoinGameCommand ? { gameID: string}:
   CommandType extends ViewingAreaUpdateCommand ? undefined :
