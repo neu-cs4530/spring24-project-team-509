@@ -24,3 +24,26 @@ export const groceryStoreItemPrices = {
   ketchup: 4,
   lemon: 1,
 };
+
+// Commented out but just to have a copy here
+// // TODO: interactable command for opening the grocery store
+// export type InteractableCommand =
+//   | OpenGroceryStoreCommand
+//   | AddToCartCommand
+//   | RemoveFromCartCommand
+//   | CheckOutCommand;
+
+// export interface OpenGroceryStoreCommand {
+//   type: 'OpenGrocery';
+// }
+// export interface AddToCartCommand {
+//   type: 'AddToCart';
+//   item: GroceryStoreItem;
+// }
+// export interface RemoveFromCartCommand {
+//   type: 'RemoveFromCart';
+//   item: GroceryStoreItem;
+// }
+// export interface CheckOutCommand {
+//   type: 'CheckOut';
+// }
