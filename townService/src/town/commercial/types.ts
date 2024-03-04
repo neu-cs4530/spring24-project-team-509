@@ -1,6 +1,3 @@
-// eslint-disable-next-line import/no-cycle
-import GroceryStoreItem from './database/GroceryStoreItem';
-
 // TODO: define the GroceryStoreItemNames like "pizza", "apple"
 export type GroceryStoreItemName =
   | 'bacon'
@@ -28,24 +25,25 @@ export const groceryStoreItemPrices = {
   lemon: 1,
 };
 
-// TODO: interactable command for opening the grocery store
-export type InteractableCommand =
-  | OpenGroceryStoreCommand
-  | AddToCartCommand
-  | RemoveFromCartCommand
-  | CheckOutCommand;
+// Commented out but just to have a copy here
+// // TODO: interactable command for opening the grocery store
+// export type InteractableCommand =
+//   | OpenGroceryStoreCommand
+//   | AddToCartCommand
+//   | RemoveFromCartCommand
+//   | CheckOutCommand;
 
-export interface OpenGroceryStoreCommand {
-  type: 'OpenGrocery';
-}
-export interface AddToCartCommand {
-  type: 'AddToCart';
-  item: GroceryStoreItem;
-}
-export interface RemoveFromCartCommand {
-  type: 'RemoveFromCart';
-  item: GroceryStoreItem;
-}
-export interface CheckOutCommand {
-  type: 'CheckOut';
-}
+// export interface OpenGroceryStoreCommand {
+//   type: 'OpenGrocery';
+// }
+// export interface AddToCartCommand {
+//   type: 'AddToCart';
+//   item: GroceryStoreItem;
+// }
+// export interface RemoveFromCartCommand {
+//   type: 'RemoveFromCart';
+//   item: GroceryStoreItem;
+// }
+// export interface CheckOutCommand {
+//   type: 'CheckOut';
+// }

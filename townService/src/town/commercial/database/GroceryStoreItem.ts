@@ -1,5 +1,5 @@
-import { GroceryStoreItemName } from 'covey-town-shared-libraries/types/CoveyTownSocket';
 import { MODIFY_ITEM_QUANTITY_ERROR, NEGATIVE_ITEM_QUANTITY_ERROR } from '../errors';
+import { GroceryStoreItemName, groceryStoreItemPrices } from '../types';
 
 /**
  * GroceryStoreItem is a class that represents a grocery store item.
