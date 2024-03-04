@@ -69,7 +69,7 @@ export default class GroceryStoreItemList {
    * To add an item to the list.
    */
   public addItem(itemToAdd: GroceryStoreItem): void {
-    this.addItemWithQuantity(itemToAdd.itemName, itemToAdd.quantity);
+    this.addItemWithQuantity(itemToAdd.name, itemToAdd.quantity);
   }
 
   /**
@@ -118,7 +118,7 @@ export default class GroceryStoreItemList {
    * @param itemToRemove is the item to be removed from the list.
    */
   public removeItem(itemToRemove: GroceryStoreItem): void {
-    this.removeItemWithQuantity(itemToRemove.itemName, itemToRemove.quantity);
+    this.removeItemWithQuantity(itemToRemove.name, itemToRemove.quantity);
   }
 
   /**

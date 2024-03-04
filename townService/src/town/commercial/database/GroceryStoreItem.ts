@@ -25,7 +25,7 @@ export default class GroceryStoreItem {
     this._quantity = quantity || 0;
   }
 
-  public get itemName(): GroceryStoreItemName {
+  public get name(): GroceryStoreItemName {
     return this._itemName;
   }
 
