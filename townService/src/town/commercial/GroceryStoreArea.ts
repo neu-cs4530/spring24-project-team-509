@@ -1,7 +1,7 @@
 import Player from '../../lib/Player';
 import {
   BoundingBox,
-  Interactable,
+  GroceryStoreModel,
   InteractableCommand,
   InteractableCommandReturnType,
   PlayerID,
@@ -123,11 +123,17 @@ export default class GroceryStoreArea extends InteractableArea {
     return true;
   }
 
-  /** TODO
+  /** TODO: maybe?
    * To transfer the grocery store into a model that can be sent to the client.
    */
-  public toModel(): Interactable {
-    throw new Error('Method not implemented.');
+  public toModel(): GroceryStoreModel {
+    const { id } = this;
+    return {
+      type: 'GroceryStoreArea',
+      id,
+      occupants: this.occupantsByID,
+      inventory: this._groceryStoreInventory,
+    };
   }
 
   /** TODO
