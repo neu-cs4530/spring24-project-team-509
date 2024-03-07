@@ -39,7 +39,7 @@ describe('PlayerDatabase', () => {
             playerDatabase.addToPlayerInventory(playerID, itemList);
             playerDatabase.removeFromPlayerInventory(playerID, itemList);
 
-            expect(playerDatabase.getPlayerInventory(playerID)).toEqual([]);
+            expect(playerDatabase.getPlayerInventory(playerID)).toEqual(new GroceryStoreItemList());
         });
     });
 
@@ -50,7 +50,7 @@ describe('PlayerDatabase', () => {
 
             playerDatabase.addToPlayerCart(playerID, item);
 
-            expect(playerDatabase.getPlayerCart(playerID)).toEqual([item]);
+            expect(playerDatabase.getPlayerCart(playerID)).toEqual(new GroceryStoreItemList([item]));
         });
     });
 
@@ -62,7 +62,7 @@ describe('PlayerDatabase', () => {
             playerDatabase.addToPlayerCart(playerID, item);
             playerDatabase.removeFromPlayerCart(playerID, item);
 
-            expect(playerDatabase.getPlayerCart(playerID)).toEqual([]);
+            expect(playerDatabase.getPlayerCart(playerID)).toEqual(new GroceryStoreItemList());
         });
     });
 
