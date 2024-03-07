@@ -4,112 +4,114 @@ import GroceryStoreItem from './GroceryStoreItem';
 
 // TODO: trading offer
 describe('PlayerDatabase', () => {
+  let playerDatabase: PlayerDatabase;
+
+  beforeEach(() => {
+    playerDatabase = new PlayerDatabase();
+  });
+
+  describe('addToPlayerInventory', () => {
+    it("should add items to the player's inventory", () => {
+      const playerID = 'player1';
+      const items: GroceryStoreItem[] = [
+        new GroceryStoreItem('bacon', 10),
+        new GroceryStoreItem('cereal', 5),
+      ];
+
+      const itemList = new GroceryStoreItemList(items);
+
+      playerDatabase.addToPlayerInventory(playerID, itemList);
+
+      expect(playerDatabase.getPlayerInventory(playerID)).toEqual(itemList);
+    });
+  });
+
+  describe('removeFromPlayerInventory', () => {
+    it("should remove items from the player's inventory", () => {
+      const playerID = 'player1';
+      const items: GroceryStoreItem[] = [
+        new GroceryStoreItem('bacon', 10),
+        new GroceryStoreItem('cereal', 5),
+      ];
+
+      const itemList = new GroceryStoreItemList(items);
+
+      playerDatabase.addToPlayerInventory(playerID, itemList);
+      playerDatabase.removeFromPlayerInventory(playerID, itemList);
+
+      expect(playerDatabase.getPlayerInventory(playerID)).toEqual(new GroceryStoreItemList());
+    });
+  });
+
+  describe('addToPlayerCart', () => {
+    it("should add an item to the player's cart", () => {
+      const playerID = 'player1';
+      const item: GroceryStoreItem = new GroceryStoreItem('bacon', 10);
+
+      playerDatabase.addToPlayerCart(playerID, item);
+
+      expect(playerDatabase.getPlayerCart(playerID)).toEqual(new GroceryStoreItemList([item]));
+    });
+  });
+
+  describe('removeFromPlayerCart', () => {
+    it("should remove an item from the player's cart", () => {
+      const playerID = 'player1';
+      const item: GroceryStoreItem = new GroceryStoreItem('bacon', 10);
+
+      playerDatabase.addToPlayerCart(playerID, item);
+      playerDatabase.removeFromPlayerCart(playerID, item);
+
+      expect(playerDatabase.getPlayerCart(playerID)).toEqual(new GroceryStoreItemList());
+    });
+  });
+
+  describe('addToPlayerPurchaseHistory', () => {
+    it("should add items to the player's purchase history", () => {
+      const playerID = 'player1';
+      const items: GroceryStoreItem[] = [
+        new GroceryStoreItem('bacon', 10),
+        new GroceryStoreItem('cereal', 5),
+      ];
+
+      const itemList = new GroceryStoreItemList(items);
+
+      playerDatabase.addToPlayerPurchaseHistory(playerID, itemList);
+
+      expect(playerDatabase.getPlayerPurchaseHistory(playerID)).toEqual([itemList]);
+    });
+  });
+
+  describe('PlayerDatabase', () => {
     let playerDatabase: PlayerDatabase;
 
     beforeEach(() => {
-        playerDatabase = new PlayerDatabase();
+      playerDatabase = new PlayerDatabase();
     });
 
-    describe('addToPlayerInventory', () => {
-        it('should add items to the player\'s inventory', () => {
-            const playerID = 'player1';
-            const items: GroceryStoreItem[] = [
-                new GroceryStoreItem('bacon', 10),
-                new GroceryStoreItem('cereal', 5),
-            ];
+    describe('addItemToPlayerInventory', () => {
+      it("should add an item to the player's inventory", () => {
+        const playerID = 'player1';
+        const item: GroceryStoreItem = new GroceryStoreItem('bacon', 10);
 
-            const itemList = new GroceryStoreItemList(items);
+        playerDatabase.addItemToPlayerInventory(playerID, item);
 
-            playerDatabase.addToPlayerInventory(playerID, itemList);
-
-            expect(playerDatabase.getPlayerInventory(playerID)).toEqual(itemList);
-        });
+        expect(playerDatabase.getPlayerInventory(playerID)).toEqual(
+          new GroceryStoreItemList([item]),
+        );
+      });
     });
 
-    describe('removeFromPlayerInventory', () => {
-        it('should remove items from the player\'s inventory', () => {
-            const playerID = 'player1';
-            const items: GroceryStoreItem[] = [
-                new GroceryStoreItem('bacon', 10),
-                new GroceryStoreItem('cereal', 5),
-            ];
+    describe('removeItemFromPlayerInventory', () => {
+      it("should remove an item from the player's inventory", () => {
+        const playerID = 'player1';
+        const item: GroceryStoreItem = new GroceryStoreItem('bacon', 10);
 
-            const itemList = new GroceryStoreItemList(items);
+        playerDatabase.addItemToPlayerInventory(playerID, item);
+        playerDatabase.removeItemFromPlayerInventory(playerID, item);
 
-            playerDatabase.addToPlayerInventory(playerID, itemList);
-            playerDatabase.removeFromPlayerInventory(playerID, itemList);
-
-            expect(playerDatabase.getPlayerInventory(playerID)).toEqual(new GroceryStoreItemList());
-        });
+        expect(playerDatabase.getPlayerInventory(playerID)).toEqual(new GroceryStoreItemList());
+      });
     });
-
-    describe('addToPlayerCart', () => {
-        it('should add an item to the player\'s cart', () => {
-            const playerID = 'player1';
-            const item: GroceryStoreItem = new GroceryStoreItem('bacon', 10);
-
-            playerDatabase.addToPlayerCart(playerID, item);
-
-            expect(playerDatabase.getPlayerCart(playerID)).toEqual(new GroceryStoreItemList([item]));
-        });
-    });
-
-    describe('removeFromPlayerCart', () => {
-        it('should remove an item from the player\'s cart', () => {
-            const playerID = 'player1';
-            const item: GroceryStoreItem = new GroceryStoreItem('bacon', 10);
-
-            playerDatabase.addToPlayerCart(playerID, item);
-            playerDatabase.removeFromPlayerCart(playerID, item);
-
-            expect(playerDatabase.getPlayerCart(playerID)).toEqual(new GroceryStoreItemList());
-        });
-    });
-
-    describe('addToPlayerPurchaseHistory', () => {
-        it('should add items to the player\'s purchase history', () => {
-            const playerID = 'player1';
-            const items: GroceryStoreItem[] = [
-                new GroceryStoreItem('bacon', 10),
-                new GroceryStoreItem('cereal', 5),
-            ];
-
-            const itemList = new GroceryStoreItemList(items);
-
-            playerDatabase.addToPlayerPurchaseHistory(playerID, itemList);
-
-            expect(playerDatabase.getPlayerPurchaseHistory(playerID)).toEqual([itemList]);
-        });
-    });
-
-    describe('PlayerDatabase', () => {
-        let playerDatabase: PlayerDatabase;
-
-        beforeEach(() => {
-            playerDatabase = new PlayerDatabase();
-        });
-
-        describe('addItemToPlayerInventory', () => {
-            it('should add an item to the player\'s inventory', () => {
-                const playerID = 'player1';
-                const item: GroceryStoreItem = new GroceryStoreItem('bacon', 10);
-
-                playerDatabase.addItemToPlayerInventory(playerID, item);
-
-                expect(playerDatabase.getPlayerInventory(playerID)).toEqual(new GroceryStoreItemList([item]));
-            });
-        });
-
-        describe('removeItemFromPlayerInventory', () => {
-            it('should remove an item from the player\'s inventory', () => {
-                const playerID = 'player1';
-                const item: GroceryStoreItem = new GroceryStoreItem('bacon', 10);
-
-                playerDatabase.addItemToPlayerInventory(playerID, item);
-                playerDatabase.removeItemFromPlayerInventory(playerID, item);
-
-                expect(playerDatabase.getPlayerInventory(playerID)).toEqual(new GroceryStoreItemList());
-            });
-        });
-    });
+  });
 });

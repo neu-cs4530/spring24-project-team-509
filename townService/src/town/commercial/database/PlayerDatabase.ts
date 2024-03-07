@@ -110,25 +110,25 @@ export default class PlayerDatabase {
   }
 
   /**
-    * To get the player's inventory.
-    * If the player's inventory is found, it returns the inventory.
-    * If the player's inventory is not found, it returns an empty inventory.
-    *
-    * @param playerID is the id of the player.
-    * @returns the player's inventory.
-    */
-    public getPlayerInventory(playerID: PlayerID): GroceryStoreItemList {
-     // To find the player's inventory
-     const playerInventory = this._playerInventories.get(playerID);
+   * To get the player's inventory.
+   * If the player's inventory is found, it returns the inventory.
+   * If the player's inventory is not found, it returns an empty inventory.
+   *
+   * @param playerID is the id of the player.
+   * @returns the player's inventory.
+   */
+  public getPlayerInventory(playerID: PlayerID): GroceryStoreItemList {
+    // To find the player's inventory
+    const playerInventory = this._playerInventories.get(playerID);
 
-     // If the player's inventory is found, return the inventory
-     if (playerInventory) {
+    // If the player's inventory is found, return the inventory
+    if (playerInventory) {
       return playerInventory;
-     }
-
-     // If the player's inventory is not found, return an empty inventory
-     return new GroceryStoreItemList();
     }
+
+    // If the player's inventory is not found, return an empty inventory
+    return new GroceryStoreItemList();
+  }
 
   /**
    * To add an item into player's cart
@@ -269,5 +269,4 @@ export default class PlayerDatabase {
     // If the player's purchase history is not found, return an empty purchase history
     return [];
   }
-  
 }
