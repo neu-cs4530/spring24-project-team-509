@@ -68,6 +68,27 @@ export default class PlayerDatabase {
   }
 
   /**
+    * To get the player's inventory.
+    * If the player's inventory is found, it returns the inventory.
+    * If the player's inventory is not found, it returns an empty inventory.
+    *
+    * @param playerID is the id of the player.
+    * @returns the player's inventory.
+    */
+    public getPlayerInventory(playerID: PlayerID): GroceryStoreItemList {
+     // To find the player's inventory
+     const playerInventory = this._playerInventories.get(playerID);
+
+     // If the player's inventory is found, return the inventory
+     if (playerInventory) {
+      return playerInventory;
+     }
+
+     // If the player's inventory is not found, return an empty inventory
+     return new GroceryStoreItemList();
+    }
+
+  /**
    * To add an item into player's cart
    *
    * @param playerID
@@ -107,23 +128,24 @@ export default class PlayerDatabase {
   }
 
   /**
-   * To add items to the player's purchase history.
-   * If the player's purchase history is found, it adds the items to the player's purchase history.
-   * If the player's purchase history is not found, it creates a new purchase history for the player and adds the items to the player's purchase history.
+   * To get the player's cart.
+   * If the player's cart is found, it returns the cart.
+   * If the player's cart is not found, it returns an empty cart.
    *
    * @param playerID is the id of the player.
-   * @param itemList is the list of items to be added to the player's purchase history.
+   * @returns the player's cart.
    */
-  public addToPlayerPurchaseHistory(playerID: PlayerID, itemList: GroceryStoreItemList): void {
-    // If the player's purchase history is found, it adds the history to the player's purchase history.
-    const playerPurchaseHistory = this._playerPurchaseHistories.get(playerID);
+  public getPlayerCart(playerID: PlayerID): GroceryStoreItemList {
+    // To find the player's cart
+    const playerCart = this._playerCarts.get(playerID);
 
-    // If the player's purchase history is found
-    if (playerPurchaseHistory) {
-      playerPurchaseHistory.push(itemList);
-    } else {
-      this._playerPurchaseHistories.set(playerID, [itemList]);
+    // If the player's cart is found, return the cart
+    if (playerCart) {
+      return playerCart;
     }
+
+    // If the player's cart is not found, return an empty cart
+    return new GroceryStoreItemList();
   }
 
   /**
@@ -143,4 +165,67 @@ export default class PlayerDatabase {
       this._playerTradingHistories.set(playerID, [tradingOffer]);
     }
   }
+
+  /**
+   * To get the player's trading history.
+   * If the player's trading history is found, it returns the trading history.
+   * If the player's trading history is not found, it returns an empty trading history.
+   *
+   * @param playerID is the id of the player.
+   * @returns the player's trading history.
+   */
+  public getPlayerTradingHistories(playerID: PlayerID): Array<TradingOffer> {
+    // To find the player's trading history
+    const playerTradingHistory = this._playerTradingHistories.get(playerID);
+
+    // If the player's trading history is found, return the trading history
+    if (playerTradingHistory) {
+      return playerTradingHistory;
+    }
+
+    // If the player's trading history is not found, return an empty trading history
+    return [];
+  }
+
+  /**
+   * To add items to the player's purchase history.
+   * If the player's purchase history is found, it adds the items to the player's purchase history.
+   * If the player's purchase history is not found, it creates a new purchase history for the player and adds the items to the player's purchase history.
+   *
+   * @param playerID is the id of the player.
+   * @param itemList is the list of items to be added to the player's purchase history.
+   */
+  public addToPlayerPurchaseHistory(playerID: PlayerID, itemList: GroceryStoreItemList): void {
+    // To find the player's purchase history
+    const playerPurchaseHistory = this._playerPurchaseHistories.get(playerID);
+
+    // If the player's purchase history is found
+    if (playerPurchaseHistory) {
+      playerPurchaseHistory.push(itemList);
+    } else {
+      this._playerPurchaseHistories.set(playerID, [itemList]);
+    }
+  }
+
+  /**
+   * To get the player's purchase history.
+   * If the player's purchase history is found, it returns the purchase history.
+   * If the player's purchase history is not found, it returns an empty purchase history.
+   *
+   * @param playerID is the id of the player.
+   * @returns the player's purchase history.
+   */
+  public getPlayerPurchaseHistory(playerID: PlayerID): Array<GroceryStoreItemList> {
+    // To find the player's purchase history
+    const playerPurchaseHistory = this._playerPurchaseHistories.get(playerID);
+
+    // If the player's purchase history is found, return the purchase history
+    if (playerPurchaseHistory) {
+      return playerPurchaseHistory;
+    }
+
+    // If the player's purchase history is not found, return an empty purchase history
+    return [];
+  }
+  
 }
