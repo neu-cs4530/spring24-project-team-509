@@ -83,10 +83,10 @@ describe('PlayerDatabase', () => {
   });
 
   describe('PlayerDatabase', () => {
-    let playerDatabase: PlayerDatabase;
+    let database: PlayerDatabase;
 
     beforeEach(() => {
-      playerDatabase = new PlayerDatabase();
+        database = new PlayerDatabase();
     });
 
     describe('addItemToPlayerInventory', () => {
@@ -94,9 +94,9 @@ describe('PlayerDatabase', () => {
         const playerID = 'player1';
         const item: GroceryStoreItem = new GroceryStoreItem('bacon', 10);
 
-        playerDatabase.addItemToPlayerInventory(playerID, item);
+        database.addItemToPlayerInventory(playerID, item);
 
-        expect(playerDatabase.getPlayerInventory(playerID)).toEqual(
+        expect(database.getPlayerInventory(playerID)).toEqual(
           new GroceryStoreItemList([item]),
         );
       });
@@ -107,10 +107,10 @@ describe('PlayerDatabase', () => {
         const playerID = 'player1';
         const item: GroceryStoreItem = new GroceryStoreItem('bacon', 10);
 
-        playerDatabase.addItemToPlayerInventory(playerID, item);
-        playerDatabase.removeItemFromPlayerInventory(playerID, item);
+        database.addItemToPlayerInventory(playerID, item);
+        database.removeItemFromPlayerInventory(playerID, item);
 
-        expect(playerDatabase.getPlayerInventory(playerID)).toEqual(new GroceryStoreItemList());
+        expect(database.getPlayerInventory(playerID)).toEqual(new GroceryStoreItemList());
       });
     });
   });
