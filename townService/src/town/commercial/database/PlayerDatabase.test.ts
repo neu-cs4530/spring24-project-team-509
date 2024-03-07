@@ -86,7 +86,7 @@ describe('PlayerDatabase', () => {
     let database: PlayerDatabase;
 
     beforeEach(() => {
-        database = new PlayerDatabase();
+      database = new PlayerDatabase();
     });
 
     describe('addItemToPlayerInventory', () => {
@@ -96,9 +96,7 @@ describe('PlayerDatabase', () => {
 
         database.addItemToPlayerInventory(playerID, item);
 
-        expect(database.getPlayerInventory(playerID)).toEqual(
-          new GroceryStoreItemList([item]),
-        );
+        expect(database.getPlayerInventory(playerID)).toEqual(new GroceryStoreItemList([item]));
       });
     });
 
