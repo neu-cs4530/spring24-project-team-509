@@ -48,6 +48,28 @@ export default class PlayerDatabase {
   }
 
   /**
+   * To add an item to the player's inventory.
+   * If the player's inventory is found, it adds the item to the player's inventory.
+   * If the player's inventory is not found, it creates a new inventory for the player and adds the item to the player's inventory.
+   *
+   * @param playerID is the id of the player.
+   * @param item is the item to be added to the player's inventory.
+   */
+  public addItemToPlayerInventory(playerID: PlayerID, item: GroceryStoreItem): void {
+    // To find the player's inventory
+    const playerInventory = this._playerInventories.get(playerID);
+
+    // If the player's inventory is found
+    if (playerInventory) {
+      playerInventory.addItem(item);
+    } else {
+      const newInventory = new GroceryStoreItemList();
+      newInventory.addItem(item);
+      this._playerInventories.set(playerID, newInventory);
+    }
+  }
+
+  /**
    * To remove items from the player's inventory.
    * If the player's inventory is found, it removes the items from the player's inventory.
    * If the player's inventory is not found, it throws an error.
@@ -62,6 +84,26 @@ export default class PlayerDatabase {
     // If the player's inventory is found
     if (playerInventory) {
       playerInventory.removeItemList(itemList);
+    } else {
+      throw new Error(PLAYER_INVENTORY_NOT_FOUND_ERROR);
+    }
+  }
+
+  /**
+   * To remove an item from the player's inventory.
+   * If the player's inventory is found, it removes the item from the player's inventory.
+   * If the player's inventory is not found, it throws an error.
+   *
+   * @param playerID is the id of the player.
+   * @param item is the item to be removed from the player's inventory.
+   */
+  public removeItemFromPlayerInventory(playerID: PlayerID, item: GroceryStoreItem): void {
+    // To find the player's inventory
+    const playerInventory = this._playerInventories.get(playerID);
+
+    // If the player's inventory is found
+    if (playerInventory) {
+      playerInventory.removeItem(item);
     } else {
       throw new Error(PLAYER_INVENTORY_NOT_FOUND_ERROR);
     }

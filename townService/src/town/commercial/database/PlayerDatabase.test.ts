@@ -1,8 +1,8 @@
 import PlayerDatabase from './PlayerDatabase';
 import GroceryStoreItemList from './GroceryStoreItemList';
 import GroceryStoreItem from './GroceryStoreItem';
-import TradingOffer from './TradingOffer';
 
+// TODO: trading offer
 describe('PlayerDatabase', () => {
     let playerDatabase: PlayerDatabase;
 
@@ -82,4 +82,34 @@ describe('PlayerDatabase', () => {
         });
     });
 
+    describe('PlayerDatabase', () => {
+        let playerDatabase: PlayerDatabase;
+
+        beforeEach(() => {
+            playerDatabase = new PlayerDatabase();
+        });
+
+        describe('addItemToPlayerInventory', () => {
+            it('should add an item to the player\'s inventory', () => {
+                const playerID = 'player1';
+                const item: GroceryStoreItem = new GroceryStoreItem('bacon', 10);
+
+                playerDatabase.addItemToPlayerInventory(playerID, item);
+
+                expect(playerDatabase.getPlayerInventory(playerID)).toEqual(new GroceryStoreItemList([item]));
+            });
+        });
+
+        describe('removeItemFromPlayerInventory', () => {
+            it('should remove an item from the player\'s inventory', () => {
+                const playerID = 'player1';
+                const item: GroceryStoreItem = new GroceryStoreItem('bacon', 10);
+
+                playerDatabase.addItemToPlayerInventory(playerID, item);
+                playerDatabase.removeItemFromPlayerInventory(playerID, item);
+
+                expect(playerDatabase.getPlayerInventory(playerID)).toEqual(new GroceryStoreItemList());
+            });
+        });
+    });
 });
