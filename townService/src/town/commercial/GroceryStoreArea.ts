@@ -10,9 +10,9 @@ import {
 import GroceryStoreItemList from './database/GroceryStoreItemList';
 import GroceryStoreItem from './database/GroceryStoreItem';
 import { GroceryStoreItemName, groceryStoreItemPrices } from './types';
-import InteractableArea from '../InteractableArea';
 import PlayerDatabase from './database/PlayerDatabase';
 import { INVALID_COMMAND_MESSAGE, ITEM_LIST_EMPTY_ERROR } from './errors';
+import CommercialArea from './CommercialArea';
 
 /**
  * A GroceryStoreArea is an InteractableArea on the map that can host a grocery store.
@@ -23,14 +23,13 @@ import { INVALID_COMMAND_MESSAGE, ITEM_LIST_EMPTY_ERROR } from './errors';
  * _restockItems() is a method that restocks the grocery store with items.
  * _addItemToInventory() is a method that adds items to the grocery store inventory.
  * _removeItemFromInventory() is a method that removes items from the grocery store inventory.
- * isActive() is a method that checks if the grocery store is active.
+ * toModel() is a method that transfers the grocery store into a model that can be sent to the client.
+ * handleCommand() is a method that handles the command from the player.
  *
  * @param _playerDatabase is the player database that stores the player's inventory, purchase history, and trading history.
  * @param _groceryStoreInventory is the grocery store inventory that stores the list of items that can be bought by the players.
  */
-export default class GroceryStoreArea extends InteractableArea {
-  private _playerDatabase;
-
+export default class GroceryStoreArea extends CommercialArea {
   private _groceryStoreInventory: GroceryStoreItemList = this._initializeGroceryStoreInventory();
 
   constructor(
@@ -41,10 +40,7 @@ export default class GroceryStoreArea extends InteractableArea {
     inventory?: GroceryStoreItemList,
   ) {
     // Calls the constructor of the parent class.
-    super(id, { x, y, width, height }, townEmitter);
-
-    // Sets the playerDatabase.
-    this._playerDatabase = playerDatabase;
+    super(id, { x, y, width, height }, townEmitter, playerDatabase);
 
     // If the inventory is found, it sets the inventory.
     if (inventory) {
@@ -114,13 +110,6 @@ export default class GroceryStoreArea extends InteractableArea {
   private _checkOut(playerId: PlayerID): void {
     // Only if checked out successfully
     this._emitAreaChanged(); // Maybe?
-  }
-
-  /**
-   * If the grocery store is active.
-   */
-  public get isActive(): boolean {
-    return true;
   }
 
   /** TODO: maybe?
