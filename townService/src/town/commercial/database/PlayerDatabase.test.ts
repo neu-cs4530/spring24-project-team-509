@@ -1,6 +1,7 @@
 import PlayerDatabase from './PlayerDatabase';
 import GroceryStoreItemList from './GroceryStoreItemList';
 import GroceryStoreItem from './GroceryStoreItem';
+import { PLAYER_INVENTORY_NOT_FOUND_ERROR } from '../errors';
 
 // TODO: trading offer
 describe('PlayerDatabase', () => {
@@ -40,6 +41,15 @@ describe('PlayerDatabase', () => {
       playerDatabase.removeFromPlayerInventory(playerID, itemList);
 
       expect(playerDatabase.getPlayerInventory(playerID)).toEqual(new GroceryStoreItemList());
+    });
+
+    it("should throw error whenn remove non existing items from the player's inventory", () => {
+      const playerID = 'player1';
+      const itemList = new GroceryStoreItemList();
+      // Expect PLAYER_INVENTORY_NOT_FOUND_ERROR to be thrown
+      expect(() => {
+        playerDatabase.removeFromPlayerInventory(playerID, itemList);
+      }).toThrow(PLAYER_INVENTORY_NOT_FOUND_ERROR);
     });
   });
 
@@ -101,14 +111,13 @@ describe('PlayerDatabase', () => {
     });
 
     describe('removeItemFromPlayerInventory', () => {
-      it("should remove an item from the player's inventory", () => {
+      it("should throw PLAYER_INVENTORY_NOT_FOUND_ERROR when player's inventory is not found", () => {
         const playerID = 'player1';
         const item: GroceryStoreItem = new GroceryStoreItem('bacon', 10);
 
-        database.addItemToPlayerInventory(playerID, item);
-        database.removeItemFromPlayerInventory(playerID, item);
-
-        expect(database.getPlayerInventory(playerID)).toEqual(new GroceryStoreItemList());
+        expect(() => {
+          playerDatabase.removeItemFromPlayerInventory(playerID, item);
+        }).toThrow(PLAYER_INVENTORY_NOT_FOUND_ERROR);
       });
     });
   });
