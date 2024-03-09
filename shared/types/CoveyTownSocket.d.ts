@@ -18,7 +18,8 @@ export type TownJoinResponse = {
 }
 
 // TODO: maybe add GroceryStoreArea and TradingArea?
-export type InteractableType = 'ConversationArea' | 'ViewingArea' | 'TicTacToeArea' | 'ConnectFourArea';
+export type InteractableType = 'ConversationArea' | 'ViewingArea' | 'TicTacToeArea' | 'ConnectFourArea'
+  | 'GroceryStoreArea' | 'TradingArea';
 export interface Interactable {
   type: InteractableType;
   id: InteractableID;
@@ -195,7 +196,10 @@ export interface GameArea<T extends GameState> extends Interactable {
   history: GameResult[];
 }
 
-// TODO: GroceryStoreArea and TradingArea extends Interactable? 
+// TODO: GroceryStoreModel and TradingModel extends Interactable? 
+export interface GroceryStoreModel extends Interactable {
+  inventory: GroceryStoreItemList;
+}
 
 export type CommandID = string;
 

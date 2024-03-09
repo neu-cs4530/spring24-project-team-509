@@ -10,3 +10,7 @@ export const PLAYER_CART_NOT_FOUND_ERROR = 'Player cart not found';
 
 // Errors for command
 export const INVALID_COMMAND_MESSAGE = 'Command invalid';
+
+// Erros for TradingOffer
+export const TRADE_ALREADY_COMPLETED_ERROR = 'Trade already completed';
+export const PLAYER_2_NOT_SET_ERROR = 'Player 2 is not set';
