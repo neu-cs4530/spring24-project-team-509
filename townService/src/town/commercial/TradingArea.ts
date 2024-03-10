@@ -63,7 +63,7 @@ export default class TradingArea extends CommercialArea {
       throw new Error('Trading offer is not provided');
     }
     // Remove the trading offer from the trading board.
-    this._tradingBoard = this._tradingBoard.filter((offer) => offer !== tradingOffer);
+    this._tradingBoard = this._tradingBoard.filter(offer => offer !== tradingOffer);
     // Add the itemsYouHave to the player2's inventory.
     this._playerDatabase.addToPlayerInventory(tradingOffer.player2, tradingOffer.itemsYouHave);
     // Add the itemsYouWant to the player1's inventory.

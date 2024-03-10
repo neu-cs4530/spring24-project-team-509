@@ -1,6 +1,6 @@
 import TradingOffer from './TradingOffer';
 import GroceryStoreItemList from './GroceryStoreItemList';
-import { TRADE_ALREADY_COMPLETED_ERROR, PLAYER_2_NOT_SET_ERROR } from '../errors';
+import { TRADE_ALREADY_COMPLETED_ERROR } from '../errors';
 
 describe('TradingOffer', () => {
   let tradingOffer: TradingOffer;
