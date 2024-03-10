@@ -43,8 +43,12 @@ export default class TradingArea extends CommercialArea {
    * @param player
    * @param tradingOffer
    */
-  public postTradingOffer(player: Player, tradingOffer: TradingOffer): void {
-    throw new Error('Not implemented');
+  public postTradingOffer(tradingOffer: TradingOffer): void {
+    if (!tradingOffer) {
+      throw new Error('Trading offer is not provided');
+    }
+    // Add the trading offer to the trading board.
+    this._tradingBoard.push(tradingOffer);
   }
 
   /** TODO
@@ -55,7 +59,15 @@ export default class TradingArea extends CommercialArea {
    * @param tradingOffer is the trading offer to be accepted.
    */
   public acceptTradingOffer(tradingOffer: TradingOffer): void {
-    throw new Error('Not implemented');
+    if (!tradingOffer) {
+      throw new Error('Trading offer is not provided');
+    }
+    // Remove the trading offer from the trading board.
+    this._tradingBoard = this._tradingBoard.filter((offer) => offer !== tradingOffer);
+    // Add the itemsYouHave to the player2's inventory.
+    this._playerDatabase.addToPlayerInventory(tradingOffer.player2, tradingOffer.itemsYouHave);
+    // Add the itemsYouWant to the player1's inventory.
+    this._playerDatabase.addToPlayerInventory(tradingOffer.player1, tradingOffer.itemsYouWant);
   }
 
   /** TODO
