@@ -11,7 +11,11 @@ import GroceryStoreItemList from './database/GroceryStoreItemList';
 import GroceryStoreItem from './database/GroceryStoreItem';
 import { GroceryStoreItemName, groceryStoreItemPrices } from './types';
 import PlayerDatabase from './database/PlayerDatabase';
-import { INVALID_COMMAND_MESSAGE, ITEM_LIST_EMPTY_ERROR } from './errors';
+import {
+  INSUFFICIENT_FUNDS_MESSAGE,
+  INVALID_COMMAND_MESSAGE,
+  ITEM_LIST_EMPTY_ERROR,
+} from './errors';
 import CommercialArea from './CommercialArea';
 
 /**
@@ -53,11 +57,11 @@ export default class GroceryStoreArea extends CommercialArea {
    * To loop through the groceryStoreItemPrices and add the items to the grocery store inventory.
    * The quantity of each item is set to 50.
    */
-  private _initializeGroceryStoreInventory(): GroceryStoreItemList {
+  protected _initializeGroceryStoreInventory(): GroceryStoreItemList {
     const groceryStoreItemList = new GroceryStoreItemList();
 
     // Add items to the grocery store inventory
-    Object.entries(groceryStoreItemPrices).forEach(([name, price]) => {
+    Object.entries(groceryStoreItemPrices).forEach(([name]) => {
       const item = new GroceryStoreItem(name as GroceryStoreItemName, 50);
       groceryStoreItemList.addItem(item);
     });
@@ -65,11 +69,22 @@ export default class GroceryStoreArea extends CommercialArea {
     return groceryStoreItemList;
   }
 
-  /** TODO
+  /**
    * To restock the grocery store with items.
+   * Restock to the +10 items when there is 0 in the grocery inventory for a certain item.
+   * @param itemList is the list of items to be restocked.
+   * @throws {Error} if the itemList is empty.
    */
-  private _restockItems(itemList: GroceryStoreItemList[]) {
-    throw new Error('Method not implemented.');
+  // note to self: do we want to have a set initial quantity for all items, do we restock to that same quantity
+  private _restockItems() {
+    if (this._groceryStoreInventory.itemList.length === 0) {
+      throw new Error(ITEM_LIST_EMPTY_ERROR);
+    }
+    for (const item of this._groceryStoreInventory.itemList) {
+      if (item.quantity === 0) {
+        item.setQuantity(10);
+      }
+    }
   }
 
   /**
@@ -104,12 +119,32 @@ export default class GroceryStoreArea extends CommercialArea {
 
   /** TODO
    * To check out a player's cart.
-   *
+   * @throws error if the player's cart is empty, or if the player doesn't have enough money.
+   * If the player's cart is not empty, it checks out the player's cart.
+   *  - Reduces the balance of that player based on the checkout amount
+   *  - Adds the items to the player's inventory.
+   *  - Empties player cart
    * @param playerId is the id of the player who is checking out
    */
   private _checkOut(playerId: PlayerID): void {
-    // Only if checked out successfully
-    this._emitAreaChanged(); // Maybe?
+    // Get the player's cart
+    const cart = this._playerDatabase.getPlayerCart(playerId);
+    let checkoutAmount = 0;
+    Object.entries(cart).forEach(([item, quantity]) => {
+      // Add type annotation for 'item'
+      checkoutAmount +=
+        groceryStoreItemPrices[item as keyof typeof groceryStoreItemPrices] * quantity;
+    });
+    let balance = this._playerDatabase.getPlayerBalance(playerId); // TODO Manh and Jiaying: player balance also needs to be tracked    // Check if the player has enough money
+    if (balance < checkoutAmount) {
+      throw new Error(INSUFFICIENT_FUNDS_MESSAGE);
+    } else {
+      // Reduce the balance of the player based on the checkout amount and add the items to the player's inventory
+      balance = -checkoutAmount;
+      this._playerDatabase.addToPlayerInventory(playerId, cart);
+      this._playerDatabase.clearPlayerCart(playerId);
+      this._emitAreaChanged(); // Maybe?
+    }
   }
 
   /** TODO: maybe?
@@ -139,16 +174,21 @@ export default class GroceryStoreArea extends CommercialArea {
   ): InteractableCommandReturnType<CommandType> {
     // Open menu command
     switch (command.type) {
-      case 'OpenGroceryStore': // TODO
-        throw new Error('Not implemented');
+      case 'OpenGroceryStore':
+        if (!this._groceryStoreInventory) {
+          this._initializeGroceryStoreInventory();
+        }
+        this.add(player);
+        return undefined as InteractableCommandReturnType<CommandType>;
       case 'AddToCart':
         this._playerDatabase.addToPlayerCart(player.id, command.item);
         return undefined as InteractableCommandReturnType<CommandType>;
       case 'RemoveFromCart':
         this._playerDatabase.removeFromPlayerCart(player.id, command.item);
         return undefined as InteractableCommandReturnType<CommandType>;
-      case 'CheckOut': // TODO
-        throw new Error('Not implemented');
+      case 'CheckOut':
+        this._checkOut(player.id);
+        return undefined as InteractableCommandReturnType<CommandType>;
       default:
         throw new Error(INVALID_COMMAND_MESSAGE);
     }
