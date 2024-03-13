@@ -5,9 +5,9 @@ import {
   InteractableCommand,
   InteractableCommandReturnType,
   TownEmitter,
+  TradingArea as TradingAreaModel,
 } from '../../types/CoveyTownSocket';
 import CommercialArea from './CommercialArea';
-import PlayerDatabase from './database/PlayerDatabase';
 import TradingOffer from './database/TradingOffer';
 
 /**
@@ -22,14 +22,12 @@ export default class TradingArea extends CommercialArea {
   private _tradingBoard: TradingOffer[] = [];
 
   constructor(
-    id: string,
-    { x, y, width, height }: BoundingBox,
+    { id, tradingBoard }: Omit<TradingAreaModel, 'type'>,
+    coordinates: BoundingBox,
     townEmitter: TownEmitter,
-    playerDatabase?: PlayerDatabase,
-    tradingBoard?: TradingOffer[],
   ) {
     // Calls the constructor of the parent class.
-    super(id, { x, y, width, height }, townEmitter, playerDatabase);
+    super(id, coordinates, townEmitter);
 
     // Sets the tradingBoard.
     if (tradingBoard) {
@@ -65,9 +63,20 @@ export default class TradingArea extends CommercialArea {
     // Remove the trading offer from the trading board.
     this._tradingBoard = this._tradingBoard.filter(offer => offer !== tradingOffer);
     // Add the itemsYouHave to the player2's inventory.
+    if (!tradingOffer.player2) {
+      throw new Error('Player2 is not set');
+    }
     this._playerDatabase.addToPlayerInventory(tradingOffer.player2, tradingOffer.itemsYouHave);
     // Add the itemsYouWant to the player1's inventory.
     this._playerDatabase.addToPlayerInventory(tradingOffer.player1, tradingOffer.itemsYouWant);
+  }
+
+  /**
+   * Get the current trading board.
+   * @returns The array of trading offers on the board.
+   */
+  public get tradingBoard(): TradingOffer[] {
+    return this._tradingBoard;
   }
 
   /** TODO
