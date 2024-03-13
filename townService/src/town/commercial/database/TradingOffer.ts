@@ -47,6 +47,10 @@ export default class TradingOffer {
     return this._tradeCompleted;
   }
 
+  public get player2(): PlayerID | null {
+    return this._playerAccept;
+  }
+
   /**
    * Complete the trade by setting the tradeCompleted to true.
    * If the trade is already completed, throw an error.
