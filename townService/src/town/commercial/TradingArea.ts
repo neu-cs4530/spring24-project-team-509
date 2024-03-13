@@ -82,11 +82,16 @@ export default class TradingArea extends CommercialArea {
   /** TODO
    * To model the trading area.
    */
-  public toModel(): Interactable {
+  public toModel(): TradingAreaModel {
     // Implement the logic to convert TradingArea to its corresponding model representation
     // Return the model object
-    //we have commercial interface implemented which you could use or something similar to grocerystoremodel
-    throw new Error();
+
+    return {
+      id: this.id,
+      occupants: this.occupantsByID,
+      tradingBoard: this._tradingBoard,
+      type: 'TradingArea',
+    };
   }
 
   /** TODO

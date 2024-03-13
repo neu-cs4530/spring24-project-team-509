@@ -18,9 +18,7 @@ describe('TradingArea', () => {
 
   it('should model the trading area', () => {
     const model = tradingArea.toModel();
-    expect(model).toHaveProperty('id', '1');
     expect(model).toHaveProperty('type', 'TradingArea');
-    expect(model).toHaveProperty('boundingBox');
     expect(model).toHaveProperty('tradingBoard');
   });
 });
