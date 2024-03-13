@@ -1,5 +1,5 @@
 import { PlayerID } from '../../../types/CoveyTownSocket';
-import { PLAYER_CART_NOT_FOUND_ERROR, PLAYER_INVENTORY_NOT_FOUND_ERROR } from '../errors';
+import { MONEY_CANNOT_BE_NEGATIVE_ERROR, PLAYER_CART_NOT_FOUND_ERROR, PLAYER_INVENTORY_NOT_FOUND_ERROR } from '../errors';
 import GroceryStoreItem from './GroceryStoreItem';
 import GroceryStoreItemList from './GroceryStoreItemList';
 import TradingOffer from './TradingOffer';
@@ -26,6 +26,8 @@ export default class PlayerDatabase {
   private _playerPurchaseHistories = new Map<PlayerID, Array<GroceryStoreItemList>>();
 
   private _playerTradingHistories = new Map<PlayerID, Array<TradingOffer>>();
+
+  private _playerMoney = new Map<PlayerID, number>();
 
   /**
    * To add items to the player's inventory.
@@ -142,5 +144,38 @@ export default class PlayerDatabase {
     } else {
       this._playerTradingHistories.set(playerID, [tradingOffer]);
     }
+  }
+
+  /**
+   * To add money to the player's money.
+   * 
+   * @param playerID is the id of the player.
+   * @param money is the amount of money to be added to the player's money.
+   */
+  public addToPlayerMoney(playerID: PlayerID, money: number): void {
+    if (money <= 0) {
+      throw new Error(MONEY_CANNOT_BE_NEGATIVE_ERROR);
+    }
+
+    const currentMoney = this._playerMoney.get(playerID);
+
+    if (currentMoney) {
+      this._playerMoney.set(playerID, currentMoney + money);
+    } else {
+      this._playerMoney.set(playerID, money);
+    }
+  }
+
+  /** TODO
+   * To remove money from player's money.
+   * The remove money amount cannot be negative.
+   * The remove money amount cannot be greater than the player's money.
+   * Throws an error if the remove money amount is negative or greater than the player's money.
+   * Throws an error if the player's money is not found.
+   * 
+   * @param playerID 
+   * @param money 
+   */
+  public removeFromPlayerMoeny(playerID: PlayerID, money: number): void {
   }
 }
