@@ -151,10 +151,9 @@ export default class GroceryStoreArea extends CommercialArea {
    * To transfer the grocery store into a model that can be sent to the client.
    */
   public toModel(): GroceryStoreModel {
-    const { id } = this;
     return {
+      id: this.id,
       type: 'GroceryStoreArea',
-      id,
       occupants: this.occupantsByID,
       inventory: this._groceryStoreInventory,
     };

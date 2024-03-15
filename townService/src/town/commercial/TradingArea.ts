@@ -64,6 +64,7 @@ export default class TradingArea extends CommercialArea {
   public toModel(): Interactable {
     // Implement the logic to convert TradingArea to its corresponding model representation
     // Return the model object
+    //we have commercial interface implemented which you could use or something similar to grocerystoremodel
     throw new Error();
   }
 
