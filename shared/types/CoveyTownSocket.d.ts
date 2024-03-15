@@ -76,6 +76,10 @@ export interface ViewingArea extends Interactable {
   elapsedTimeSec: number;
 }
 
+export interface TradingArea extends Interactable {
+  tradingBoard: TradingOffer[];
+}
+
 export type GameStatus = 'IN_PROGRESS' | 'WAITING_TO_START' | 'OVER' | 'WAITING_FOR_PLAYERS';
 /**
  * Base type for the state of a game
