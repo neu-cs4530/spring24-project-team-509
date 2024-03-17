@@ -1,13 +1,12 @@
-import { Interactable, PlayerID } from "../../types/CoveyTownSocket";
+import { Interactable, PlayerID } from '../../types/CoveyTownSocket';
 
 /**
  * This class is the base class for all commercial activities.
- * As a model, Commercial should handle the business logic and data management related to commercial activities. 
+ * As a model, Commercial should handle the business logic and data management related to commercial activities.
  * It may interact with other models to handle player interactions and manage the state of the commercial zones.
- * add in a parameter for the state if necessary later <StateType extends CommercialState> 
+ * add in a parameter for the state if necessary later <StateType extends CommercialState>
  */
-export interface Commercial extends Interactable{
-
+export interface Commercial extends Interactable {
   /**
    * This method is called when a player wants to buy an item from the commercial area.
    * @param playerID the id of the player who wants to buy the item
