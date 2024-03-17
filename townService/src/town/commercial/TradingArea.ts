@@ -9,7 +9,12 @@ import {
 } from '../../types/CoveyTownSocket';
 import CommercialArea from './CommercialArea';
 import TradingOffer from './database/TradingOffer';
-import { INVALID_COMMAND_MESSAGE, INVALID_TRADE_OFFER, PLAYER_CANNOT_ACCEPT_OWN_OFFER, PLAYER_INSUFFICIENT_INVENTORY_ERROR } from './errors';
+import {
+  INVALID_COMMAND_MESSAGE,
+  INVALID_TRADE_OFFER,
+  PLAYER_CANNOT_ACCEPT_OWN_OFFER,
+  PLAYER_INSUFFICIENT_INVENTORY_ERROR,
+} from './errors';
 
 /**
  * A TradingArea is an InteractableArea on the map that can host a trading area.
@@ -76,13 +81,13 @@ export default class TradingArea extends CommercialArea {
     }
 
     // Check if the player 1 still has the items.
-    const player1_inventory = this._playerDatabase.getPlayerInventory(tradingOffer.player1);
-    if (!player1_inventory.hasItems(tradingOffer.itemsYouWant)) {
+    const player1Inventory = this._playerDatabase.getPlayerInventory(tradingOffer.player1);
+    if (!player1Inventory.hasItems(tradingOffer.itemsYouWant)) {
       throw new Error(PLAYER_INSUFFICIENT_INVENTORY_ERROR);
     }
     // Check if the player 2 still has the items.
-    const player2_inventory = this._playerDatabase.getPlayerInventory(playerId);
-    if (!player2_inventory.hasItems(tradingOffer.itemsYouHave)) {
+    const player2Inventory = this._playerDatabase.getPlayerInventory(playerId);
+    if (!player2Inventory.hasItems(tradingOffer.itemsYouHave)) {
       throw new Error(PLAYER_INSUFFICIENT_INVENTORY_ERROR);
     }
 

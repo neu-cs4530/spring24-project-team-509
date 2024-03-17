@@ -12,17 +12,17 @@ import TradingOffer from './TradingOffer';
  *
  * removeFromPlayerInventory() is a method that removes items from the player's inventory.
  * removeItemFromPlayerInventory() is a method that removes an item from the player's inventory.
- * 
+ *
  * getPlayerInventory() is a method that gets the player's inventory.
  *
  * addToPlayerCart() is a method that add an item into player's cart
  * removeFromPlayerCart() is a method that remove an item from player's cart
- * 
+ *
  * getPlayerCart() is a method that gets the player's cart.
- * 
+ *
  * addToPlayerTradingHistories() is a method that adds a past trading offer to the player's trading history.
  * getPlayerTradingHistories() is a method that gets the player's trading history.
- * 
+ *
  * addToPlayerPurchaseHistory() is a method that adds items to the player's purchase history.
  * getPlayerPurchaseHistory() is a method that gets the player's purchase history.
  *
