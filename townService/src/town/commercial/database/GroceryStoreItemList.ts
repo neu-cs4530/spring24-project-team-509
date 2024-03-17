@@ -13,6 +13,7 @@ import GroceryStoreItem from './GroceryStoreItem';
  * removeItemWithQuantity() is a method that removes an item from the list.
  * removeItem() is a method that removes an item from the list.
  * removeItemList() is a method that removes a list of items from the list.
+ * hasItems() is a method that checks if the list has the items in the itemList.
  *
  * @param _itemList is the list of items.
  */
@@ -129,6 +130,19 @@ export default class GroceryStoreItemList {
   public removeItemList(itemList: GroceryStoreItemList): void {
     itemList.itemList.forEach(item => {
       this.removeItem(item);
+    });
+  }
+
+  /**
+   * To check if the list has the items in the itemList.
+   *
+   * @param itemList is the list of items to be checked.
+   * @returns true if the list has the items in the itemList, else false.
+   */
+  public hasItems(itemList: GroceryStoreItemList): boolean {
+    return itemList.itemList.every(item => {
+      const itemInList = this.itemList.find(element => element.isItem(item.name));
+      return itemInList ? itemInList.quantity >= item.quantity : false;
     });
   }
 }
