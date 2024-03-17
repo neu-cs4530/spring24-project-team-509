@@ -76,10 +76,6 @@ export interface ViewingArea extends Interactable {
   elapsedTimeSec: number;
 }
 
-export interface TradingArea extends Interactable {
-  tradingBoard: TradingOffer[];
-}
-
 export type GameStatus = 'IN_PROGRESS' | 'WAITING_TO_START' | 'OVER' | 'WAITING_FOR_PLAYERS';
 /**
  * Base type for the state of a game
@@ -205,6 +201,10 @@ export interface GroceryStoreModel extends Interactable {
   inventory: GroceryStoreItemList;
 }
 
+export interface TradingArea extends Interactable {
+  tradingBoard: TradingOffer[];
+}
+
 export type CommandID = string;
 
 /**
@@ -232,7 +232,9 @@ export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | 
   | OpenGroceryStoreCommand
   | AddToCartCommand
   | RemoveFromCartCommand
-  | CheckOutCommand;;
+  | CheckOutCommand
+  | PostTradingOfferCommand
+  | AcceptTradingOfferCommand;
 export interface OpenGroceryStoreCommand {
   type: 'OpenGroceryStore';
 }
@@ -246,6 +248,14 @@ export interface RemoveFromCartCommand {
 }
 export interface CheckOutCommand {
   type: 'CheckOut';
+}
+export interface PostTradingOfferCommand {
+  type: 'PostTradingOffer';
+  tradingOffer: TradingOffer;
+}
+export interface AcceptTradingOfferCommand {
+  type: 'AcceptTradingOffer';
+  tradingOffer: TradingOffer;
 }
 export interface ViewingAreaUpdateCommand  {
   type: 'ViewingAreaUpdate';
