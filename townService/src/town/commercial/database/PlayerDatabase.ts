@@ -8,11 +8,23 @@ import TradingOffer from './TradingOffer';
  * PlayerDatabase is a class that stores the player's inventory, purchase history, and trading history.
  *
  * addToPlayerInventory() is a method that adds items to the player's inventory.
+ * addItemToPlayerInventory() is a method that adds an item to the player's inventory.
+ *
  * removeFromPlayerInventory() is a method that removes items from the player's inventory.
+ * removeItemFromPlayerInventory() is a method that removes an item from the player's inventory.
+ * 
+ * getPlayerInventory() is a method that gets the player's inventory.
+ *
  * addToPlayerCart() is a method that add an item into player's cart
  * removeFromPlayerCart() is a method that remove an item from player's cart
+ * 
+ * getPlayerCart() is a method that gets the player's cart.
+ * 
+ * addToPlayerTradingHistories() is a method that adds a past trading offer to the player's trading history.
+ * getPlayerTradingHistories() is a method that gets the player's trading history.
+ * 
  * addToPlayerPurchaseHistory() is a method that adds items to the player's purchase history.
- * addToPlayerTradingHistory() is a method that adds a past trading offer to the player's trading histroy.
+ * getPlayerPurchaseHistory() is a method that gets the player's purchase history.
  *
  * @param _playerInventory is a map that stores the player's inventory.
  * @param _playerPurchaseHistory is a map that stores the player's purchase history.
