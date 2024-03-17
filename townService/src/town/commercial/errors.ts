@@ -14,3 +14,5 @@ export const INVALID_COMMAND_MESSAGE = 'Command invalid';
 // Erros for TradingOffer
 export const TRADE_ALREADY_COMPLETED_ERROR = 'Trade already completed';
 export const PLAYER_2_NOT_SET_ERROR = 'Player 2 is not set';
+// Errors for GroceryStoreArea
+export const INSUFFICIENT_FUNDS_MESSAGE = 'Player has insufficient funds.';

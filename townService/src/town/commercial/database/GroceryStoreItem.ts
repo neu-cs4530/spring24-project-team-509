@@ -13,6 +13,10 @@ import { GroceryStoreItemName, groceryStoreItemPrices } from '../types';
  * @param _quantity is the quantity of the item.
  */
 export default class GroceryStoreItem {
+  setQuantity(arg0: number) {
+    throw new Error('Method not implemented.');
+  }
+
   private _itemName: GroceryStoreItemName;
 
   private _price: number;

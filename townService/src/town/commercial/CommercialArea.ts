@@ -9,7 +9,7 @@ import PlayerDatabase from './database/PlayerDatabase';
  * isActive() is a method that checks if the commercial area is active.
  */
 export default abstract class CommercialArea extends InteractableArea {
-  protected _playerDatabase;
+  protected _playerDatabase: PlayerDatabase;
 
   constructor(
     id: string,
