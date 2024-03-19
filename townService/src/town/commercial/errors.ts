@@ -20,4 +20,3 @@ export const PLAYER_CANNOT_ACCEPT_OWN_OFFER = 'Player cannot accept their own of
 
 // Errors for GroceryStoreArea
 export const INSUFFICIENT_FUNDS_MESSAGE = 'Player has insufficient funds.';
-
