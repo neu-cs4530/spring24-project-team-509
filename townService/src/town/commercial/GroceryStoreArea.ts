@@ -6,6 +6,7 @@ import {
   InteractableCommandReturnType,
   PlayerID,
   TownEmitter,
+  GroceryStoreArea as GroceryStoreAreaModel,
 } from '../../types/CoveyTownSocket';
 import GroceryStoreItemList from './database/GroceryStoreItemList';
 import GroceryStoreItem from './database/GroceryStoreItem';
@@ -37,18 +38,19 @@ export default class GroceryStoreArea extends CommercialArea {
   private _groceryStoreInventory: GroceryStoreItemList = this._initializeGroceryStoreInventory();
 
   constructor(
-    id: string,
-    { x, y, width, height }: BoundingBox,
+    { id, inventory }: Omit<GroceryStoreAreaModel, 'type'>,
+    coordinates: BoundingBox,
     townEmitter: TownEmitter,
     playerDatabase: PlayerDatabase,
-    inventory?: GroceryStoreItemList,
   ) {
     // Calls the constructor of the parent class.
-    super(id, { x, y, width, height }, townEmitter, playerDatabase);
+    super(id, coordinates, townEmitter, playerDatabase);
 
     // If the inventory is found, it sets the inventory.
     if (inventory) {
       this._groceryStoreInventory = inventory;
+    } else {
+      this._groceryStoreInventory = this._initializeGroceryStoreInventory();
     }
   }
 
@@ -68,6 +70,13 @@ export default class GroceryStoreArea extends CommercialArea {
 
     return groceryStoreItemList;
   }
+
+  /**
+    * Returns the grocery store inventory.
+    */
+    public get groceryStoreInventory(): GroceryStoreItemList {
+     return this._groceryStoreInventory;
+    }
 
   /**
    * To restock the grocery store with items.
@@ -136,15 +145,16 @@ export default class GroceryStoreArea extends CommercialArea {
         groceryStoreItemPrices[item as keyof typeof groceryStoreItemPrices] * quantity;
     });
     let balance = this._playerDatabase.getPlayerBalance(playerId); // TODO Manh and Jiaying: player balance also needs to be tracked    // Check if the player has enough money
-    if (balance < checkoutAmount) {
-      throw new Error(INSUFFICIENT_FUNDS_MESSAGE);
-    } else {
+    // if (balance < checkoutAmount) {
+    //   throw new Error(INSUFFICIENT_FUNDS_MESSAGE);
+    // } else {
       // Reduce the balance of the player based on the checkout amount and add the items to the player's inventory
-      balance = -checkoutAmount;
-      this._playerDatabase.addToPlayerInventory(playerId, cart);
-      this._playerDatabase.clearPlayerCart(playerId);
-      this._emitAreaChanged(); // Maybe?
-    }
+    balance = -checkoutAmount;
+    //this._playerDatabase.setPlayerBalance(playerId, balance);
+    this._playerDatabase.addToPlayerInventory(playerId, cart);
+    //this._playerDatabase.clearPlayerCart(playerId);
+    //this._emitAreaChanged(); // Maybe?
+    //}
   }
 
   /** TODO: maybe?
@@ -188,6 +198,9 @@ export default class GroceryStoreArea extends CommercialArea {
       case 'CheckOut':
         this._checkOut(player.id);
         return undefined as InteractableCommandReturnType<CommandType>;
+      // case 'CloseGroceryStore':
+      //   this.remove(player);
+      //   return undefined as InteractableCommandReturnType<CommandType>;
       default:
         throw new Error(INVALID_COMMAND_MESSAGE);
     }

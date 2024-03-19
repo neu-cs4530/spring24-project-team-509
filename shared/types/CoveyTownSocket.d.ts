@@ -76,6 +76,14 @@ export interface ViewingArea extends Interactable {
   elapsedTimeSec: number;
 }
 
+export interface TradingArea extends Interactable {
+  tradingBoard: TradingOffer[];
+}
+
+export interface GroceryStoreArea extends Interactable {
+  inventory?: GroceryStoreItemList;
+}
+
 export type GameStatus = 'IN_PROGRESS' | 'WAITING_TO_START' | 'OVER' | 'WAITING_FOR_PLAYERS';
 /**
  * Base type for the state of a game
@@ -196,13 +204,8 @@ export interface GameArea<T extends GameState> extends Interactable {
   history: GameResult[];
 }
 
-// TODO: GroceryStoreModel and TradingModel extends Interactable? 
 export interface GroceryStoreModel extends Interactable {
   inventory: GroceryStoreItemList;
-}
-
-export interface TradingArea extends Interactable {
-  tradingBoard: TradingOffer[];
 }
 
 export type CommandID = string;

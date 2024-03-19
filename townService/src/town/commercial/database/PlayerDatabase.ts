@@ -39,7 +39,7 @@ export default class PlayerDatabase {
 
   private _playerTradingHistories = new Map<PlayerID, Array<TradingOffer>>();
 
-  // every player starts with a balance of 1000 dollars
+  // every player starts with a balance of 100 dollars
   private _playerBalance = new Map<PlayerID, number>();
 
   // Getters and Setters for playerInventories

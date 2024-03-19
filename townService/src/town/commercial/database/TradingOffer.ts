@@ -62,7 +62,7 @@ export default class TradingOffer {
       throw new Error(TRADE_ALREADY_COMPLETED_ERROR);
     }
 
-    // If player2 is not set, throw an error.
+    // If playerAccept is not set, throw an error.
     if (this._playerAccept === null) {
       throw new Error(PLAYER_2_NOT_SET_ERROR);
     }
@@ -71,9 +71,9 @@ export default class TradingOffer {
   }
 
   /**
-   * To accept the trade, the player2 must be the player that accepted the trade.
+   * To accept the trade, the playerAccept must be the player that accepted the trade.
    *
-   * @param player2 is the player that accepted the trade.
+   * @param playerAccept is the player that accepted the trade.
    */
   public acceptTrade(playerAccept: PlayerID) {
     this._playerAccept = playerAccept;
