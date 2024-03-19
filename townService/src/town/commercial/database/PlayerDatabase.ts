@@ -111,6 +111,19 @@ export default class PlayerDatabase {
     this._playerBalance = playerBalance;
   }
 
+
+  /**
+   * To set the balance of a player by ID.
+   * If the player's balance is found, it updates the balance.
+   * If the player's balance is not found, it throws an error.
+   *
+
+   * @param balance is the new balance to be set for the player.
+   */
+  public setPlayerBalanceByID(playerID: PlayerID, balance: number): void {
+    this._playerBalance.set(playerID, balance);
+  }
+
   /**
    * Sarah & Krish
    * To return all items in the player cart
@@ -134,15 +147,18 @@ export default class PlayerDatabase {
    * @param playerID is the id of the player
    */
   public clearPlayerCart(playerId: PlayerID): void {
-    const playerCart = this._playerCarts.get(playerId);
-    if (playerCart) {
-      // Iterate through each item in the player's cart and remove it
-      for (let i = 0; i < playerCart.itemList.length; i++) {
-        playerCart.removeItem(playerCart.itemList[i]);
-      }
-    } else {
-      throw new Error(PLAYER_CART_NOT_FOUND_ERROR);
-    }
+    this._playerCarts.set(playerId, new GroceryStoreItemList());
+    
+    // const playerCart = this._playerCarts.get(playerId);
+    // if (playerCart) {
+    //   //Iterate through each item in the player's cart and remove it
+    //   for (let i = 0; i < playerCart.itemList.length; i++) {
+    //     playerCart.removeItem(playerCart.itemList[i]);
+    //   }
+      
+    // } else {
+    //   throw new Error(PLAYER_CART_NOT_FOUND_ERROR);
+    // }
   }
 
   /**
@@ -154,14 +170,19 @@ export default class PlayerDatabase {
    * @param itemList is the list of items to be added to the player's inventory.
    */
   public addToPlayerInventory(playerID: PlayerID, itemList: GroceryStoreItemList): void {
+    
+    const clonedItemList = new GroceryStoreItemList();
+    itemList.itemList.forEach(item => {
+      clonedItemList.addItem(item);
+    });
     // To find the player's inventory
     const playerInventory = this._playerInventories.get(playerID);
 
     // If the player's inventory is found
     if (playerInventory) {
-      playerInventory.addItemList(itemList);
+      playerInventory.addItemList(clonedItemList);
     } else {
-      this._playerInventories.set(playerID, itemList);
+      this._playerInventories.set(playerID, clonedItemList);
     }
   }
 
