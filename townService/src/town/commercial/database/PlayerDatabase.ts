@@ -39,6 +39,112 @@ export default class PlayerDatabase {
 
   private _playerTradingHistories = new Map<PlayerID, Array<TradingOffer>>();
 
+  // every player starts with a balance of 1000 dollars
+  private _playerBalance = new Map<PlayerID, number>();
+
+  // Getters and Setters for playerInventories
+  public getPlayerInventories(): Map<PlayerID, GroceryStoreItemList> {
+    return this._playerInventories;
+  }
+
+  public setPlayerInventories(playerInventories: Map<PlayerID, GroceryStoreItemList>): void {
+    this._playerInventories = playerInventories;
+  }
+
+  // Getters and Setters for playerCarts
+  public getPlayerCarts(): Map<PlayerID, GroceryStoreItemList> {
+    return this._playerCarts;
+  }
+
+  public setPlayerCarts(playerCarts: Map<PlayerID, GroceryStoreItemList>): void {
+    this._playerCarts = playerCarts;
+  }
+
+  // Getters and Setters for playerPurchaseHistories
+  public getPlayerPurchaseHistories(): Map<PlayerID, Array<GroceryStoreItemList>> {
+    return this._playerPurchaseHistories;
+  }
+
+  public setPlayerPurchaseHistories(
+    playerPurchaseHistories: Map<PlayerID, Array<GroceryStoreItemList>>,
+  ): void {
+    this._playerPurchaseHistories = playerPurchaseHistories;
+  }
+
+  /**
+   * To get the player's trading history.
+   * If the player's trading history is found, it returns the trading history.
+   * If the player's trading history is not found, it returns an empty trading history.
+   *
+   * @param playerID is the id of the player.
+   * @returns the player's trading history.
+   */
+  public getPlayerTradingHistories(playerID: PlayerID): Array<TradingOffer> {
+    // To find the player's trading history
+    const playerTradingHistory = this._playerTradingHistories.get(playerID);
+
+    // If the player's trading history is found, return the trading history
+    if (playerTradingHistory) {
+      return playerTradingHistory;
+    }
+
+    // If the player's trading history is not found, return an empty trading history
+    return [];
+  }
+
+  public setPlayerTradingHistories(
+    playerTradingHistories: Map<PlayerID, Array<TradingOffer>>,
+  ): void {
+    this._playerTradingHistories = playerTradingHistories;
+  }
+
+  /**
+   * Sarah & Krish
+   * To get the current balance of the player
+   * @param playerID is the id of the player
+   */
+  public getPlayerBalance(playerID: PlayerID): number {
+    return this._playerBalance.get(playerID) || 0;
+  }
+
+  public setPlayerBalance(playerBalance: Map<PlayerID, number>): void {
+    this._playerBalance = playerBalance;
+  }
+
+  /**
+   * Sarah & Krish
+   * To return all items in the player cart
+   * @param playerID is the id of the player
+   * @returns the player cart
+   */
+  public getPlayerCart(playerID: PlayerID): GroceryStoreItemList {
+    // To find the player's cart
+    const playerCart = this._playerCarts.get(playerID);
+
+    // If the player's cart is found
+    if (playerCart) {
+      return playerCart;
+    }
+    throw new Error(PLAYER_CART_NOT_FOUND_ERROR);
+  }
+
+  /**
+   * Sarah & Krish
+   * To clear all the contents of the player cart
+   * @param playerID is the id of the player
+   */
+  public clearPlayerCart(playerId: PlayerID): void {
+    const playerCart = this._playerCarts.get(playerId);
+    if (playerCart) {
+      // Iterate through each item in the player's cart and remove it
+      for (let i = 0; i < playerCart.itemList.length; i++) {
+        playerCart.removeItem(playerCart.itemList[i]);
+      }
+    } else {
+      throw new Error(PLAYER_CART_NOT_FOUND_ERROR);
+    }
+  }
+
   /**
    * To add items to the player's inventory.
    * If the player's inventory is found, it adds the items to the player's inventory.
@@ -182,27 +288,6 @@ export default class PlayerDatabase {
   }
 
   /**
-   * To get the player's cart.
-   * If the player's cart is found, it returns the cart.
-   * If the player's cart is not found, it returns an empty cart.
-   *
-   * @param playerID is the id of the player.
-   * @returns the player's cart.
-   */
-  public getPlayerCart(playerID: PlayerID): GroceryStoreItemList {
-    // To find the player's cart
-    const playerCart = this._playerCarts.get(playerID);
-
-    // If the player's cart is found, return the cart
-    if (playerCart) {
-      return playerCart;
-    }
-
-    // If the player's cart is not found, return an empty cart
-    return new GroceryStoreItemList();
-  }
-
-  /**
    * To add a past ttrading offer to the player's trading history
    *
    * @param playerID is the id of the player.
@@ -218,27 +303,6 @@ export default class PlayerDatabase {
     } else {
       this._playerTradingHistories.set(playerID, [tradingOffer]);
     }
-  }
-
-  /**
-   * To get the player's trading history.
-   * If the player's trading history is found, it returns the trading history.
-   * If the player's trading history is not found, it returns an empty trading history.
-   *
-   * @param playerID is the id of the player.
-   * @returns the player's trading history.
-   */
-  public getPlayerTradingHistories(playerID: PlayerID): Array<TradingOffer> {
-    // To find the player's trading history
-    const playerTradingHistory = this._playerTradingHistories.get(playerID);
-
-    // If the player's trading history is found, return the trading history
-    if (playerTradingHistory) {
-      return playerTradingHistory;
-    }
-
-    // If the player's trading history is not found, return an empty trading history
-    return [];
   }
 
   /**

@@ -17,3 +17,7 @@ export const TRADE_ALREADY_COMPLETED_ERROR = 'Trade already completed';
 export const PLAYER_2_NOT_SET_ERROR = 'Player 2 is not set';
 export const INVALID_TRADE_OFFER = 'Trading offer is not valid';
 export const PLAYER_CANNOT_ACCEPT_OWN_OFFER = 'Player cannot accept their own offer';
+
+// Errors for GroceryStoreArea
+export const INSUFFICIENT_FUNDS_MESSAGE = 'Player has insufficient funds.';
+
