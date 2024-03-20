@@ -8,6 +8,7 @@ export const ITEM_LIST_EMPTY_ERROR = 'Item list is empty';
 export const PLAYER_INVENTORY_NOT_FOUND_ERROR = 'Player inventory not found.';
 export const PLAYER_CART_NOT_FOUND_ERROR = 'Player cart not found';
 export const PLAYER_INSUFFICIENT_INVENTORY_ERROR = 'Player has insufficient inventory';
+export const PLAYER_INSUFFICIENT_FUNDS_ERROR = 'Player has insufficient funds';
 
 // Errors for command
 export const INVALID_COMMAND_MESSAGE = 'Command invalid';
