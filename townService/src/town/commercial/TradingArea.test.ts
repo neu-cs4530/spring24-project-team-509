@@ -92,9 +92,22 @@ describe('TradingArea', () => {
     it('should accept a trading offer from the trading board', () => {
       const tradingOffer = new TradingOffer(itemsYouHave, itemsYouWant, playerInitiate);
       tradingArea.postTradingOffer(tradingOffer);
-      tradingOffer.acceptTrade(playerAccept);
-      tradingArea.acceptTradingOffer(tradingOffer);
+      //tradingOffer.acceptTrade(playerAccept);
+      tradingArea.acceptTradingOffer(tradingOffer, playerAccept);
+      expect(tradingArea.tradingBoard).not.toContain(tradingOffer);
+      //more down here to compare the content the database but we can't see it, 
+      //lmk if you want to add a database to the constructor or 
 
+    });
+    it('handle command post TradingOffer', () => {
+      const tradingOffer = new TradingOffer(itemsYouHave, itemsYouWant, playerInitiate);
+      tradingArea.handleCommand({ type: 'PostTradingOffer', tradingOffer }, newPlayer);
+      expect(tradingArea.tradingBoard).toContain(tradingOffer);
+    });
+    it('handle command accept TradingOffer', () => {
+      const tradingOffer = new TradingOffer(itemsYouHave, itemsYouWant, playerInitiate);
+      tradingArea.postTradingOffer(tradingOffer);
+      tradingArea.handleCommand({ type: 'AcceptTradingOffer', tradingOffer }, newPlayer);
       expect(tradingArea.tradingBoard).not.toContain(tradingOffer);
     });
   });

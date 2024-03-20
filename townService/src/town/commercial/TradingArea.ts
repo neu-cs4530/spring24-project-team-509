@@ -106,7 +106,7 @@ export default class TradingArea extends CommercialArea {
     this._playerDatabase.addToPlayerInventory(tradingOffer.player1, tradingOffer.itemsYouWant);
   }
 
-  /** TODO: maybe?
+  /** 
    * To model the trading area.
    */
   public toModel(): TradingAreaModel {
