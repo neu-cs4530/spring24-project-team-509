@@ -72,11 +72,11 @@ export default class GroceryStoreArea extends CommercialArea {
   }
 
   /**
-    * Returns the grocery store inventory.
-    */
-    public get groceryStoreInventory(): GroceryStoreItemList {
-     return this._groceryStoreInventory;
-    }
+   * Returns the grocery store inventory.
+   */
+  public get groceryStoreInventory(): GroceryStoreItemList {
+    return this._groceryStoreInventory;
+  }
 
   /**
    * To restock the grocery store with items.
@@ -136,24 +136,7 @@ export default class GroceryStoreArea extends CommercialArea {
    * @param playerId is the id of the player who is checking out
    */
   private _checkOut(playerId: PlayerID): void {
-    // Get the player's cart
-    const cart = this._playerDatabase.getPlayerCart(playerId);
-    let checkoutAmount = 0;
-    Object.entries(cart).forEach(([item, quantity]) => {
-      // Add type annotation for 'item'
-      checkoutAmount +=
-        groceryStoreItemPrices[item as keyof typeof groceryStoreItemPrices] * quantity;
-    });
-    let balance = this._playerDatabase.getPlayerBalance(playerId); // TODO Manh and Jiaying: player balance also needs to be tracked    // Check if the player has enough money
-    // if (balance < checkoutAmount) {
-    //   throw new Error(INSUFFICIENT_FUNDS_MESSAGE);
-    // } else {
-      // Reduce the balance of the player based on the checkout amount and add the items to the player's inventory
-    balance = checkoutAmount;
-    this._playerDatabase.setPlayerBalanceByID(playerId, 10);
-    this._playerDatabase.addToPlayerInventory(playerId, cart);
-    this._playerDatabase.clearPlayerCart(playerId);
-    //}
+    this._playerDatabase.checkOutPlayerCart(playerId);
   }
 
   /** TODO: maybe?
@@ -189,10 +172,10 @@ export default class GroceryStoreArea extends CommercialArea {
         this.add(player);
         return undefined as InteractableCommandReturnType<CommandType>;
       case 'AddToCart':
-        this._playerDatabase.addToPlayerCart(player.id, command.item);
+        this._playerDatabase.addItemToPlayerCart(player.id, command.item);
         return undefined as InteractableCommandReturnType<CommandType>;
       case 'RemoveFromCart':
-        this._playerDatabase.removeFromPlayerCart(player.id, command.item);
+        this._playerDatabase.removeItemFromPlayerCart(player.id, command.item);
         return undefined as InteractableCommandReturnType<CommandType>;
       case 'CheckOut':
         this._checkOut(player.id);
