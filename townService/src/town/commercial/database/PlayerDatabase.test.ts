@@ -27,6 +27,27 @@ describe('PlayerDatabase', () => {
     });
   });
 
+  describe('removeItemFromPlayerInventory', () => {
+    it("should remove an item from the player's inventory", () => {
+      const playerID = 'player1';
+      const item: GroceryStoreItem = new GroceryStoreItem('bacon', 10);
+
+      playerDatabase.addItemToPlayerInventory(playerID, item);
+      playerDatabase.removeItemFromPlayerInventory(playerID, item);
+
+      expect(playerDatabase.getPlayerInventory(playerID)).toEqual(new GroceryStoreItemList());
+    });
+
+    it("should throw INVENTORY_NOT_FFOUND when removing from a non-existing player's inventory", () => {
+      const playerID = 'player1';
+      const item: GroceryStoreItem = new GroceryStoreItem('bacon', 10);
+
+      expect(() => {
+        playerDatabase.removeItemFromPlayerInventory(playerID, item);
+      }).toThrow(PLAYER_INVENTORY_NOT_FOUND_ERROR);
+    });
+  });
+
   describe('removeFromPlayerInventory', () => {
     it("should remove items from the player's inventory", () => {
       const playerID = 'player1';
@@ -45,8 +66,12 @@ describe('PlayerDatabase', () => {
 
     it("should throw error whenn remove non existing items from the player's inventory", () => {
       const playerID = 'player1';
-      const itemList = new GroceryStoreItemList();
-      // Expect PLAYER_INVENTORY_NOT_FOUND_ERROR to be thrown
+      const items: GroceryStoreItem[] = [
+        new GroceryStoreItem('bacon', 10),
+        new GroceryStoreItem('cereal', 5),
+      ];
+      const itemList = new GroceryStoreItemList(items);
+
       expect(() => {
         playerDatabase.removeFromPlayerInventory(playerID, itemList);
       }).toThrow(PLAYER_INVENTORY_NOT_FOUND_ERROR);
@@ -58,7 +83,7 @@ describe('PlayerDatabase', () => {
       const playerID = 'player1';
       const item: GroceryStoreItem = new GroceryStoreItem('bacon', 10);
 
-      playerDatabase.addToPlayerCart(playerID, item);
+      playerDatabase.addItemToPlayerCart(playerID, item);
 
       expect(playerDatabase.getPlayerCart(playerID)).toEqual(new GroceryStoreItemList([item]));
     });
@@ -69,8 +94,8 @@ describe('PlayerDatabase', () => {
       const playerID = 'player1';
       const item: GroceryStoreItem = new GroceryStoreItem('bacon', 10);
 
-      playerDatabase.addToPlayerCart(playerID, item);
-      playerDatabase.removeFromPlayerCart(playerID, item);
+      playerDatabase.addItemToPlayerCart(playerID, item);
+      playerDatabase.removeItemFromPlayerCart(playerID, item);
 
       expect(playerDatabase.getPlayerCart(playerID)).toEqual(new GroceryStoreItemList());
     });
@@ -119,6 +144,23 @@ describe('PlayerDatabase', () => {
           playerDatabase.removeItemFromPlayerInventory(playerID, item);
         }).toThrow(PLAYER_INVENTORY_NOT_FOUND_ERROR);
       });
+    });
+  });
+
+  describe('checkOutPlayerCart', () => {
+    it("should add items from the player's cart to the player's inventory", () => {
+      const playerID = 'player1';
+      const items: GroceryStoreItem[] = [
+        new GroceryStoreItem('bacon', 10),
+        new GroceryStoreItem('cereal', 5),
+      ];
+
+      const itemList = new GroceryStoreItemList(items);
+
+      playerDatabase.addToPlayerCart(playerID, itemList);
+      playerDatabase.checkOutPlayerCart(playerID);
+
+      expect(playerDatabase.getPlayerInventory(playerID)).toEqual(itemList);
     });
   });
 });
