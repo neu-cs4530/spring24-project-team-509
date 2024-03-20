@@ -115,7 +115,6 @@
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
          "height":45,
          "id":6,
-         "locked":true,
          "name":"Walls",
          "opacity":1,
          "type":"tilelayer",
@@ -172,7 +171,6 @@
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
          "height":45,
          "id":5,
-         "locked":true,
          "name":"On The Walls",
          "opacity":1,
          "type":"tilelayer",
@@ -229,7 +227,6 @@
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
          "height":45,
          "id":2,
-         "locked":true,
          "name":"World",
          "opacity":1,
          "type":"tilelayer",
@@ -355,6 +352,7 @@
         {
          "draworder":"topdown",
          "id":4,
+         "locked":true,
          "name":"Objects",
          "objects":[
                 {
@@ -627,113 +625,6 @@
                  "width":1.33529176124966,
                  "x":3296.83535852584,
                  "y":1068.23340899987
-                }, 
-                {
-                 "height":94.6666666666667,
-                 "id":58,
-                 "name":"Trading Area Table 1",
-                 "rotation":0,
-                 "type":"ConversationArea",
-                 "visible":true,
-                 "width":127.333333333333,
-                 "x":3904,
-                 "y":831.333333333333
-                }, 
-                {
-                 "height":96.6666666666666,
-                 "id":59,
-                 "name":"Trading Area Table 2",
-                 "rotation":0,
-                 "type":"ConversationArea",
-                 "visible":true,
-                 "width":128.666666666667,
-                 "x":4095.33333333333,
-                 "y":830.666666666667
-                }, 
-                {
-                 "height":92,
-                 "id":61,
-                 "name":"Trading Area Bulletin",
-                 "properties":[
-                        {
-                         "name":"type",
-                         "type":"string",
-                         "value":"Trading"
-                        }],
-                 "rotation":0,
-                 "type":"TradingArea",
-                 "visible":true,
-                 "width":130,
-                 "x":3872.66666666667,
-                 "y":676
-                }, 
-                {
-                 "height":223.333333333333,
-                 "id":64,
-                 "name":"Grocery Store Aisle 1",
-                 "properties":[
-                        {
-                         "name":"type",
-                         "type":"string",
-                         "value":"Grocery"
-                        }],
-                 "rotation":0,
-                 "type":"GroceryStoreMenu",
-                 "visible":true,
-                 "width":101.333333333333,
-                 "x":3981.33333333333,
-                 "y":1071.33333333333
-                }, 
-                {
-                 "height":224.666666666667,
-                 "id":67,
-                 "name":"Grocery Store Aisle 2",
-                 "properties":[
-                        {
-                         "name":"type",
-                         "type":"string",
-                         "value":"Grocery"
-                        }],
-                 "rotation":0,
-                 "type":"GroceryStoreMenu",
-                 "visible":true,
-                 "width":92,
-                 "x":4110,
-                 "y":1072.66666666667
-                }, 
-                {
-                 "height":223.333333333333,
-                 "id":69,
-                 "name":"Grocery Store Aisle 3",
-                 "properties":[
-                        {
-                         "name":"type",
-                         "type":"string",
-                         "value":"Grocery"
-                        }],
-                 "rotation":0,
-                 "type":"GroceryStoreMenu",
-                 "visible":true,
-                 "width":64.6666666666661,
-                 "x":4212,
-                 "y":1072.66666666667
-                }, 
-                {
-                 "height":112.666666666667,
-                 "id":72,
-                 "name":"Grocery Store Checkout",
-                 "properties":[
-                        {
-                         "name":"type",
-                         "type":"string",
-                         "value":"Grocery"
-                        }],
-                 "rotation":0,
-                 "type":"GroceryStoreCheckout",
-                 "visible":true,
-                 "width":96.666666666667,
-                 "x":3871.33333333333,
-                 "y":1072
                 }],
          "opacity":1,
          "type":"objectgroup",
