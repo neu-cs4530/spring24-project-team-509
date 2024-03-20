@@ -12,6 +12,31 @@ import TradingOffer from './TradingOffer';
 /**
  * PlayerDatabase is a class that stores the player's inventory, purchase history, and trading history.
  *
+ * Methods:
+ * - getPlayerInventory: To get the player's inventory.
+ * - addItemToPlayerInventory: To add an item to the player's inventory.
+ * - addToPlayerInventory: To add items to the player's inventory.
+ * - removeItemFromPlayerInventory: To remove an item from the player's inventory.
+ * - removeFromPlayerInventory: To remove items from the player's inventory.
+ *
+ * - getPlayerCart: To get the player's cart.
+ * - addItemToPlayerCart: To add an item to the player's cart.
+ * - addToPlayerCart: To add items to the player's cart.
+ * - removeItemFromPlayerCart: To remove an item from the player's cart.
+ * - removeFromPlayerCart: To remove items from the player's cart.
+ * - clearPlayerCart: To clear all the contents of the player cart.
+ *
+ * - getPlayerPurchaseHistory: To get the player's purchase history.
+ * - addToPlayerPurchaseHistory: To add items to the player's purchase history.
+ *
+ * - getPlayerTradingHistories: To get the player's trading history.
+ * - addToPlayerTradingHistories: To add a past trading offer to the player's trading history.
+ *
+ * - getPlayerBalance: To get the current balance of the player.
+ * - updatePlayerBalance: To set the balance of a player by ID.
+ *
+ * - checkOutPlayerCart: To check out a player's cart.
+ *
  * @param _playerInventory is a map that stores the player's inventory.
  * @param _playerCart is a map that stores the player's cart.
  * @param _playerPurchaseHistory is a map that stores the player's purchase history.
@@ -181,7 +206,6 @@ export default class PlayerDatabase {
 
   // /////////////////////////////////////////////////////////////////////////////////////////
   /**
-   * Sarah & Krish
    * To return all items in the player cart
    * @param playerID is the id of the player
    * @returns the player cart
@@ -274,23 +298,11 @@ export default class PlayerDatabase {
   }
 
   /**
-   * Sarah & Krish
    * To clear all the contents of the player cart
    * @param playerID is the id of the player
    */
   public clearPlayerCart(playerId: PlayerID): void {
     this._playerCarts.set(playerId, new GroceryStoreItemList());
-
-    // const playerCart = this._playerCarts.get(playerId);
-    // if (playerCart) {
-    //   //Iterate through each item in the player's cart and remove it
-    //   for (let i = 0; i < playerCart.itemList.length; i++) {
-    //     playerCart.removeItem(playerCart.itemList[i]);
-    //   }
-
-    // } else {
-    //   throw new Error(PLAYER_CART_NOT_FOUND_ERROR);
-    // }
   }
 
   // /////////////////////////////////////////////////////////////////////////////////////////
@@ -384,7 +396,6 @@ export default class PlayerDatabase {
 
   // /////////////////////////////////////////////////////////////////////////////////////////
   /**
-   * Sarah & Krish
    * To get the current balance of the player
    * @param playerID is the id of the player
    */
@@ -407,7 +418,6 @@ export default class PlayerDatabase {
    * If the player's balance is found, it updates the balance.
    * If the player's balance is not found, it throws an error.
    *
-
    * @param balance is the new balance to be set for the player.
    */
   public updatePlayerBalance(playerID: PlayerID, balance: number): void {
