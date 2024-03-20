@@ -1,5 +1,10 @@
 import { PlayerID } from '../../../types/CoveyTownSocket';
-import { PLAYER_CART_NOT_FOUND_ERROR, PLAYER_INVENTORY_NOT_FOUND_ERROR } from '../errors';
+import {
+  ITEM_LIST_EMPTY_ERROR,
+  PLAYER_CART_NOT_FOUND_ERROR,
+  PLAYER_INSUFFICIENT_FUNDS_ERROR,
+  PLAYER_INVENTORY_NOT_FOUND_ERROR,
+} from '../errors';
 import GroceryStoreItem from './GroceryStoreItem';
 import GroceryStoreItemList from './GroceryStoreItemList';
 import TradingOffer from './TradingOffer';
@@ -7,28 +12,11 @@ import TradingOffer from './TradingOffer';
 /**
  * PlayerDatabase is a class that stores the player's inventory, purchase history, and trading history.
  *
- * addToPlayerInventory() is a method that adds items to the player's inventory.
- * addItemToPlayerInventory() is a method that adds an item to the player's inventory.
- *
- * removeFromPlayerInventory() is a method that removes items from the player's inventory.
- * removeItemFromPlayerInventory() is a method that removes an item from the player's inventory.
- *
- * getPlayerInventory() is a method that gets the player's inventory.
- *
- * addToPlayerCart() is a method that add an item into player's cart
- * removeFromPlayerCart() is a method that remove an item from player's cart
- *
- * getPlayerCart() is a method that gets the player's cart.
- *
- * addToPlayerTradingHistories() is a method that adds a past trading offer to the player's trading history.
- * getPlayerTradingHistories() is a method that gets the player's trading history.
- *
- * addToPlayerPurchaseHistory() is a method that adds items to the player's purchase history.
- * getPlayerPurchaseHistory() is a method that gets the player's purchase history.
- *
  * @param _playerInventory is a map that stores the player's inventory.
+ * @param _playerCart is a map that stores the player's cart.
  * @param _playerPurchaseHistory is a map that stores the player's purchase history.
  * @param _playerTradingHistory is a map that stores the player's trading history.
+ * @param _playerBalances is a map that stores the player's balance.
  */
 export default class PlayerDatabase {
   private _playerInventories = new Map<PlayerID, GroceryStoreItemList>();
@@ -39,151 +27,77 @@ export default class PlayerDatabase {
 
   private _playerTradingHistories = new Map<PlayerID, Array<TradingOffer>>();
 
-  // every player starts with a balance of 100 dollars
-  private _playerBalance = new Map<PlayerID, number>();
+  private _playerBalances = new Map<PlayerID, number>();
 
+  // /////////////////////////////////////////////////////////////////////////////////////////
   // Getters and Setters for playerInventories
-  public getPlayerInventories(): Map<PlayerID, GroceryStoreItemList> {
+  public get playerInventories(): Map<PlayerID, GroceryStoreItemList> {
     return this._playerInventories;
   }
 
-  public setPlayerInventories(playerInventories: Map<PlayerID, GroceryStoreItemList>): void {
+  public set playerInventories(playerInventories: Map<PlayerID, GroceryStoreItemList>) {
     this._playerInventories = playerInventories;
   }
 
   // Getters and Setters for playerCarts
-  public getPlayerCarts(): Map<PlayerID, GroceryStoreItemList> {
+  public get playerCarts(): Map<PlayerID, GroceryStoreItemList> {
     return this._playerCarts;
   }
 
-  public setPlayerCarts(playerCarts: Map<PlayerID, GroceryStoreItemList>): void {
+  public set playerCarts(playerCarts: Map<PlayerID, GroceryStoreItemList>) {
     this._playerCarts = playerCarts;
   }
 
   // Getters and Setters for playerPurchaseHistories
-  public getPlayerPurchaseHistories(): Map<PlayerID, Array<GroceryStoreItemList>> {
+  public get playerPurchaseHistories(): Map<PlayerID, Array<GroceryStoreItemList>> {
     return this._playerPurchaseHistories;
   }
 
-  public setPlayerPurchaseHistories(
+  public set playerPurchaseHistories(
     playerPurchaseHistories: Map<PlayerID, Array<GroceryStoreItemList>>,
-  ): void {
+  ) {
     this._playerPurchaseHistories = playerPurchaseHistories;
   }
 
-  /**
-   * To get the player's trading history.
-   * If the player's trading history is found, it returns the trading history.
-   * If the player's trading history is not found, it returns an empty trading history.
-   *
-   * @param playerID is the id of the player.
-   * @returns the player's trading history.
-   */
-  public getPlayerTradingHistories(playerID: PlayerID): Array<TradingOffer> {
-    // To find the player's trading history
-    const playerTradingHistory = this._playerTradingHistories.get(playerID);
-
-    // If the player's trading history is found, return the trading history
-    if (playerTradingHistory) {
-      return playerTradingHistory;
-    }
-
-    // If the player's trading history is not found, return an empty trading history
-    return [];
+  // Getters and Setters for playerTradingHistories
+  public get playerTradingHistories(): Map<PlayerID, Array<TradingOffer>> {
+    return this._playerTradingHistories;
   }
 
-  public setPlayerTradingHistories(
-    playerTradingHistories: Map<PlayerID, Array<TradingOffer>>,
-  ): void {
+  public set playerTradingHistories(playerTradingHistories: Map<PlayerID, Array<TradingOffer>>) {
     this._playerTradingHistories = playerTradingHistories;
   }
 
-  /**
-   * Sarah & Krish
-   * To get the current balance of the player
-   * @param playerID is the id of the player
-   */
-  public getPlayerBalance(playerID: PlayerID): number {
-    return this._playerBalance.get(playerID) || 0;
+  // Getters and Setters for playerBalances
+  public get playerBalances(): Map<PlayerID, number> {
+    return this._playerBalances;
   }
 
-  public setPlayerBalance(playerBalance: Map<PlayerID, number>): void {
-    this._playerBalance = playerBalance;
+  public set playerBalances(playerBalances: Map<PlayerID, number>) {
+    this._playerBalances = playerBalances;
   }
 
-
+  // /////////////////////////////////////////////////////////////////////////////////////////
   /**
-   * To set the balance of a player by ID.
-   * If the player's balance is found, it updates the balance.
-   * If the player's balance is not found, it throws an error.
-   *
-
-   * @param balance is the new balance to be set for the player.
-   */
-  public setPlayerBalanceByID(playerID: PlayerID, balance: number): void {
-    this._playerBalance.set(playerID, balance);
-  }
-
-  /**
-   * Sarah & Krish
-   * To return all items in the player cart
-   * @param playerID is the id of the player
-   * @returns the player cart
-   */
-  public getPlayerCart(playerID: PlayerID): GroceryStoreItemList {
-    // To find the player's cart
-    const playerCart = this._playerCarts.get(playerID);
-
-    // If the player's cart is found
-    if (playerCart) {
-      return playerCart;
-    }
-    throw new Error(PLAYER_CART_NOT_FOUND_ERROR);
-  }
-
-  /**
-   * Sarah & Krish
-   * To clear all the contents of the player cart
-   * @param playerID is the id of the player
-   */
-  public clearPlayerCart(playerId: PlayerID): void {
-    this._playerCarts.set(playerId, new GroceryStoreItemList());
-    
-    // const playerCart = this._playerCarts.get(playerId);
-    // if (playerCart) {
-    //   //Iterate through each item in the player's cart and remove it
-    //   for (let i = 0; i < playerCart.itemList.length; i++) {
-    //     playerCart.removeItem(playerCart.itemList[i]);
-    //   }
-      
-    // } else {
-    //   throw new Error(PLAYER_CART_NOT_FOUND_ERROR);
-    // }
-  }
-
-  /**
-   * To add items to the player's inventory.
-   * If the player's inventory is found, it adds the items to the player's inventory.
-   * If the player's inventory is not found, it creates a new inventory for the player and adds the items to the player's inventory.
+   * To get the player's inventory.
+   * If the player's inventory is found, it returns the inventory.
+   * If the player's inventory is not found, it returns an empty inventory.
    *
    * @param playerID is the id of the player.
-   * @param itemList is the list of items to be added to the player's inventory.
+   * @returns the player's inventory.
    */
-  public addToPlayerInventory(playerID: PlayerID, itemList: GroceryStoreItemList): void {
-    
-    const clonedItemList = new GroceryStoreItemList();
-    itemList.itemList.forEach(item => {
-      clonedItemList.addItem(item);
-    });
+  public getPlayerInventory(playerID: PlayerID): GroceryStoreItemList {
     // To find the player's inventory
     const playerInventory = this._playerInventories.get(playerID);
 
-    // If the player's inventory is found
+    // If the player's inventory is found, return the inventory
     if (playerInventory) {
-      playerInventory.addItemList(clonedItemList);
-    } else {
-      this._playerInventories.set(playerID, clonedItemList);
+      return playerInventory;
     }
+
+    // If the player's inventory is not found, return an empty inventory
+    this._playerInventories.set(playerID, new GroceryStoreItemList());
+    return new GroceryStoreItemList();
   }
 
   /**
@@ -201,7 +115,9 @@ export default class PlayerDatabase {
     // If the player's inventory is found
     if (playerInventory) {
       playerInventory.addItem(item);
-    } else {
+    }
+    // If the player's inventory is not found, create a new inventory for the player and add the item to the player's inventory
+    else {
       const newInventory = new GroceryStoreItemList();
       newInventory.addItem(item);
       this._playerInventories.set(playerID, newInventory);
@@ -209,23 +125,21 @@ export default class PlayerDatabase {
   }
 
   /**
-   * To remove items from the player's inventory.
-   * If the player's inventory is found, it removes the items from the player's inventory.
-   * If the player's inventory is not found, it throws an error.
+   * To add items to the player's inventory.
+   * Iterate through the itemList and add each item to the player's inventory.
    *
    * @param playerID is the id of the player.
-   * @param itemList is the list of items to be removed from the player's inventory.
+   * @param itemList is the list of items to be added to the player's inventory.
    */
-  public removeFromPlayerInventory(playerID: PlayerID, itemList: GroceryStoreItemList): void {
-    // To find the player's inventory
-    const playerInventory = this._playerInventories.get(playerID);
-
-    // If the player's inventory is found
-    if (playerInventory) {
-      playerInventory.removeItemList(itemList);
-    } else {
-      throw new Error(PLAYER_INVENTORY_NOT_FOUND_ERROR);
+  public addToPlayerInventory(playerID: PlayerID, itemList: GroceryStoreItemList): void {
+    // To check if the itemList is empty
+    if (itemList.isEmpty()) {
+      throw new Error(ITEM_LIST_EMPTY_ERROR);
     }
+
+    itemList.itemList.forEach(item => {
+      this.addItemToPlayerInventory(playerID, item);
+    });
   }
 
   /**
@@ -249,23 +163,40 @@ export default class PlayerDatabase {
   }
 
   /**
-   * To get the player's inventory.
-   * If the player's inventory is found, it returns the inventory.
-   * If the player's inventory is not found, it returns an empty inventory.
+   * To remove items from the player's inventory.
    *
    * @param playerID is the id of the player.
-   * @returns the player's inventory.
+   * @param itemList is the list of items to be removed from the player's inventory.
    */
-  public getPlayerInventory(playerID: PlayerID): GroceryStoreItemList {
-    // To find the player's inventory
-    const playerInventory = this._playerInventories.get(playerID);
-
-    // If the player's inventory is found, return the inventory
-    if (playerInventory) {
-      return playerInventory;
+  public removeFromPlayerInventory(playerID: PlayerID, itemList: GroceryStoreItemList): void {
+    // To check if the itemList is empty
+    if (itemList.isEmpty()) {
+      throw new Error(ITEM_LIST_EMPTY_ERROR);
     }
 
-    // If the player's inventory is not found, return an empty inventory
+    itemList.itemList.forEach(item => {
+      this.removeItemFromPlayerInventory(playerID, item);
+    });
+  }
+
+  // /////////////////////////////////////////////////////////////////////////////////////////
+  /**
+   * Sarah & Krish
+   * To return all items in the player cart
+   * @param playerID is the id of the player
+   * @returns the player cart
+   */
+  public getPlayerCart(playerID: PlayerID): GroceryStoreItemList {
+    // To find the player's cart
+    const playerCart = this._playerCarts.get(playerID);
+
+    // If the player's cart is found
+    if (playerCart) {
+      return playerCart;
+    }
+
+    // If the player's cart is not found, return an empty cart
+    this._playerCarts.set(playerID, new GroceryStoreItemList());
     return new GroceryStoreItemList();
   }
 
@@ -275,7 +206,7 @@ export default class PlayerDatabase {
    * @param playerID
    * @param itemList
    */
-  public addToPlayerCart(playerID: PlayerID, item: GroceryStoreItem): void {
+  public addItemToPlayerCart(playerID: PlayerID, item: GroceryStoreItem): void {
     // To find the player's cart
     let playerCart = this._playerCarts.get(playerID);
 
@@ -291,12 +222,29 @@ export default class PlayerDatabase {
   }
 
   /**
-   * To remove an item from a player's cart
+   * To add items to the player's cart.
    *
-   * @param playerID
-   * @param itemList
+   * @param playerID is the id of the player.
+   * @param itemList is the list of items to be added to the player's cart.
    */
-  public removeFromPlayerCart(playerID: PlayerID, item: GroceryStoreItem): void {
+  public addToPlayerCart(playerID: PlayerID, itemList: GroceryStoreItemList): void {
+    // To check if the itemList is empty
+    if (itemList.isEmpty()) {
+      throw new Error(ITEM_LIST_EMPTY_ERROR);
+    }
+
+    itemList.itemList.forEach(item => {
+      this.addItemToPlayerCart(playerID, item);
+    });
+  }
+
+  /**
+   * To remove an item from the player's cart
+   *
+   * @param playerID is the id of the player
+   * @param item is the item to be removed from the player's cart
+   */
+  public removeItemFromPlayerCart(playerID: PlayerID, item: GroceryStoreItem): void {
     // To find the player's cart
     const playerCart = this._playerCarts.get(playerID);
 
@@ -306,6 +254,114 @@ export default class PlayerDatabase {
     } else {
       throw new Error(PLAYER_CART_NOT_FOUND_ERROR);
     }
+  }
+
+  /**
+   * To remove an item list from a player's cart
+   *
+   * @param playerID
+   * @param itemList
+   */
+  public removeFromPlayerCart(playerID: PlayerID, itemList: GroceryStoreItemList): void {
+    // To check if the itemList is empty
+    if (itemList.isEmpty()) {
+      throw new Error(ITEM_LIST_EMPTY_ERROR);
+    }
+
+    itemList.itemList.forEach(item => {
+      this.removeItemFromPlayerCart(playerID, item);
+    });
+  }
+
+  /**
+   * Sarah & Krish
+   * To clear all the contents of the player cart
+   * @param playerID is the id of the player
+   */
+  public clearPlayerCart(playerId: PlayerID): void {
+    this._playerCarts.set(playerId, new GroceryStoreItemList());
+
+    // const playerCart = this._playerCarts.get(playerId);
+    // if (playerCart) {
+    //   //Iterate through each item in the player's cart and remove it
+    //   for (let i = 0; i < playerCart.itemList.length; i++) {
+    //     playerCart.removeItem(playerCart.itemList[i]);
+    //   }
+
+    // } else {
+    //   throw new Error(PLAYER_CART_NOT_FOUND_ERROR);
+    // }
+  }
+
+  // /////////////////////////////////////////////////////////////////////////////////////////
+  /**
+   * To get the player's purchase history.
+   * If the player's purchase history is found, it returns the purchase history.
+   * If the player's purchase history is not found, it returns an empty purchase history.
+   *
+   * @param playerID is the id of the player.
+   * @returns the player's purchase history.
+   */
+  public getPlayerPurchaseHistory(playerID: PlayerID): Array<GroceryStoreItemList> {
+    // To find the player's purchase history
+    const playerPurchaseHistory = this._playerPurchaseHistories.get(playerID);
+
+    // If the player's purchase history is found, return the purchase history
+    if (playerPurchaseHistory) {
+      return playerPurchaseHistory;
+    }
+
+    // If the player's purchase history is not found, return an empty purchase history
+    this._playerPurchaseHistories.set(playerID, []);
+    return [];
+  }
+
+  /**
+   * To add items to the player's purchase history.
+   * If the player's purchase history is found, it adds the items to the player's purchase history.
+   * If the player's purchase history is not found, it creates a new purchase history for the player and adds the items to the player's purchase history.
+   *
+   * @param playerID is the id of the player.
+   * @param itemList is the list of items to be added to the player's purchase history.
+   */
+  public addToPlayerPurchaseHistory(playerID: PlayerID, itemList: GroceryStoreItemList): void {
+    // To check if the itemList is empty
+    if (itemList.isEmpty()) {
+      throw new Error(ITEM_LIST_EMPTY_ERROR);
+    }
+
+    // To find the player's purchase history
+    const playerPurchaseHistory = this._playerPurchaseHistories.get(playerID);
+
+    // If the player's purchase history is found
+    if (playerPurchaseHistory) {
+      playerPurchaseHistory.push(itemList);
+    } else {
+      this._playerPurchaseHistories.set(playerID, [itemList]);
+    }
+  }
+
+  // /////////////////////////////////////////////////////////////////////////////////////////
+  /**
+   * To get the player's trading history.
+   * If the player's trading history is found, it returns the trading history.
+   * If the player's trading history is not found, it returns an empty trading history.
+   *
+   * @param playerID is the id of the player.
+   * @returns the player's trading history.
+   */
+  public getPlayerTradingHistories(playerID: PlayerID): Array<TradingOffer> {
+    // To find the player's trading history
+    const playerTradingHistory = this._playerTradingHistories.get(playerID);
+
+    // If the player's trading history is found, return the trading history
+    if (playerTradingHistory) {
+      return playerTradingHistory;
+    }
+
+    // If the player's trading history is not found, return an empty trading history
+    this._playerTradingHistories.set(playerID, []);
+    return [];
   }
 
   /**
@@ -326,44 +382,67 @@ export default class PlayerDatabase {
     }
   }
 
+  // /////////////////////////////////////////////////////////////////////////////////////////
   /**
-   * To add items to the player's purchase history.
-   * If the player's purchase history is found, it adds the items to the player's purchase history.
-   * If the player's purchase history is not found, it creates a new purchase history for the player and adds the items to the player's purchase history.
-   *
-   * @param playerID is the id of the player.
-   * @param itemList is the list of items to be added to the player's purchase history.
+   * Sarah & Krish
+   * To get the current balance of the player
+   * @param playerID is the id of the player
    */
-  public addToPlayerPurchaseHistory(playerID: PlayerID, itemList: GroceryStoreItemList): void {
-    // To find the player's purchase history
-    const playerPurchaseHistory = this._playerPurchaseHistories.get(playerID);
+  public getPlayerBalance(playerID: PlayerID): number {
+    // To find the player's balance
+    const playerBalance = this._playerBalances.get(playerID);
 
-    // If the player's purchase history is found
-    if (playerPurchaseHistory) {
-      playerPurchaseHistory.push(itemList);
-    } else {
-      this._playerPurchaseHistories.set(playerID, [itemList]);
+    // If the player's balance is found, return the balance
+    if (playerBalance) {
+      return playerBalance;
     }
+
+    // If the player's balance is not found, set it to 100 and return 100
+    this._playerBalances.set(playerID, 100);
+    return 100;
   }
 
   /**
-   * To get the player's purchase history.
-   * If the player's purchase history is found, it returns the purchase history.
-   * If the player's purchase history is not found, it returns an empty purchase history.
+   * To set the balance of a player by ID.
+   * If the player's balance is found, it updates the balance.
+   * If the player's balance is not found, it throws an error.
    *
-   * @param playerID is the id of the player.
-   * @returns the player's purchase history.
-   */
-  public getPlayerPurchaseHistory(playerID: PlayerID): Array<GroceryStoreItemList> {
-    // To find the player's purchase history
-    const playerPurchaseHistory = this._playerPurchaseHistories.get(playerID);
 
-    // If the player's purchase history is found, return the purchase history
-    if (playerPurchaseHistory) {
-      return playerPurchaseHistory;
+   * @param balance is the new balance to be set for the player.
+   */
+  public updatePlayerBalance(playerID: PlayerID, balance: number): void {
+    this._playerBalances.set(playerID, balance);
+  }
+
+  // /////////////////////////////////////////////////////////////////////////////////////////
+  /**
+   * To check out a player's cart.
+   * If the player's cart is empty, it throws an error.
+   * If the player doesn't have enough money, it throws an error.
+   * If the player's cart is not empty, it checks out the player's cart.
+   *  - Reduces the balance of that player based on the checkout amount
+   *  - Adds the items to the player's inventory.
+   *  - Empties player cart
+   *
+   * @param playerId is the id of the player who is checking out
+   */
+  public checkOutPlayerCart(playerId: PlayerID): void {
+    // Find play cart
+    const playerCart = this.getPlayerCart(playerId);
+
+    // Check for balance and cart value if the player can afford to check out
+    const playerBalance = this.getPlayerBalance(playerId);
+    const cartValue = playerCart.getItemListTotalValue();
+
+    if (cartValue > playerBalance) {
+      throw new Error(PLAYER_INSUFFICIENT_FUNDS_ERROR);
     }
 
-    // If the player's purchase history is not found, return an empty purchase history
-    return [];
+    // Update player balance
+    this.updatePlayerBalance(playerId, playerBalance - cartValue);
+    // Add items to player inventory
+    this.addToPlayerInventory(playerId, playerCart);
+    // Clear player cart
+    this.clearPlayerCart(playerId);
   }
 }
