@@ -19,7 +19,7 @@ describe('TradingArea', () => {
   const playerInitiate = 'player1';
   const playerAccept = 'player2';
   let newPlayer: Player;
-  let interactableUpdateSpy: jest.SpyInstance;
+  // let interactableUpdateSpy: jest.SpyInstance;
 
   beforeEach(() => {
     mockClear(townEmitter);
@@ -29,7 +29,7 @@ describe('TradingArea', () => {
     tradingOffer = new TradingOffer(itemsYouHave, itemsYouWant, playerInitiate);
     newPlayer = new Player(nanoid(), mock<TownEmitter>());
     tradingArea.add(newPlayer);
-    //interactableUpdateSpy = jest.spyOn(tradingArea, '_emitAreaChanged');
+    // interactableUpdateSpy = jest.spyOn(tradingArea, '_emitAreaChanged');
   });
   describe('TradingArea', () => {
     it('should model the trading area', () => {
@@ -85,26 +85,26 @@ describe('TradingArea', () => {
 
   describe('TradingBoard', () => {
     it('should post a trading offer to the trading board', () => {
-      const tradingOffer = new TradingOffer(itemsYouHave, itemsYouWant, playerInitiate);
+      tradingOffer = new TradingOffer(itemsYouHave, itemsYouWant, playerInitiate);
       tradingArea.postTradingOffer(tradingOffer);
       expect(tradingArea.tradingBoard).toContain(tradingOffer);
     });
     it('should accept a trading offer from the trading board', () => {
-      const tradingOffer = new TradingOffer(itemsYouHave, itemsYouWant, playerInitiate);
+      tradingOffer = new TradingOffer(itemsYouHave, itemsYouWant, playerInitiate);
       tradingArea.postTradingOffer(tradingOffer);
-      //tradingOffer.acceptTrade(playerAccept);
+      // tradingOffer.acceptTrade(playerAccept);
       tradingArea.acceptTradingOffer(tradingOffer, playerAccept);
       expect(tradingArea.tradingBoard).not.toContain(tradingOffer);
-      //more down here to compare the content the database but we can't see it,
-      //lmk if you want to add a database to the constructor or
+      // more down here to compare the content the database but we can't see it,
+      // lmk if you want to add a database to the constructor or
     });
     it('handle command post TradingOffer', () => {
-      const tradingOffer = new TradingOffer(itemsYouHave, itemsYouWant, playerInitiate);
+      tradingOffer = new TradingOffer(itemsYouHave, itemsYouWant, playerInitiate);
       tradingArea.handleCommand({ type: 'PostTradingOffer', tradingOffer }, newPlayer);
       expect(tradingArea.tradingBoard).toContain(tradingOffer);
     });
     it('handle command accept TradingOffer', () => {
-      const tradingOffer = new TradingOffer(itemsYouHave, itemsYouWant, playerInitiate);
+      tradingOffer = new TradingOffer(itemsYouHave, itemsYouWant, playerInitiate);
       tradingArea.postTradingOffer(tradingOffer);
       tradingArea.handleCommand({ type: 'AcceptTradingOffer', tradingOffer }, newPlayer);
       expect(tradingArea.tradingBoard).not.toContain(tradingOffer);
