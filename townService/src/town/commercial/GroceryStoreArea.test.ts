@@ -1,10 +1,10 @@
-import GroceryStoreArea from './GroceryStoreArea';
 import { nanoid } from 'nanoid';
+import { mock, mockClear } from 'jest-mock-extended';
+import GroceryStoreArea from './GroceryStoreArea';
 import PlayerDatabase from './database/PlayerDatabase';
 import { TownEmitter } from '../../types/CoveyTownSocket';
 import GroceryStoreItemList from './database/GroceryStoreItemList';
 import Player from '../../lib/Player';
-import { mock, mockClear } from 'jest-mock-extended';
 import { getLastEmittedEvent } from '../../TestUtils';
 import GroceryStoreItem from './database/GroceryStoreItem';
 
@@ -16,46 +16,31 @@ describe('GroceryStoreArea', () => {
   const id = nanoid();
   let items: GroceryStoreItemList;
   let newPlayer: Player;
-  //let interactableUpdateSpy: jest.SpyInstance;
+  // let interactableUpdateSpy: jest.SpyInstance;
 
   beforeEach(() => {
     mockClear(townEmitter);
-    groceryStoreArea = new GroceryStoreArea({ id, occupants: [] }, boundingBox, townEmitter, playerDatabase);
+    groceryStoreArea = new GroceryStoreArea(
+      { id, occupants: [] },
+      boundingBox,
+      townEmitter,
+      playerDatabase,
+    );
     items = new GroceryStoreItemList();
     newPlayer = new Player(nanoid(), mock<TownEmitter>());
     groceryStoreArea.add(newPlayer);
-    //interactableUpdateSpy = jest.spyOn(groceryStoreArea, '_emitAreaChanged');
+    // interactableUpdateSpy = jest.spyOn(groceryStoreArea, '_emitAreaChanged');
   });
 
   it('should initialize the grocery store inventory', () => {
     expect(groceryStoreArea.groceryStoreInventory).toBeDefined();
   });
 
-  // it('should restock the grocery store with items', () => {
-  //   const initialInventory = groceryStoreArea['_groceryStoreInventory'];
-  //   groceryStoreArea['_restockItems']();
-  //   expect(groceryStoreArea['_groceryStoreInventory']).not.toEqual(initialInventory);
-  // });
-
-  // it('should add items to the grocery store inventory', () => {
-  
-  //   groceryStoreArea['_addItemsToInventory'](items);
-  //   expect(groceryStoreArea['_groceryStoreInventory']).toContainEqual(items);
-  // });
-
-  // it('should remove items from the grocery store inventory', () => {
-    
-
-  //   groceryStoreArea['_addItemsToInventory'](items);
-  //   groceryStoreArea['_removeItemsFromInventory'](items);
-  //   expect(groceryStoreArea['_groceryStoreInventory']).not.toContainEqual(items);
-  // });
-
   it('should model the grocery store area', () => {
     const model = groceryStoreArea.toModel();
     expect(model).toEqual({
       id,
-      inventory: groceryStoreArea['_groceryStoreInventory'],
+      inventory: groceryStoreArea.groceryStoreInventory,
       occupants: [newPlayer.id],
       type: 'GroceryStoreArea',
     });
@@ -68,7 +53,7 @@ describe('GroceryStoreArea', () => {
         const lastEmittedUpdate = getLastEmittedEvent(townEmitter, 'interactableUpdate');
         expect(lastEmittedUpdate).toEqual({
           id,
-          inventory: groceryStoreArea['_groceryStoreInventory'],
+          inventory: groceryStoreArea.groceryStoreInventory,
           occupants: [newPlayer.id],
           type: 'GroceryStoreArea',
         });
@@ -90,7 +75,7 @@ describe('GroceryStoreArea', () => {
         const lastEmittedUpdate = getLastEmittedEvent(townEmitter, 'interactableUpdate');
         expect(lastEmittedUpdate).toEqual({
           id,
-          inventory: groceryStoreArea['_groceryStoreInventory'],
+          inventory: groceryStoreArea.groceryStoreInventory,
           occupants: [extraPlayer.id],
           type: 'GroceryStoreArea',
         });
@@ -106,22 +91,22 @@ describe('GroceryStoreArea', () => {
 
   describe('handleCommand', () => {
     it('should handle a open store command from a player', () => {
-      let player1 = new Player(nanoid(), mock<TownEmitter>());
+      const player1 = new Player(nanoid(), mock<TownEmitter>());
       groceryStoreArea.handleCommand({ type: 'OpenGroceryStore' }, player1);
       expect(player1.location.interactableID).toEqual(groceryStoreArea.id);
-      //expect(interactableUpdateSpy).toHaveBeenCalled();
+      // expect(interactableUpdateSpy).toHaveBeenCalled();
       expect(groceryStoreArea.occupantsByID).toEqual([newPlayer.id, player1.id]);
     });
 
     it('should handle an add to cart command from a player', () => {
-      const item =  new GroceryStoreItem('bacon', 1);
+      const item = new GroceryStoreItem('bacon', 1);
       const itemList = new GroceryStoreItemList([item]);
       groceryStoreArea.handleCommand({ type: 'AddToCart', item }, newPlayer);
       expect(playerDatabase.getPlayerCart(newPlayer.id).itemList).toEqual(itemList.itemList);
     });
 
     it('should handle a remove from cart command from a player', () => {
-      const item =  new GroceryStoreItem('bacon', 1);
+      const item = new GroceryStoreItem('bacon', 1);
       const itemList = new GroceryStoreItemList([item]);
       groceryStoreArea.handleCommand({ type: 'AddToCart', item }, newPlayer);
       expect(playerDatabase.getPlayerCart(newPlayer.id).itemList).toEqual(itemList.itemList);
@@ -130,7 +115,7 @@ describe('GroceryStoreArea', () => {
     });
 
     it('should handle a checkout command from a player', () => {
-      const item =  new GroceryStoreItem('bacon', 1);
+      const item = new GroceryStoreItem('bacon', 1);
       const itemList = new GroceryStoreItemList([item]);
       groceryStoreArea.handleCommand({ type: 'AddToCart', item }, newPlayer);
       expect(playerDatabase.getPlayerCart(newPlayer.id).itemList).toEqual(itemList.itemList);
@@ -140,15 +125,10 @@ describe('GroceryStoreArea', () => {
       expect(playerDatabase.getPlayerInventory(newPlayer.id).itemList).toEqual(itemList.itemList);
     });
 
-
     it('should throw an error for an invalid command from a player', () => {
       const invalidCommand = {} as any;
       const player = {} as any;
       expect(() => groceryStoreArea.handleCommand(invalidCommand, player)).toThrowError();
     });
   });
-
-
-
-  
 });
