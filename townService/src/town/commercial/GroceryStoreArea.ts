@@ -12,11 +12,7 @@ import GroceryStoreItemList from './database/GroceryStoreItemList';
 import GroceryStoreItem from './database/GroceryStoreItem';
 import { GroceryStoreItemName, groceryStoreItemPrices } from './types';
 import PlayerDatabase from './database/PlayerDatabase';
-import {
-  INSUFFICIENT_FUNDS_MESSAGE,
-  INVALID_COMMAND_MESSAGE,
-  ITEM_LIST_EMPTY_ERROR,
-} from './errors';
+import { INVALID_COMMAND_MESSAGE, ITEM_LIST_EMPTY_ERROR } from './errors';
 import CommercialArea from './CommercialArea';
 
 /**

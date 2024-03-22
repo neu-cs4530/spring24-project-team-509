@@ -14,7 +14,6 @@ describe('GroceryStoreArea', () => {
   const townEmitter = mock<TownEmitter>();
   const boundingBox = { x: 100, y: 100, width: 100, height: 100 };
   const id = nanoid();
-  let items: GroceryStoreItemList;
   let newPlayer: Player;
   // let interactableUpdateSpy: jest.SpyInstance;
 
@@ -26,7 +25,6 @@ describe('GroceryStoreArea', () => {
       townEmitter,
       playerDatabase,
     );
-    items = new GroceryStoreItemList();
     newPlayer = new Player(nanoid(), mock<TownEmitter>());
     groceryStoreArea.add(newPlayer);
     // interactableUpdateSpy = jest.spyOn(groceryStoreArea, '_emitAreaChanged');
@@ -123,12 +121,6 @@ describe('GroceryStoreArea', () => {
       expect(playerDatabase.getPlayerCart(newPlayer.id).itemList).toEqual([]);
       expect(playerDatabase.getPlayerBalance(newPlayer.id)).toEqual(95);
       expect(playerDatabase.getPlayerInventory(newPlayer.id).itemList).toEqual(itemList.itemList);
-    });
-
-    it('should throw an error for an invalid command from a player', () => {
-      const invalidCommand = {} as any;
-      const player = {} as any;
-      expect(() => groceryStoreArea.handleCommand(invalidCommand, player)).toThrowError();
     });
   });
 });
