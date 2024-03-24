@@ -3,7 +3,9 @@ import Interactable, { KnownInteractableTypes } from '../Interactable';
 
 export default class GroceryStoreArea extends Interactable {
   private _isInteracting = false;
+
   private _infoTextBox?: Phaser.GameObjects.Text;
+
   private _groceryStoreArea?: GroceryStoreAreaController;
 
   getType(): KnownInteractableTypes {

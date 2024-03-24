@@ -3,10 +3,6 @@ import { useInteractable, useInteractableAreaController } from '../../../classes
 import { InteractableID } from '../../../types/CoveyTownSocket';
 import { useCallback, useEffect, useState } from 'react';
 import {
-  AccordionButton,
-  AccordionIcon,
-  AccordionPanel,
-  Box,
   Button,
   Heading,
   Modal,
@@ -20,7 +16,6 @@ import { GroceryStoreArea as GroceryStoreAreaModel } from '../../../types/CoveyT
 import GroceryStoreAreaInteractable from './GroceryStoreArea';
 import useTownController from '../../../hooks/useTownController';
 import { supabase } from '../../../supabaseClient';
-import { set } from 'lodash';
 import React from 'react';
 
 export function GroceryMenu({ interactableID }: { interactableID: InteractableID }): JSX.Element {
