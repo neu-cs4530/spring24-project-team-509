@@ -17,9 +17,7 @@ export type TownJoinResponse = {
   interactables: TypedInteractable[];
 }
 
-// TODO: maybe add GroceryStoreArea and TradingArea?
-export type InteractableType = 'ConversationArea' | 'ViewingArea' | 'TicTacToeArea' | 'ConnectFourArea'
-  | 'GroceryStoreArea' | 'TradingArea';
+export type InteractableType = 'ConversationArea' | 'ViewingArea' | 'TicTacToeArea' | 'ConnectFourArea' | 'GroceryStoreArea' | 'TradingArea';
 export interface Interactable {
   type: InteractableType;
   id: InteractableID;
@@ -63,6 +61,14 @@ export type ChatMessage = {
 export interface ConversationArea extends Interactable {
   topic?: string;
 };
+
+export interface GroceryStoreArea extends Interactable {
+  
+};
+
+export interface TradingArea extends Interactable {
+};
+
 export interface BoundingBox {
   x: number;
   y: number;
@@ -196,14 +202,6 @@ export interface GameArea<T extends GameState> extends Interactable {
   history: GameResult[];
 }
 
-// TODO: GroceryStoreModel and TradingModel extends Interactable? 
-export interface GroceryStoreModel extends Interactable {
-  inventory: GroceryStoreItemList;
-}
-
-export interface TradingArea extends Interactable {
-  tradingBoard: TradingOffer[];
-}
 
 export type CommandID = string;
 
@@ -228,13 +226,6 @@ interface InteractableCommandBase {
 }
 
 export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | GameMoveCommand<ConnectFourMove> | StartGameCommand | LeaveGameCommand
-  // TODO: Modified by Jiaying 221-238, commands for GroceryStoreArea, but not trading area yet
-  | OpenGroceryStoreCommand
-  | AddToCartCommand
-  | RemoveFromCartCommand
-  | CheckOutCommand
-  | PostTradingOfferCommand
-  | AcceptTradingOfferCommand;
 export interface OpenGroceryStoreCommand {
   type: 'OpenGroceryStore';
 }
