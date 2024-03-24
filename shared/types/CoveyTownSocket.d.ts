@@ -63,8 +63,8 @@ export interface ConversationArea extends Interactable {
 };
 
 export interface GroceryStoreArea extends Interactable {
-  
-};
+}
+
 
 export interface TradingArea extends Interactable {
 };

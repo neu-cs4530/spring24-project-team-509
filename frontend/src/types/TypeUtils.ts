@@ -1,4 +1,3 @@
-import GroceryStoreArea from '../components/Town/interactables/GroceryStoreArea';
 import {
   ConversationArea,
   Interactable,
@@ -6,6 +5,7 @@ import {
   ViewingArea,
   GameArea,
   ConnectFourGameState,
+  GroceryStoreArea,
   TradingArea,
 } from './CoveyTownSocket';
 
