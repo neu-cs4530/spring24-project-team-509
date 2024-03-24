@@ -5,6 +5,8 @@ import {
   ViewingArea,
   GameArea,
   ConnectFourGameState,
+  GroceryStoreArea,
+  TradingArea,
 } from './CoveyTownSocket';
 
 /**
@@ -12,6 +14,14 @@ import {
  */
 export function isConversationArea(interactable: Interactable): interactable is ConversationArea {
   return interactable.type === 'ConversationArea';
+}
+
+export function isGroceryStoreArea(interactable: Interactable): interactable is GroceryStoreArea {
+  return interactable.type === 'GroceryStoreArea';
+}
+
+export function isTradingArea(interactable: Interactable): interactable is TradingArea {
+  return interactable.type === 'TradingArea';
 }
 
 /**

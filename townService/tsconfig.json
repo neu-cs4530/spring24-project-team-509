@@ -1,5 +1,5 @@
 {
- "include": ["src/**/*"],
+ "include": ["src/**/*", "supabaseClient.ts", "../frontend/src/supabaseClient.ts"],
     "exclude": ["node_modules", "jest.config.ts"],
     "compilerOptions": {
         /* Visit https://aka.ms/tsconfig.json to read more about this file */
