@@ -8,6 +8,7 @@
     "@emotion/styled": "^11.9.3",
     "@material-ui/core": "^4.12.4",
     "@material-ui/icons": "^4.11.3",
+    "@supabase/supabase-js": "^2.39.8",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react-hooks": "^8.0.1",
     "@twilio-labs/plugin-rtc": "^0.8.4",

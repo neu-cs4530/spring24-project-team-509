@@ -10,6 +10,8 @@ import Interactable from '../components/Town/Interactable';
 import ConversationArea from '../components/Town/interactables/ConversationArea';
 import GameArea from '../components/Town/interactables/GameArea';
 import ViewingArea from '../components/Town/interactables/ViewingArea';
+import GroceryStoreArea from '../components/Town/interactables/GroceryStoreArea';
+import TradingArea from '../components/Town/interactables/TradingArea';
 import { LoginController } from '../contexts/LoginControllerContext';
 import { TownsService, TownsServiceClient } from '../generated/client';
 import useTownController from '../hooks/useTownController';
@@ -32,10 +34,14 @@ import {
   isConversationArea,
   isTicTacToeArea,
   isViewingArea,
+  isGroceryStoreArea,
+  isTradingArea,
 } from '../types/TypeUtils';
 import ConnectFourAreaController from './interactable/ConnectFourAreaController';
 import ConversationAreaController from './interactable/ConversationAreaController';
 import GameAreaController, { GameEventTypes } from './interactable/GameAreaController';
+import GroceryStoreAreaController from './interactable/GroceryStoreAreaController';
+import TradingAreaController from './interactable/TradingAreaController';
 import InteractableAreaController, {
   BaseInteractableEventMap,
   GenericInteractableAreaController,
@@ -330,6 +336,20 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
       eachInteractable => eachInteractable instanceof ViewingAreaController,
     );
     return ret as ViewingAreaController[];
+  }
+
+  public get groceryStoreArea() {
+    const ret = this._interactableControllers.filter(
+      eachInteractable => eachInteractable instanceof GroceryStoreAreaController,
+    );
+    return ret as GroceryStoreAreaController[];
+  }
+
+  public get tradingArea() {
+    const ret = this._interactableControllers.filter(
+      eachInteractable => eachInteractable instanceof TradingAreaController,
+    );
+    return ret as TradingAreaController[];
   }
 
   public get gameAreas() {
@@ -631,6 +651,10 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
             this._interactableControllers.push(
               new ConnectFourAreaController(eachInteractable.id, eachInteractable, this),
             );
+          } else if (isGroceryStoreArea(eachInteractable)) {
+            this._interactableControllers.push(new GroceryStoreAreaController(eachInteractable.id));
+          } else if (isTradingArea(eachInteractable)) {
+            this._interactableControllers.push(new TradingAreaController(eachInteractable.id));
           }
         });
         this._userID = initialData.userID;
@@ -671,6 +695,30 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
       return existingController;
     } else {
       throw new Error(`No such viewing area controller ${existingController}`);
+    }
+  }
+
+  public getGroceryStoreAreaController(
+    groceryStoreArea: GroceryStoreArea,
+  ): GroceryStoreAreaController {
+    const existingController = this._interactableControllers.find(
+      eachExistingArea => eachExistingArea.id === groceryStoreArea.name,
+    );
+    if (existingController instanceof GroceryStoreAreaController) {
+      return existingController;
+    } else {
+      throw new Error(`No such grocery store area controller ${existingController}`);
+    }
+  }
+
+  public getTradingAreaController(tradingArea: TradingArea): TradingAreaController {
+    const existingController = this._interactableControllers.find(
+      eachExistingArea => eachExistingArea.id === tradingArea.name,
+    );
+    if (existingController instanceof TradingAreaController) {
+      return existingController;
+    } else {
+      throw new Error(`No such grocery store area controller ${existingController}`);
     }
   }
 
@@ -773,13 +821,32 @@ export function useTownSettings() {
  */
 export function useInteractableAreaController<T>(interactableAreaID: string): T {
   const townController = useTownController();
-  const interactableAreaController = townController.gameAreas.find(
+  const gameAreaController = townController.gameAreas.find(
     eachArea => eachArea.id == interactableAreaID,
   );
-  if (!interactableAreaController) {
+  if (!gameAreaController) {
+    //Look for a viewing area
+    const viewingAreaController = townController.viewingAreas.find(
+      eachArea => eachArea.id == interactableAreaID,
+    );
+    const groceryStoreAreaController = townController.groceryStoreArea.find(
+      eachArea => eachArea.id == interactableAreaID,
+    );
+    const tradingAreaController = townController.tradingArea.find(
+      eachArea => eachArea.id == interactableAreaID,
+    );
+    if (viewingAreaController) {
+      return viewingAreaController as unknown as T;
+    }
+    if (groceryStoreAreaController) {
+      return groceryStoreAreaController as unknown as T;
+    }
+    if (tradingAreaController) {
+      return tradingAreaController as unknown as T;
+    }
     throw new Error(`Requested interactable area ${interactableAreaID} does not exist`);
   }
-  return interactableAreaController as unknown as T;
+  return gameAreaController as unknown as T;
 }
 
 /**
