@@ -115,36 +115,42 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
       setGroceryStoreAreaModel(groceryStoreAreaController.toInteractableAreaModel());
     };
     groceryStoreAreaController.addListener('groceryStoreAreaUpdated', updateGroceryStoreAreaModel);
-
+    
+    let isMounted = true;
     const fetchStoreInventory = async () => {
       const { data, error } = await supabase.from('StoreInventory').select();
-      if (data) {
-        setStoreInventory(data);
-        setdbError(null);
-      }
-      if (error) {
-        setdbError(error.message);
-        console.error('Error fetching store cart:', error.message);
-        setStoreInventory(null);
+      if (isMounted) {
+        if (data) {
+          setStoreInventory(data);
+          setdbError(null);
+        }
+        if (error) {
+          setdbError(error.message);
+          console.error('Error fetching store cart:', error.message);
+          setStoreInventory(null);
+        }
       }
     };
 
     const fetchCart = async () => {
       const { data, error } = await supabase.from('storeCart').select();
-      if (data) {
-        setStoreCart(data);
-        setdbError(null);
-      }
-      if (error) {
-        setdbError(error.message);
-        console.error('Error fetching store cart:', error.message);
-        setStoreCart(null);
+      if (isMounted) {  
+        if (data) {
+          setStoreCart(data);
+          setdbError(null);
+        }
+        if (error) {
+          setdbError(error.message);
+          console.error('Error fetching store cart:', error.message);
+          setStoreCart(null);
+        }
       }
     };
     fetchStoreInventory();
     fetchCart();
 
     return () => {
+      isMounted = false;
       groceryStoreAreaController.removeListener(
         'groceryStoreAreaUpdated',
         updateGroceryStoreAreaModel,
@@ -169,7 +175,7 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
               </tr>
             </thead>
             <tbody>
-              {storeInventory.map((item: any) => (
+              {storeInventory.sort((a, b) => a.name.localeCompare(b.name)).map((item: any) => (
                 <tr key={item.name}>
                   <td>{item.name}</td>
                   <td>{item.price}</td>
@@ -195,7 +201,7 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
               </tr>
             </thead>
             <tbody>
-              {storeCart.map((item: any) => (
+              {storeCart.sort((a, b) => a.name.localeCompare(b.name)).map((item: any) => (
                 <tr key={item.name}>
                   <td>{item.name}</td>
                   <td>{item.price}</td>
@@ -209,7 +215,8 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
           </table>
         </div>
       )}
-      <p>Total Price: {totalPrice}</p> {/* New code */}
+      <p>Total Price: {totalPrice}</p>
+      <Button>Checkout</Button>
     </div>
   );
 }
