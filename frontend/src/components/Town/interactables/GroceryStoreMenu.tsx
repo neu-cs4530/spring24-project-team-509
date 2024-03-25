@@ -251,8 +251,7 @@ export default function GroceryStoreAreaWrapper(): JSX.Element {
           townController.unPause();
         }}
         closeOnOverlayClick={false}
-        size='xl'
-      >
+        size='xl'>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>{groceryStoreArea.name}</ModalHeader>
