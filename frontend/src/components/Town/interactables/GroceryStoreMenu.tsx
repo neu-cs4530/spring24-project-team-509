@@ -32,82 +32,16 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
   );
 
   const handleCalculateTotalPrice = async () => {
-    const { data } = await supabase.from('storeCart').select();
-    let total = 0;
-    if (data) {
-      data.forEach((item: any) => {
-        total += item.price * item.quantity;
-      });
-    }
+    const total = await groceryStoreAreaController.handleCalculateTotalPrice();
     setTotalPrice(total);
   };
 
-  const handleReduceItemFromCart = async (itemName: string) => {
-    const { data } = await supabase.from('storeCart').select().eq('name', itemName);
-    if (data && data.length > 0) {
-      const item = data[0];
-      if (item.quantity > 0) {
-        await supabase
-          .from('storeCart')
-          .update({ quantity: item.quantity - 1 })
-          .eq('name', itemName);
-        if (item.quantity === 1) {
-          await supabase.from('storeCart').delete().eq('name', itemName);
-        }
-      } else {
-        await supabase.from('storeCart').delete().eq('name', itemName);
-      }
-    }
-  };
-
-  const handleAddItemToInventory = async (itemName: string) => {
-    const { data } = await supabase.from('StoreInventory').select().eq('name', itemName);
-    if (data && data.length > 0) {
-      const item = data[0];
-      await supabase
-        .from('StoreInventory')
-        .update({ quantity: item.quantity + 1 })
-        .eq('name', itemName);
-    }
-  };
-
-  //This stays here, move the content function to controller
   const handleReturnItem = async (itemName: string) => {
-    //groceryStoreAreaController
-    handleReduceItemFromCart(itemName);
-    handleAddItemToInventory(itemName);
-    handleCalculateTotalPrice();
-  };
-
-  const handleRemoveItemFromInventory = async (itemName: string) => {
-    const { data } = await supabase.from('StoreInventory').select().eq('name', itemName);
-
-    if (data && data.length > 0) {
-      const item = data[0];
-      await supabase
-        .from('StoreInventory')
-        .update({ quantity: item.quantity - 1 })
-        .eq('name', itemName);
-      console.log(item.quantity);
-    }
-  };
-
-  const handleAddItemToCart = async (itemName: string, price: number) => {
-    const { data } = await supabase.from('storeCart').select().eq('name', itemName);
-    if (data && data.length > 0) {
-      const item = data[0];
-      await supabase
-        .from('storeCart')
-        .upsert([{ name: item.name, price: item.price, quantity: item.quantity + 1 }]);
-    } else {
-      await supabase.from('storeCart').upsert([{ name: itemName, price: price, quantity: 1 }]);
-    }
+    groceryStoreAreaController.handleReturnItem(itemName);
   };
 
   const handleAddItem = async (itemName: string, price: number) => {
-    handleAddItemToCart(itemName, price);
-    handleRemoveItemFromInventory(itemName);
-    handleCalculateTotalPrice();
+    groceryStoreAreaController.handleAddItem(itemName, price);
   };
 
   useEffect(() => {
@@ -149,6 +83,7 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
     fetchStoreInventory();
     fetchCart();
 
+    handleCalculateTotalPrice();
     return () => {
       isMounted = false;
       groceryStoreAreaController.removeListener(
