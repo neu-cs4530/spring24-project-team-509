@@ -115,7 +115,7 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
       setGroceryStoreAreaModel(groceryStoreAreaController.toInteractableAreaModel());
     };
     groceryStoreAreaController.addListener('groceryStoreAreaUpdated', updateGroceryStoreAreaModel);
-    
+
     let isMounted = true;
     const fetchStoreInventory = async () => {
       const { data, error } = await supabase.from('StoreInventory').select();
@@ -134,7 +134,7 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
 
     const fetchCart = async () => {
       const { data, error } = await supabase.from('storeCart').select();
-      if (isMounted) {  
+      if (isMounted) {
         if (data) {
           setStoreCart(data);
           setdbError(null);
@@ -175,16 +175,18 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
               </tr>
             </thead>
             <tbody>
-              {storeInventory.sort((a, b) => a.name.localeCompare(b.name)).map((item: any) => (
-                <tr key={item.name}>
-                  <td>{item.name}</td>
-                  <td>{item.price}</td>
-                  <td>{item.quantity}</td>
-                  <td>
-                    <Button onClick={() => handleAddItem(item.name, item.price)}>Add</Button>
-                  </td>
-                </tr>
-              ))}
+              {storeInventory
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map((item: any) => (
+                  <tr key={item.name}>
+                    <td>{item.name}</td>
+                    <td>{item.price}</td>
+                    <td>{item.quantity}</td>
+                    <td>
+                      <Button onClick={() => handleAddItem(item.name, item.price)}>Add</Button>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
@@ -201,16 +203,18 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
               </tr>
             </thead>
             <tbody>
-              {storeCart.sort((a, b) => a.name.localeCompare(b.name)).map((item: any) => (
-                <tr key={item.name}>
-                  <td>{item.name}</td>
-                  <td>{item.price}</td>
-                  <td>{item.quantity}</td>
-                  <td>
-                    <Button onClick={() => handleReturnItem(item.name)}>Return</Button>
-                  </td>
-                </tr>
-              ))}
+              {storeCart
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map((item: any) => (
+                  <tr key={item.name}>
+                    <td>{item.name}</td>
+                    <td>{item.price}</td>
+                    <td>{item.quantity}</td>
+                    <td>
+                      <Button onClick={() => handleReturnItem(item.name)}>Return</Button>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
@@ -247,7 +251,8 @@ export default function GroceryStoreAreaWrapper(): JSX.Element {
           townController.unPause();
         }}
         closeOnOverlayClick={false}
-        size='xl'>
+        size='xl'
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>{groceryStoreArea.name}</ModalHeader>
