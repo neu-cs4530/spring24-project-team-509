@@ -1,4 +1,5 @@
 import { ITiledMapObject } from '@jonbell/tiled-map-type-guard';
+import { supabase } from 'covey-town/src/supabaseClient';
 import InteractableArea from './InteractableArea';
 import {
   BoundingBox,
@@ -42,6 +43,87 @@ export default class GroceryStoreArea extends InteractableArea {
     command: CommandType,
     player: Player,
   ): InteractableCommandReturnType<CommandType> {
-    throw new Error('Method not implemented.');
+    if (command.type === 'AddToCart') {
+      console.log(`Adding item to cart: ${command.itemName} and ${command.price}`);
+    }
+    if (command.type === 'RemoveFromCart') {
+      console.log(`Removing item from cart: ${command.itemName}`);
+    }
+    throw new Error('Invalid command');
+  }
+
+  async handleCalculateTotalPrice(): Promise<number> {
+    let totalPrice = 0;
+    const { data } = await supabase.from('storeCart').select();
+    if (data && data.length > 0) {
+      totalPrice = data.reduce((acc: number, item: any) => acc + item.price * item.quantity, 0);
+    }
+    return totalPrice;
+  }
+
+  async handleAddItemToCart(itemName: string, price: number): Promise<void> {
+    const { data } = await supabase.from('storeCart').select().eq('name', itemName);
+    if (data && data.length > 0) {
+      const item = data[0];
+      await supabase
+        .from('storeCart')
+        .update({ quantity: item.quantity + 1 })
+        .eq('name', itemName);
+    } else {
+      await supabase.from('storeCart').insert([{ name: itemName, price, quantity: 1 }]);
+    }
+  }
+
+  async handleRemoveItemFromCart(itemName: string): Promise<void> {
+    const { data } = await supabase.from('storeCart').select().eq('name', itemName);
+    if (data && data.length > 0) {
+      const item = data[0];
+      if (item.quantity > 0) {
+        await supabase
+          .from('storeCart')
+          .update({ quantity: item.quantity - 1 })
+          .eq('name', itemName);
+        if (item.quantity === 1) {
+          await supabase.from('storeCart').delete().eq('name', itemName);
+        }
+      } else {
+        await supabase.from('storeCart').delete().eq('name', itemName);
+      }
+    }
+  }
+
+  async handleAddItemToStoreInventory(itemName: string): Promise<void> {
+    const { data } = await supabase.from('StoreInventory').select().eq('name', itemName);
+    if (data && data.length > 0) {
+      const item = data[0];
+      await supabase
+        .from('StoreInventory')
+        .update({ quantity: item.quantity + 1 })
+        .eq('name', itemName);
+    } else {
+      await supabase.from('StoreInventory').insert([{ name: itemName, quantity: 1 }]);
+    }
+  }
+
+  async handleRemoveItemFromStoreInventory(itemName: string): Promise<void> {
+    const { data } = await supabase.from('StoreInventory').select().eq('name', itemName);
+
+    if (data && data.length > 0) {
+      const item = data[0];
+      await supabase
+        .from('StoreInventory')
+        .update({ quantity: item.quantity - 1 })
+        .eq('name', itemName);
+    }
+  }
+
+  async handleAddItem(itemName: string, price: number): Promise<void> {
+    this.handleAddItemToCart(itemName, price);
+    this.handleRemoveItemFromStoreInventory(itemName);
+  }
+
+  async handleRemoveItem(itemName: string): Promise<void> {
+    this.handleRemoveItemFromCart(itemName);
+    this.handleAddItemToStoreInventory(itemName);
   }
 }
