@@ -62,12 +62,10 @@ export interface ConversationArea extends Interactable {
   topic?: string;
 };
 
-export interface GroceryStoreArea extends Interactable {
-}
+export type GroceryStoreArea = Interactable
 
 
-export interface TradingArea extends Interactable {
-};
+export type TradingArea = Interactable;
 
 export interface BoundingBox {
   x: number;
@@ -225,17 +223,29 @@ interface InteractableCommandBase {
   type: string;
 }
 
-export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | GameMoveCommand<ConnectFourMove> | StartGameCommand | LeaveGameCommand
+export type InteractableCommand =  
+ViewingAreaUpdateCommand | 
+JoinGameCommand | 
+GameMoveCommand<TicTacToeMove> | 
+GameMoveCommand<ConnectFourMove> | 
+StartGameCommand | 
+LeaveGameCommand |
+AddToCartCommand |
+RemoveFromCartCommand |
+CheckOutCommand |
+PostTradingOfferCommand |
+AcceptTradingOfferCommand
 export interface OpenGroceryStoreCommand {
   type: 'OpenGroceryStore';
 }
 export interface AddToCartCommand {
   type: 'AddToCart';
-  item: GroceryStoreItem;
+  itemName: string;
+  price: number
 }
 export interface RemoveFromCartCommand {
   type: 'RemoveFromCart';
-  item: GroceryStoreItem;
+  itemName: string;
 }
 export interface CheckOutCommand {
   type: 'CheckOut';
