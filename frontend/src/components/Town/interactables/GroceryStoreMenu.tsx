@@ -36,8 +36,8 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
     setTotalPrice(total);
   };
 
-  const handleReturnItem = async (itemName: string) => {
-    groceryStoreAreaController.handleReturnItem(itemName);
+  const handleRemoveItem = async (itemName: string) => {
+    groceryStoreAreaController.handleRemoveItem(itemName);
   };
 
   const handleAddItem = async (itemName: string, price: number) => {
@@ -146,7 +146,7 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
                     <td>{item.price}</td>
                     <td>{item.quantity}</td>
                     <td>
-                      <Button onClick={() => handleReturnItem(item.name)}>Return</Button>
+                      <Button onClick={() => handleRemoveItem(item.name)}>Return</Button>
                     </td>
                   </tr>
                 ))}
