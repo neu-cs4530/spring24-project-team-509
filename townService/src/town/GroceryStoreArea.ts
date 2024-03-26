@@ -44,10 +44,14 @@ export default class GroceryStoreArea extends InteractableArea {
     player: Player,
   ): InteractableCommandReturnType<CommandType> {
     if (command.type === 'AddToCart') {
+      this.handleAddItem(command.itemName, command.price);
       console.log(`Adding item to cart: ${command.itemName} and ${command.price}`);
+      return undefined as InteractableCommandReturnType<CommandType>;
     }
     if (command.type === 'RemoveFromCart') {
+      this.handleRemoveItem(command.itemName);
       console.log(`Removing item from cart: ${command.itemName}`);
+      return undefined as InteractableCommandReturnType<CommandType>;
     }
     throw new Error('Invalid command');
   }
