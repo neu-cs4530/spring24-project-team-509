@@ -96,4 +96,18 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
     });
     this.emit('groceryStoreAreaUpdated');
   }
+
+  /** TODO:
+   * To fetch the store inventory.
+   */
+  async fetchStoreInventory(): Promise<any> {
+    throw new Error('Method not implemented.');
+  }
+
+  /** TODO:
+   * To fetch the cart.
+   */
+  async fetchCart(): Promise<any> {
+    throw new Error('Method not implemented.');
+  }
 }

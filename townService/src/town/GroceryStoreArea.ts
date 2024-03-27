@@ -58,6 +58,13 @@ export default class GroceryStoreArea extends InteractableArea {
     throw new Error('Invalid command');
   }
 
+  /**
+   * To find the total price of the items in the cart.
+   * To do this, we first fetch the items in the cart.
+   * Then we calculate the total price of the items in the cart.
+   *
+   * @returns the total price of the items in the cart.
+   */
   private async _handleCalculateTotalPrice(): Promise<number> {
     let totalPrice = 0;
     const { data } = await supabase.from('storeCart').select();
@@ -86,6 +93,20 @@ export default class GroceryStoreArea extends InteractableArea {
   private async _handleRemoveItem(itemName: string): Promise<void> {
     this._handleRemoveItemFromCart(itemName);
     this._handleAddItemToStoreInventory(itemName);
+  }
+
+  /** TODO:
+   * To fetch the store inventory.
+   */
+  private async _fetchStoreInventory(): Promise<any> {
+    throw new Error('Method not implemented.');
+  }
+
+  /** TODO:
+   * To fetch the cart.
+   */
+  private async _fetchCart(): Promise<any> {
+    throw new Error('Method not implemented.');
   }
 
   /**
