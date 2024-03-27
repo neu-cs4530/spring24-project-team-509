@@ -230,6 +230,8 @@ GameMoveCommand<TicTacToeMove> |
 GameMoveCommand<ConnectFourMove> | 
 StartGameCommand | 
 LeaveGameCommand |
+OpenGroceryStoreCommand |
+CalculateTotalCartPriceCommand |
 AddToCartCommand |
 RemoveFromCartCommand |
 CheckOutCommand |
@@ -237,6 +239,9 @@ PostTradingOfferCommand |
 AcceptTradingOfferCommand
 export interface OpenGroceryStoreCommand {
   type: 'OpenGroceryStore';
+}
+export interface CalculateTotalCartPriceCommand {
+  type: 'CalculateTotalCartPrice';
 }
 export interface AddToCartCommand {
   type: 'AddToCart';
@@ -279,12 +284,12 @@ export interface GameMoveCommand<MoveType> {
   move: MoveType;
 }
 
-// TODO? What are the command returning?
 export type InteractableCommandReturnType<CommandType extends InteractableCommand> = 
   CommandType extends JoinGameCommand ? { gameID: string}:
   CommandType extends ViewingAreaUpdateCommand ? undefined :
   CommandType extends GameMoveCommand<TicTacToeMove> ? undefined :
   CommandType extends LeaveGameCommand ? undefined :
+  CommandType extends CalculateTotalCartPriceCommand ? Promise<number> : // TODO: here?
   never;
 
 export type InteractableCommandResponse<MessageType> = {
