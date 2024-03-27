@@ -430,12 +430,10 @@ export default class Town {
       .map(eachGrocAreaObj =>
         GroceryStoreArea.fromMapObject(eachGrocAreaObj, this._broadcastEmitter),
       );
-    
+
     const inventoryAreas = objectLayer.objects
       .filter(eachObject => eachObject.type === 'InventoryArea')
-      .map(eachGrocAreaObj =>
-        InventoryArea.fromMapObject(eachGrocAreaObj, this._broadcastEmitter),
-      );
+      .map(eachGrocAreaObj => InventoryArea.fromMapObject(eachGrocAreaObj, this._broadcastEmitter));
 
     const tradingAreas = objectLayer.objects
       .filter(eachObject => eachObject.type === 'TradingArea')
