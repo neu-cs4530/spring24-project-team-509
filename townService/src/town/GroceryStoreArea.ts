@@ -1,5 +1,4 @@
 import { ITiledMapObject } from '@jonbell/tiled-map-type-guard';
-import { supabase } from 'covey-town/src/supabaseClient';
 import InteractableArea from './InteractableArea';
 import {
   BoundingBox,
@@ -9,6 +8,7 @@ import {
   TownEmitter,
 } from '../types/CoveyTownSocket';
 import Player from '../lib/Player';
+import { supabase } from '../../supabaseClient';
 
 export default class GroceryStoreArea extends InteractableArea {
   public constructor(
@@ -43,20 +43,22 @@ export default class GroceryStoreArea extends InteractableArea {
     command: CommandType,
     player: Player,
   ): InteractableCommandReturnType<CommandType> {
+    if (command.type === 'CalculateTotalCartPrice') {
+      const totalPrice = this._handleCalculateTotalPrice();
+      return totalPrice as InteractableCommandReturnType<CommandType>;
+    }
     if (command.type === 'AddToCart') {
-      this.handleAddItem(command.itemName, command.price);
-      console.log(`Adding item to cart: ${command.itemName} and ${command.price}`);
+      this._handleAddItem(command.itemName, command.price);
       return undefined as InteractableCommandReturnType<CommandType>;
     }
     if (command.type === 'RemoveFromCart') {
-      this.handleRemoveItem(command.itemName);
-      console.log(`Removing item from cart: ${command.itemName}`);
+      this._handleRemoveItem(command.itemName);
       return undefined as InteractableCommandReturnType<CommandType>;
     }
     throw new Error('Invalid command');
   }
 
-  async handleCalculateTotalPrice(): Promise<number> {
+  private async _handleCalculateTotalPrice(): Promise<number> {
     let totalPrice = 0;
     const { data } = await supabase.from('storeCart').select();
     if (data && data.length > 0) {
@@ -65,7 +67,36 @@ export default class GroceryStoreArea extends InteractableArea {
     return totalPrice;
   }
 
-  async handleAddItemToCart(itemName: string, price: number): Promise<void> {
+  /**
+   * To add an item to the cart and remove it from the store inventory.
+   *
+   * @param itemName is the name of the item to be added to the cart
+   * @param price is the price of the item to be added to the cart
+   */
+  private async _handleAddItem(itemName: string, price: number): Promise<void> {
+    this._handleAddItemToCart(itemName, price);
+    this._handleRemoveItemFromStoreInventory(itemName);
+  }
+
+  /**
+   * To remove an item from the cart and add it back to the store inventory.
+   *
+   * @param itemName is the name of the item to be removed from the cart
+   */
+  private async _handleRemoveItem(itemName: string): Promise<void> {
+    this._handleRemoveItemFromCart(itemName);
+    this._handleAddItemToStoreInventory(itemName);
+  }
+
+  /**
+   * To add an item to the cart, we first check if the item is already in the cart.
+   * If it is, we update the quantity of the item in the cart.
+   * If it is not, we insert the item into the cart.
+   *
+   * @param itemName is the name of the item to be added to the cart
+   * @param price is the price of the item to be added to the cart
+   */
+  private async _handleAddItemToCart(itemName: string, price: number): Promise<void> {
     const { data } = await supabase.from('storeCart').select().eq('name', itemName);
     if (data && data.length > 0) {
       const item = data[0];
@@ -78,7 +109,14 @@ export default class GroceryStoreArea extends InteractableArea {
     }
   }
 
-  async handleRemoveItemFromCart(itemName: string): Promise<void> {
+  /**
+   * To remove an item from the cart, we first check if the item is in the cart.
+   * If it is, we update the quantity of the item in the cart.
+   * If the quantity of the item is 1, we delete the item from the cart.
+   *
+   * @param itemName is the name of the item to be removed from the cart
+   */
+  private async _handleRemoveItemFromCart(itemName: string): Promise<void> {
     const { data } = await supabase.from('storeCart').select().eq('name', itemName);
     if (data && data.length > 0) {
       const item = data[0];
@@ -96,7 +134,14 @@ export default class GroceryStoreArea extends InteractableArea {
     }
   }
 
-  async handleAddItemToStoreInventory(itemName: string): Promise<void> {
+  /**
+   * To add an item to the store inventory, we first check if the item is already in the store inventory.
+   * If it is, we update the quantity of the item in the store inventory.
+   * If it is not, we insert the item into the store inventory.
+   *
+   * @param itemName is the name of the item to be added to the store inventory
+   */
+  private async _handleAddItemToStoreInventory(itemName: string): Promise<void> {
     const { data } = await supabase.from('StoreInventory').select().eq('name', itemName);
     if (data && data.length > 0) {
       const item = data[0];
@@ -109,7 +154,14 @@ export default class GroceryStoreArea extends InteractableArea {
     }
   }
 
-  async handleRemoveItemFromStoreInventory(itemName: string): Promise<void> {
+  /**
+   * To remove an item from the store inventory, we first check if the item is in the store inventory.
+   * If it is, we update the quantity of the item in the store inventory.
+   * If the quantity of the item is 1, we delete the item from the store inventory.
+   *
+   * @param itemName is the name of the item to be removed from the store inventory
+   */
+  private async _handleRemoveItemFromStoreInventory(itemName: string): Promise<void> {
     const { data } = await supabase.from('StoreInventory').select().eq('name', itemName);
 
     if (data && data.length > 0) {
@@ -119,15 +171,5 @@ export default class GroceryStoreArea extends InteractableArea {
         .update({ quantity: item.quantity - 1 })
         .eq('name', itemName);
     }
-  }
-
-  async handleAddItem(itemName: string, price: number): Promise<void> {
-    this.handleAddItemToCart(itemName, price);
-    this.handleRemoveItemFromStoreInventory(itemName);
-  }
-
-  async handleRemoveItem(itemName: string): Promise<void> {
-    this.handleRemoveItemFromCart(itemName);
-    this.handleAddItemToStoreInventory(itemName);
   }
 }
