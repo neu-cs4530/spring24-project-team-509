@@ -1,4 +1,3 @@
-import { TradingArea } from '../../types/CoveyTownSocket';
 import InteractableAreaController, {
   BaseInteractableEventMap,
   TRADING_AREA_TYPE,

@@ -1,15 +1,15 @@
-import TradingAreaController from '../../../classes/interactable/TradingAreaController';
+import InventoryAreaController from '../../../classes/interactable/InventoryAreaController';
 import Interactable, { KnownInteractableTypes } from '../Interactable';
 
-export default class TradingArea extends Interactable {
+export default class InventoryArea extends Interactable {
   private _isInteracting = false;
 
   private _infoTextBox?: Phaser.GameObjects.Text;
 
-  private _tradingArea?: TradingAreaController;
+  private _inventoryArea?: InventoryAreaController;
 
   getType(): KnownInteractableTypes {
-    return 'tradingArea';
+    return 'inventoryArea';
   }
 
   addedToScene(): void {
@@ -23,7 +23,7 @@ export default class TradingArea extends Interactable {
       this.name,
       { color: '#FFFFFF', backgroundColor: '#000000' },
     );
-    this._tradingArea = this.townController.getTradingAreaController(this);
+    //this._inventoryArea = this.townController.getInventoryAreaController(this);
   }
 
   overlapExit(): void {
@@ -46,7 +46,7 @@ export default class TradingArea extends Interactable {
         .text(
           this.scene.scale.width / 2,
           this.scene.scale.height / 2,
-          "You've found the Trading Area!.",
+          "Press space to view your inventory",
           { color: '#000000', backgroundColor: '#FFFFFF' },
         )
         .setScrollFactor(0)

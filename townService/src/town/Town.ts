@@ -25,6 +25,7 @@ import InteractableArea from './InteractableArea';
 import ViewingArea from './ViewingArea';
 import GroceryStoreArea from './GroceryStoreArea';
 import TradingArea from './TradingArea';
+import InventoryArea from './InventoryArea';
 
 /**
  * The Town class implements the logic for each town: managing the various events that
@@ -429,6 +430,12 @@ export default class Town {
       .map(eachGrocAreaObj =>
         GroceryStoreArea.fromMapObject(eachGrocAreaObj, this._broadcastEmitter),
       );
+    
+    const inventoryAreas = objectLayer.objects
+      .filter(eachObject => eachObject.type === 'InventoryArea')
+      .map(eachGrocAreaObj =>
+        InventoryArea.fromMapObject(eachGrocAreaObj, this._broadcastEmitter),
+      );
 
     const tradingAreas = objectLayer.objects
       .filter(eachObject => eachObject.type === 'TradingArea')
@@ -439,7 +446,8 @@ export default class Town {
       .concat(conversationAreas)
       .concat(gameAreas)
       .concat(groceryStoreAreas)
-      .concat(tradingAreas);
+      .concat(tradingAreas)
+      .concat(inventoryAreas);
     this._validateInteractables();
   }
 

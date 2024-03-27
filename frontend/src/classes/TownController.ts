@@ -12,6 +12,7 @@ import GameArea from '../components/Town/interactables/GameArea';
 import ViewingArea from '../components/Town/interactables/ViewingArea';
 import GroceryStoreArea from '../components/Town/interactables/GroceryStoreArea';
 import TradingArea from '../components/Town/interactables/TradingArea';
+import InventoryArea from '../components/Town/interactables/InventoryArea';
 import { LoginController } from '../contexts/LoginControllerContext';
 import { TownsService, TownsServiceClient } from '../generated/client';
 import useTownController from '../hooks/useTownController';
@@ -36,12 +37,14 @@ import {
   isViewingArea,
   isGroceryStoreArea,
   isTradingArea,
+  isInventoryArea,
 } from '../types/TypeUtils';
 import ConnectFourAreaController from './interactable/ConnectFourAreaController';
 import ConversationAreaController from './interactable/ConversationAreaController';
 import GameAreaController, { GameEventTypes } from './interactable/GameAreaController';
 import GroceryStoreAreaController from './interactable/GroceryStoreAreaController';
 import TradingAreaController from './interactable/TradingAreaController';
+import InventoryAreaController from './interactable/InventoryAreaController';
 import InteractableAreaController, {
   BaseInteractableEventMap,
   GenericInteractableAreaController,
@@ -352,6 +355,13 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
     return ret as TradingAreaController[];
   }
 
+  public get inventoryArea() {
+    const ret = this._interactableControllers.filter(
+      eachInteractable => eachInteractable instanceof InventoryAreaController,
+    );
+    return ret as InventoryAreaController[];
+  }
+
   public get gameAreas() {
     const ret = this._interactableControllers.filter(
       eachInteractable => eachInteractable instanceof GameAreaController,
@@ -655,6 +665,8 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
             this._interactableControllers.push(new GroceryStoreAreaController(eachInteractable.id));
           } else if (isTradingArea(eachInteractable)) {
             this._interactableControllers.push(new TradingAreaController(eachInteractable.id));
+          } else if (isInventoryArea(eachInteractable)) {
+            this._interactableControllers.push(new InventoryAreaController(eachInteractable.id));
           }
         });
         this._userID = initialData.userID;
@@ -718,7 +730,18 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
     if (existingController instanceof TradingAreaController) {
       return existingController;
     } else {
-      throw new Error(`No such grocery store area controller ${existingController}`);
+      throw new Error(`No such trading store area controller ${existingController}`);
+    }
+  }
+
+  public getInventoryAreaController(inventoryArea: InventoryArea): InventoryAreaController {
+    const existingController = this._interactableControllers.find(
+      eachExistingArea => eachExistingArea.id === inventoryArea.name,
+    );
+    if (existingController instanceof InventoryAreaController) {
+      return existingController;
+    } else {
+      throw new Error(`No such inventory area controller ${existingController}`);
     }
   }
 
@@ -835,6 +858,9 @@ export function useInteractableAreaController<T>(interactableAreaID: string): T 
     const tradingAreaController = townController.tradingArea.find(
       eachArea => eachArea.id == interactableAreaID,
     );
+    const inventoryAreaController = townController.inventoryArea.find(
+      eachArea => eachArea.id == interactableAreaID,
+    );
     if (viewingAreaController) {
       return viewingAreaController as unknown as T;
     }
@@ -843,6 +869,9 @@ export function useInteractableAreaController<T>(interactableAreaID: string): T 
     }
     if (tradingAreaController) {
       return tradingAreaController as unknown as T;
+    }
+    if (inventoryAreaController) {
+      return inventoryAreaController as unknown as T;
     }
     throw new Error(`Requested interactable area ${interactableAreaID} does not exist`);
   }
