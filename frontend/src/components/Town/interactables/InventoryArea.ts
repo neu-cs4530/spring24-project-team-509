@@ -23,7 +23,8 @@ export default class InventoryArea extends Interactable {
       this.name,
       { color: '#FFFFFF', backgroundColor: '#000000' },
     );
-    //this._inventoryArea = this.townController.getInventoryAreaController(this);
+    this._inventoryArea = this.townController.getInventoryAreaController(this);
+    //console.log(this.townController.nearbyPlayers)
   }
 
   overlapExit(): void {

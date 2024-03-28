@@ -11,6 +11,7 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  useToast,
 } from '@chakra-ui/react';
 import { GroceryStoreArea as GroceryStoreAreaModel } from '../../../types/CoveyTownSocket';
 import GroceryStoreAreaInteractable from './GroceryStoreArea';
@@ -26,6 +27,7 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
   const [dbError, setdbError] = useState<string | null>(null);
   const [storeCart, setStoreCart] = useState<any[] | null>([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
+  const toast = useToast();
 
   const [groceryStoreAreaModel, setGroceryStoreAreaModel] = useState<GroceryStoreAreaModel>(
     groceryStoreAreaController.toInteractableAreaModel(),
@@ -59,6 +61,7 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
       }
     }
   };
+  
 
   const handleAddItemToInventory = async (itemName: string) => {
     const { data } = await supabase.from('StoreInventory').select().eq('name', itemName);
@@ -103,11 +106,33 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
       await supabase.from('storeCart').upsert([{ name: itemName, price: price, quantity: 1 }]);
     }
   };
+  
 
   const handleAddItem = async (itemName: string, price: number) => {
     handleAddItemToCart(itemName, price);
     handleRemoveItemFromInventory(itemName);
     handleCalculateTotalPrice();
+  };
+
+  const handleCheckout = async () => {
+    const { data: cartData, error: cartError } = await supabase.from('storeCart').select();
+    if (cartData && cartData.length > 0) {
+      const itemList = cartData.map((item: any) => ({
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+      }));
+      await supabase.from('playerInventory').upsert([
+        {
+          playerID: 5,
+          itemList: JSON.stringify(itemList),
+          balance: 100,
+        },
+      ]);
+      await supabase.from('storeCart').delete();
+      setStoreCart([]);
+      setTotalPrice(0);
+    }
   };
 
   useEffect(() => {
@@ -220,7 +245,7 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
         </div>
       )}
       <p>Total Price: {totalPrice}</p>
-      <Button>Checkout</Button>
+      <Button onClick={() => handleCheckout()}>Checkout</Button>
     </div>
   );
 }
