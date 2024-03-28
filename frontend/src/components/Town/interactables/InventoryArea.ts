@@ -46,7 +46,7 @@ export default class InventoryArea extends Interactable {
         .text(
           this.scene.scale.width / 2,
           this.scene.scale.height / 2,
-          "Press space to view your inventory",
+          'Press space to view your inventory',
           { color: '#000000', backgroundColor: '#FFFFFF' },
         )
         .setScrollFactor(0)

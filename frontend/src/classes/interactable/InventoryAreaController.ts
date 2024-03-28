@@ -11,8 +11,8 @@ export type InventoryAreaEvents = BaseInteractableEventMap & {
 };
 
 export default class InventoryAreaController extends InteractableAreaController<
-    InventoryAreaEvents,
-    InventoryAreaModel
+  InventoryAreaEvents,
+  InventoryAreaModel
 > {
   toInteractableAreaModel(): InventoryAreaModel {
     return {

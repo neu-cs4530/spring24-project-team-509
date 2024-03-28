@@ -13,7 +13,6 @@ import GroceryStoreArea from './interactables/GroceryStoreArea';
 import TradingArea from './interactables/TradingArea';
 import InventoryArea from './interactables/InventoryArea';
 
-
 // Still not sure what the right type is here... "Interactable" doesn't do it
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function interactableTypeForObjectType(type: string): any {
