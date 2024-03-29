@@ -5,12 +5,20 @@ import { InteractableID } from '../../../types/CoveyTownSocket';
 import useTownController from '../../../hooks/useTownController';
 import InventoryAreaInteractable from './InventoryArea';
 import {
+  Container,
+  Heading,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  Table,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
 } from '@chakra-ui/react';
 import { InventoryArea as InventoryAreaModel } from '../../../types/CoveyTownSocket';
 import { supabase } from '../../../supabaseClient';
