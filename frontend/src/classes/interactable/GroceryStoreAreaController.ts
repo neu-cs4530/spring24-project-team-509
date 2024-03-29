@@ -38,6 +38,7 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
       type: 'GroceryStoreArea',
       totalPrice: this._totalPrice,
       storeInventory: this._storeInventory,
+      // cart: this._cart,
     };
   }
 
