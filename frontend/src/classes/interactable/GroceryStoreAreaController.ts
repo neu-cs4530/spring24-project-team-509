@@ -20,6 +20,12 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
 > {
   protected _townController: TownController;
 
+  protected _totalPrice = 0;
+
+  protected _storeInventory: any[] = [];
+
+  // protected _cart: any[] = [];
+
   constructor(id: InteractableID, townController: TownController) {
     super(id);
     this._townController = townController;
@@ -30,6 +36,8 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
       id: this.id,
       occupants: this.occupants.map(player => player.id),
       type: 'GroceryStoreArea',
+      totalPrice: this._totalPrice,
+      storeInventory: this._storeInventory,
     };
   }
 
@@ -45,28 +53,27 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
     return this.id;
   }
 
-  protected _updateFrom(updatedModel: GroceryStoreAreaModel): void {
-    // No updates to make
-    this.emit('groceryStoreAreaUpdated');
+  get totalPrice(): number {
+    return this._totalPrice;
   }
 
-  /** TODO:
-   * To find the total price of the items in the cart.
-   *
-   * @returns the total price of the items in the cart.
-   */
-  async handleCalculateTotalPrice(): Promise<number> {
-    // const totalPrice = this._townController.sendInteractableCommand(this.id, {
-    //   type: 'CalculateTotalCartPrice',
-    // });
-    let totalPrice = 0;
-    const { data } = await supabase.from('storeCart').select();
-    if (data && data.length > 0) {
-      totalPrice = data.reduce((acc: number, item: any) => {
-        return acc + item.price * item.quantity;
-      }, 0);
+  get storeInventory(): any[] {
+    return this._storeInventory;
+  }
+
+  // get cart(): any[] {
+  //   return this._cart;
+  // }
+
+  protected _updateFrom(updatedModel: GroceryStoreAreaModel): void {
+    if (updatedModel.totalPrice !== this._totalPrice) {
+      this._totalPrice = updatedModel.totalPrice;
+      this.emit('groceryStoreAreaUpdated');
     }
-    return totalPrice;
+    if (updatedModel.storeInventory !== this._storeInventory) {
+      this._storeInventory = updatedModel.storeInventory;
+      this.emit('groceryStoreAreaUpdated');
+    }
   }
 
   /**
@@ -75,13 +82,12 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
    * @param itemName is the name of the item to be added to the cart
    * @param price is the price of the item to be added to the cart
    */
-  async handleAddItem(itemName: string, price: number): Promise<void> {
+  public async handleAddItem(itemName: string, price: number): Promise<void> {
     this._townController.sendInteractableCommand(this.id, {
       type: 'AddToCart',
       itemName: itemName,
       price: price,
     });
-    this.emit('groceryStoreAreaUpdated');
   }
 
   /**
@@ -89,25 +95,10 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
    *
    * @param itemName is the name of the item to be removed from the cart
    */
-  async handleRemoveItem(itemName: string): Promise<void> {
+  public async handleRemoveItem(itemName: string): Promise<void> {
     this._townController.sendInteractableCommand(this.id, {
       type: 'RemoveFromCart',
       itemName: itemName,
     });
-    this.emit('groceryStoreAreaUpdated');
-  }
-
-  /** TODO:
-   * To fetch the store inventory.
-   */
-  async fetchStoreInventory(): Promise<any> {
-    throw new Error('Method not implemented.');
-  }
-
-  /** TODO:
-   * To fetch the cart.
-   */
-  async fetchCart(): Promise<any> {
-    throw new Error('Method not implemented.');
   }
 }

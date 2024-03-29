@@ -11,12 +11,18 @@ import Player from '../lib/Player';
 import { supabase } from '../../supabaseClient';
 
 export default class GroceryStoreArea extends InteractableArea {
+  protected _totalPrice = 0;
+
+  protected _storeInventory: any[] = [];
+
   public constructor(
     { id }: Omit<GroceryStoreAreaModel, 'type'>,
     coordinates: BoundingBox,
     townEmitter: TownEmitter,
   ) {
     super(id, coordinates, townEmitter);
+    this._updateStoreInventory();
+    this._updateCartTotalPrice();
   }
 
   public toModel(): GroceryStoreAreaModel {
@@ -24,6 +30,8 @@ export default class GroceryStoreArea extends InteractableArea {
       id: this.id,
       occupants: this.occupantsByID,
       type: 'GroceryStoreArea',
+      totalPrice: this._totalPrice,
+      storeInventory: this._storeInventory,
     };
   }
 
@@ -36,17 +44,17 @@ export default class GroceryStoreArea extends InteractableArea {
       throw new Error(`Malformed viewing area ${name}`);
     }
     const rect: BoundingBox = { x: mapObject.x, y: mapObject.y, width, height };
-    return new GroceryStoreArea({ id: name, occupants: [] }, rect, broadcastEmitter);
+    return new GroceryStoreArea(
+      { id: name, occupants: [], totalPrice: 0, storeInventory: [] },
+      rect,
+      broadcastEmitter,
+    );
   }
 
   public handleCommand<CommandType extends InteractableCommand>(
     command: CommandType,
     player: Player,
   ): InteractableCommandReturnType<CommandType> {
-    if (command.type === 'CalculateTotalCartPrice') {
-      const totalPrice = this._handleCalculateTotalPrice();
-      return totalPrice as InteractableCommandReturnType<CommandType>;
-    }
     if (command.type === 'AddToCart') {
       this._handleAddItem(command.itemName, command.price);
       return undefined as InteractableCommandReturnType<CommandType>;
@@ -59,19 +67,48 @@ export default class GroceryStoreArea extends InteractableArea {
   }
 
   /**
+   * To fetch the store inventory.
+   */
+  private async _updateStoreInventory(): Promise<void> {
+    const { data, error } = await supabase.from('StoreInventory').select();
+    if (data) {
+      this._storeInventory = data;
+    }
+    if (error) {
+      throw new Error('Error fetching store inventory');
+    }
+    this._emitAreaChanged();
+  }
+
+  /** TODO:
+   * To fetch the cart.
+   */
+  // private async _updateCart(): Promise<void> {
+  //   const { data, error } = await supabase.from('storeCart').select();
+  //   if (data) {
+  //     this._cart = data;
+  //   }
+  //   if (error) {
+  //     throw new Error('Error fetching store cart');
+  //   }
+  //   this._emitAreaChanged
+  // }
+
+  /**
    * To find the total price of the items in the cart.
    * To do this, we first fetch the items in the cart.
    * Then we calculate the total price of the items in the cart.
-   *
-   * @returns the total price of the items in the cart.
    */
-  private async _handleCalculateTotalPrice(): Promise<number> {
+  private async _updateCartTotalPrice(): Promise<void> {
     let totalPrice = 0;
     const { data } = await supabase.from('storeCart').select();
     if (data && data.length > 0) {
       totalPrice = data.reduce((acc: number, item: any) => acc + item.price * item.quantity, 0);
     }
-    return totalPrice;
+    if (totalPrice !== this._totalPrice) {
+      this._totalPrice = totalPrice;
+      this._emitAreaChanged();
+    }
   }
 
   /**
@@ -95,20 +132,6 @@ export default class GroceryStoreArea extends InteractableArea {
     this._handleAddItemToStoreInventory(itemName);
   }
 
-  /** TODO:
-   * To fetch the store inventory.
-   */
-  private async _fetchStoreInventory(): Promise<any> {
-    throw new Error('Method not implemented.');
-  }
-
-  /** TODO:
-   * To fetch the cart.
-   */
-  private async _fetchCart(): Promise<any> {
-    throw new Error('Method not implemented.');
-  }
-
   /**
    * To add an item to the cart, we first check if the item is already in the cart.
    * If it is, we update the quantity of the item in the cart.
@@ -128,6 +151,7 @@ export default class GroceryStoreArea extends InteractableArea {
     } else {
       await supabase.from('storeCart').insert([{ name: itemName, price, quantity: 1 }]);
     }
+    this._updateCartTotalPrice();
   }
 
   /**
@@ -153,6 +177,7 @@ export default class GroceryStoreArea extends InteractableArea {
         await supabase.from('storeCart').delete().eq('name', itemName);
       }
     }
+    this._updateCartTotalPrice();
   }
 
   /**
@@ -173,6 +198,7 @@ export default class GroceryStoreArea extends InteractableArea {
     } else {
       await supabase.from('StoreInventory').insert([{ name: itemName, quantity: 1 }]);
     }
+    this._updateStoreInventory();
   }
 
   /**
@@ -192,5 +218,6 @@ export default class GroceryStoreArea extends InteractableArea {
         .update({ quantity: item.quantity - 1 })
         .eq('name', itemName);
     }
+    this._updateStoreInventory();
   }
 }

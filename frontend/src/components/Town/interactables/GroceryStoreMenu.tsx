@@ -31,8 +31,8 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
     groceryStoreAreaController.toInteractableAreaModel(),
   );
 
-  const handleCalculateTotalPrice = async () => {
-    const total = await groceryStoreAreaController.handleCalculateTotalPrice();
+  const handleCalculateTotalPrice = () => {
+    const total = groceryStoreAreaController.totalPrice;
     setTotalPrice(total);
   };
 
@@ -44,46 +44,57 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
     groceryStoreAreaController.handleAddItem(itemName, price);
   };
 
+  let isMounted = true;
+  // const fetchStoreInventory = async () => {
+  //   const { data, error } = await supabase.from('StoreInventory').select();
+  //   if (isMounted) {
+  //     if (data) {
+  //       setStoreInventory(data);
+  //       setdbError(null);
+  //     }
+  //     if (error) {
+  //       setdbError(error.message);
+  //       console.error('Error fetching store cart:', error.message);
+  //       setStoreInventory(null);
+  //     }
+  //   }
+  // };
+  const fetchStoreInventory = async () => {
+    const data = groceryStoreAreaController.storeInventory;
+    if (isMounted) {
+      if (data) {
+        setStoreInventory(data);
+        setdbError(null);
+      }
+    }
+  };
+
+  const fetchCart = async () => {
+    const { data, error } = await supabase.from('storeCart').select();
+    if (isMounted) {
+      if (data) {
+        setStoreCart(data);
+        setdbError(null);
+      }
+      if (error) {
+        setdbError(error.message);
+        console.error('Error fetching store cart:', error.message);
+        setStoreCart(null);
+      }
+    }
+  };
+
   useEffect(() => {
     const updateGroceryStoreAreaModel = () => {
       setGroceryStoreAreaModel(groceryStoreAreaController.toInteractableAreaModel());
     };
     groceryStoreAreaController.addListener('groceryStoreAreaUpdated', updateGroceryStoreAreaModel);
 
-    let isMounted = true;
-    const fetchStoreInventory = async () => {
-      const { data, error } = await supabase.from('StoreInventory').select();
-      if (isMounted) {
-        if (data) {
-          setStoreInventory(data);
-          setdbError(null);
-        }
-        if (error) {
-          setdbError(error.message);
-          console.error('Error fetching store cart:', error.message);
-          setStoreInventory(null);
-        }
-      }
-    };
-
-    const fetchCart = async () => {
-      const { data, error } = await supabase.from('storeCart').select();
-      if (isMounted) {
-        if (data) {
-          setStoreCart(data);
-          setdbError(null);
-        }
-        if (error) {
-          setdbError(error.message);
-          console.error('Error fetching store cart:', error.message);
-          setStoreCart(null);
-        }
-      }
-    };
     fetchStoreInventory();
     fetchCart();
 
     handleCalculateTotalPrice();
+
     return () => {
       isMounted = false;
       groceryStoreAreaController.removeListener(
@@ -91,7 +102,7 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
         updateGroceryStoreAreaModel,
       );
     };
-  }, [groceryStoreAreaController, storeInventory, dbError, storeCart]);
+  }, [groceryStoreAreaController, storeInventory, dbError, storeCart, totalPrice]);
 
   // sort((a, b) => a.name.localeCompare(b.name)) for sorting items but it makes everything slow down
   // so I commented it out
