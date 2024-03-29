@@ -15,6 +15,8 @@ export default class GroceryStoreArea extends InteractableArea {
 
   protected _storeInventory: any[] = [];
 
+  // protected _cart: any[] = [];
+
   public constructor(
     { id }: Omit<GroceryStoreAreaModel, 'type'>,
     coordinates: BoundingBox,
@@ -32,6 +34,7 @@ export default class GroceryStoreArea extends InteractableArea {
       type: 'GroceryStoreArea',
       totalPrice: this._totalPrice,
       storeInventory: this._storeInventory,
+      // cart: this._cart,
     };
   }
 
@@ -105,10 +108,8 @@ export default class GroceryStoreArea extends InteractableArea {
     if (data && data.length > 0) {
       totalPrice = data.reduce((acc: number, item: any) => acc + item.price * item.quantity, 0);
     }
-    if (totalPrice !== this._totalPrice) {
-      this._totalPrice = totalPrice;
-      this._emitAreaChanged();
-    }
+    this._totalPrice = totalPrice;
+    this._emitAreaChanged();
   }
 
   /**
@@ -120,6 +121,7 @@ export default class GroceryStoreArea extends InteractableArea {
   private async _handleAddItem(itemName: string, price: number): Promise<void> {
     this._handleAddItemToCart(itemName, price);
     this._handleRemoveItemFromStoreInventory(itemName);
+    this._emitAreaChanged();
   }
 
   /**
@@ -130,6 +132,7 @@ export default class GroceryStoreArea extends InteractableArea {
   private async _handleRemoveItem(itemName: string): Promise<void> {
     this._handleRemoveItemFromCart(itemName);
     this._handleAddItemToStoreInventory(itemName);
+    this._emitAreaChanged();
   }
 
   /**
@@ -152,6 +155,7 @@ export default class GroceryStoreArea extends InteractableArea {
       await supabase.from('storeCart').insert([{ name: itemName, price, quantity: 1 }]);
     }
     this._updateCartTotalPrice();
+    this._emitAreaChanged();
   }
 
   /**
@@ -178,6 +182,7 @@ export default class GroceryStoreArea extends InteractableArea {
       }
     }
     this._updateCartTotalPrice();
+    this._emitAreaChanged();
   }
 
   /**
@@ -199,6 +204,7 @@ export default class GroceryStoreArea extends InteractableArea {
       await supabase.from('StoreInventory').insert([{ name: itemName, quantity: 1 }]);
     }
     this._updateStoreInventory();
+    this._emitAreaChanged();
   }
 
   /**
@@ -219,5 +225,6 @@ export default class GroceryStoreArea extends InteractableArea {
         .eq('name', itemName);
     }
     this._updateStoreInventory();
+    this._emitAreaChanged();
   }
 }
