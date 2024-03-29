@@ -4,6 +4,7 @@ import { InteractableID } from '../../../types/CoveyTownSocket';
 import { useCallback, useEffect, useState } from 'react';
 import {
   Button,
+  Container,
   Heading,
   Modal,
   ModalBody,
@@ -11,6 +12,12 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  Table,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
   useToast,
 } from '@chakra-ui/react';
 import { GroceryStoreArea as GroceryStoreAreaModel } from '../../../types/CoveyTownSocket';
