@@ -24,6 +24,16 @@ export interface Interactable {
   occupants: PlayerID[];
 }
 
+// TODO
+export interface GroceryStoreArea extends Interactable {
+  totalPrice: number;
+  storeInventory: any[];
+  // cart: any[];
+}
+
+// export type GroceryStoreArea = Interactable
+export type TradingArea = Interactable;
+
 export type TownSettingsUpdate = {
   friendlyName?: string;
   isPubliclyListed?: boolean;
@@ -61,11 +71,6 @@ export type ChatMessage = {
 export interface ConversationArea extends Interactable {
   topic?: string;
 };
-
-export type GroceryStoreArea = Interactable
-
-
-export type TradingArea = Interactable;
 
 export interface BoundingBox {
   x: number;
@@ -230,19 +235,19 @@ GameMoveCommand<TicTacToeMove> |
 GameMoveCommand<ConnectFourMove> | 
 StartGameCommand | 
 LeaveGameCommand |
-OpenGroceryStoreCommand |
-CalculateTotalCartPriceCommand |
+// OpenGroceryStoreCommand |
+// CalculateTotalCartPriceCommand |
 AddToCartCommand |
 RemoveFromCartCommand |
 CheckOutCommand |
 PostTradingOfferCommand |
 AcceptTradingOfferCommand
-export interface OpenGroceryStoreCommand {
-  type: 'OpenGroceryStore';
-}
-export interface CalculateTotalCartPriceCommand {
-  type: 'CalculateTotalCartPrice';
-}
+// export interface OpenGroceryStoreCommand {
+//   type: 'OpenGroceryStore';
+// }
+// export interface CalculateTotalCartPriceCommand {
+//   type: 'CalculateTotalCartPrice';
+// }
 export interface AddToCartCommand {
   type: 'AddToCart';
   itemName: string;
@@ -289,7 +294,6 @@ export type InteractableCommandReturnType<CommandType extends InteractableComman
   CommandType extends ViewingAreaUpdateCommand ? undefined :
   CommandType extends GameMoveCommand<TicTacToeMove> ? undefined :
   CommandType extends LeaveGameCommand ? undefined :
-  CommandType extends CalculateTotalCartPriceCommand ? Promise<number> : // TODO: here?
   never;
 
 export type InteractableCommandResponse<MessageType> = {
