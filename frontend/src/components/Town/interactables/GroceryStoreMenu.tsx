@@ -59,7 +59,7 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
   //     }
   //   }
   // };
-  const fetchStoreInventory = async () => {
+  const fetchStoreInventory = () => {
     const data = groceryStoreAreaController.storeInventory;
     if (isMounted) {
       if (data) {
@@ -92,7 +92,6 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
 
     fetchStoreInventory();
     fetchCart();
-
     handleCalculateTotalPrice();
 
     return () => {
