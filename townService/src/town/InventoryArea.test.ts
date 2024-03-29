@@ -69,7 +69,7 @@ describe('InventoryArea', () => {
   describe('fromMapObject', () => {
     it('Throws an error if the width or height are missing', () => {
       expect(() =>
-      InventoryArea.fromMapObject(
+        InventoryArea.fromMapObject(
           { id: 1, name: nanoid(), visible: true, x: 0, y: 0 },
           townEmitter,
         ),
