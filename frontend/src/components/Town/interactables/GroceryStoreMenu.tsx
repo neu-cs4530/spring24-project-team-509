@@ -19,6 +19,30 @@ import useTownController from '../../../hooks/useTownController';
 import { supabase } from '../../../supabaseClient';
 import React from 'react';
 
+React.use(Chakra, {
+  icons: {
+    iconPack: 'fa',
+    iconSet: {
+      fa-stroopwafel,
+      fa-pizza-slice,
+      fa-pepper-hot,
+      fa-lemon,
+      fa-ice-cream,
+      fa-hotdog,
+      fa-hamburger,
+      fa-fish,
+      fa-egg,
+      fa-cookie,
+      fa-cheese,
+      fa-carrot,
+      fa-candy-cane,
+      fa-bread-slice,
+      fa-bacon,
+      fa-apple-alt
+    }
+  }
+})
+
 export function GroceryMenu({ interactableID }: { interactableID: InteractableID }): JSX.Element {
   const groceryStoreAreaController =
     useInteractableAreaController<GroceryStoreAreaController>(interactableID);
@@ -232,6 +256,9 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
                 .sort((a, b) => a.name.localeCompare(b.name))
                 .map((item: any) => (
                   <Tr key={item.name}>
+                    <Td><CIcon name = {`fa fa-${item.name}`}/></Td>
+                    {/* <Td><c-icon name = {`fa fa-${item.name}`}/></Td> */}
+                    {/* trying out react-icons fa6 */}
                     <Td>{item.name}</Td>
                     <Td>{item.price}</Td>
                     <Td>{item.quantity}</Td>
