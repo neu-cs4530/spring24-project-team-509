@@ -25,30 +25,45 @@ import GroceryStoreAreaInteractable from './GroceryStoreArea';
 import useTownController from '../../../hooks/useTownController';
 import { supabase } from '../../../supabaseClient';
 import React from 'react';
+import { Icon } from '@chakra-ui/react'
+import { FaStroopwafel,
+  FaPizzaSlice,
+  FaPepperHot,
+  FaLemon,
+  FaIceCream,
+  FaHotdog,
+  FaHamburger,
+  FaFish,
+  FaEgg,
+  FaCookie,
+  FaCheese,
+  FaCarrot,
+  FaCandyCane,
+  FaBreadSlice,
+  FaBacon,
+  FaAppleAlt,
+  FaQuestionCircle } from 'react-icons/fa'
 
-React.use(Chakra, {
-  icons: {
-    iconPack: 'fa',
-    iconSet: {
-      fa-stroopwafel,
-      fa-pizza-slice,
-      fa-pepper-hot,
-      fa-lemon,
-      fa-ice-cream,
-      fa-hotdog,
-      fa-hamburger,
-      fa-fish,
-      fa-egg,
-      fa-cookie,
-      fa-cheese,
-      fa-carrot,
-      fa-candy-cane,
-      fa-bread-slice,
-      fa-bacon,
-      fa-apple-alt
-    }
-  }
-})
+const iconMap: {[key: string]: any} = {
+  'stroopwafel': FaStroopwafel,
+  'pizza-slice': FaPizzaSlice,
+  'pepper-hot': FaPepperHot,
+  'lemon': FaLemon,
+  'ice-cream': FaIceCream,
+  'hotdog': FaHotdog,
+  'hamburger': FaHamburger,
+  'fish': FaFish,
+  'egg': FaEgg,
+  'cookie': FaCookie,
+  'cheese': FaCheese,
+  'carrot': FaCarrot,
+  'candy-cane': FaCandyCane,
+  'bread-slice': FaBreadSlice,
+  'bacon': FaBacon,
+  'apple': FaAppleAlt,
+  'question-circle': FaQuestionCircle,
+};
+}
 
 export function GroceryMenu({ interactableID }: { interactableID: InteractableID }): JSX.Element {
   const groceryStoreAreaController =
@@ -263,9 +278,7 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
                 .sort((a, b) => a.name.localeCompare(b.name))
                 .map((item: any) => (
                   <Tr key={item.name}>
-                    <Td><CIcon name = {`fa fa-${item.name}`}/></Td>
-                    {/* <Td><c-icon name = {`fa fa-${item.name}`}/></Td> */}
-                    {/* trying out react-icons fa6 */}
+                    <Td><Icon as = {iconMap[item.name] || FaQuestionCircle}/></Td>
                     <Td>{item.name}</Td>
                     <Td>{item.price}</Td>
                     <Td>{item.quantity}</Td>
