@@ -62,33 +62,33 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
   }, []);
 
   return (
-    <div className='TradingBoard'>
-      <h1>Trading Board</h1>
+    <Container className='TradingBoard'>
+      <Heading>Trading Board</Heading>
       {items && (
-        <div>
-      <table>
-        <thead>
-          <tr>
-            <th>Player Name</th>
-            <th>Item</th>
-            <th>Quantity</th>
-          </tr>
-        </thead>
-        <tbody>
+        <Container>
+      <Table>
+        <Thead>
+          <Tr>
+            <Th>Player Name</Th>
+            <Th>Item</Th>
+            <Th>Quantity</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
             {items
                 .sort((a, b) => a.name.localeCompare(b.name))
                 .map((item: any) => (
-                  <tr key={item.playerName}>
-                    <td>{item.playerName}</td>
-                    <td>{item.item}</td>
-                    <td>{item.quantity}</td>
-                  </tr>
+                  <Tr key={item.playerName}>
+                    <Td>{item.playerName}</Td>
+                    <Td>{item.item}</Td>
+                    <Td>{item.quantity}</Td>
+                  </Tr>
             ))}
-        </tbody>
-      </table>
-      </div>
+        </Tbody>
+      </Table>
+      </Container>
       )}
-    </div>
+    </Container>
   );
 }
 

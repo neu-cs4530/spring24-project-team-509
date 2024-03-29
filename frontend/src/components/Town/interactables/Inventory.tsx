@@ -61,27 +61,27 @@ export function Inventory({ interactableID }: { interactableID: InteractableID }
   }, []);
 
   return (
-    <div className='Inventory Table'>
-      <h1>Inventory</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>Item Name</th>
-            <th>Quantity</th>
-            <th>Price</th>
-          </tr>
-        </thead>
-        <tbody>
+    <Container className='Inventory Table'>
+      <Heading>Inventory</Heading>
+      <Table>
+        <Thead>
+          <Tr>
+            <Th>Item Name</Th>
+            <Th>Quantity</Th>
+            <Th>Price</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
           {items?.map((item, index) => (
-            <tr key={index}>
-              <td>{item.name}</td>
-              <td>{item.quantity}</td>
-              <td>{item.price}</td>
-            </tr>
+            <Tr key={index}>
+              <Td>{item.name}</Td>
+              <Td>{item.quantity}</Td>
+              <Td>{item.price}</Td>
+            </Tr>
           ))}
-        </tbody>
-      </table>
-    </div>
+        </Tbody>
+      </Table>
+    </Container>
   );
 }
 

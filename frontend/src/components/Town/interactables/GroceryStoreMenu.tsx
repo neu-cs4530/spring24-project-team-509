@@ -186,67 +186,67 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
   // sort((a, b) => a.name.localeCompare(b.name)) for sorting items but it makes everything slow down
   // so I commented it out
   return (
-    <div className='GroceryStoreMenu'>
+    <Container className='GroceryStoreMenu'>
       {dbError && <p>{dbError}</p>}
       {storeInventory && (
-        <div>
+        <Container>
           <Heading as='h3'>GroceryStore</Heading>
-          <table>
-            <thead>
-              <tr>
-                <th>Item Name</th>
-                <th>Price</th>
-                <th>Quantity</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table>
+            <Thead>
+              <Tr>
+                <Th>Item Name</Th>
+                <Th>Price</Th>
+                <Th>Quantity</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
               {storeInventory
                 .sort((a, b) => a.name.localeCompare(b.name))
                 .map((item: any) => (
-                  <tr key={item.name}>
-                    <td>{item.name}</td>
-                    <td>{item.price}</td>
-                    <td>{item.quantity}</td>
-                    <td>
+                  <Tr key={item.name}>
+                    <Td>{item.name}</Td>
+                    <Td>{item.price}</Td>
+                    <Td>{item.quantity}</Td>
+                    <Td>
                       <Button onClick={() => handleAddItem(item.name, item.price)}>Add</Button>
-                    </td>
-                  </tr>
+                    </Td>
+                  </Tr>
                 ))}
-            </tbody>
-          </table>
-        </div>
+            </Tbody>
+          </Table>
+        </Container>
       )}
       {storeCart && (
-        <div>
+        <Container>
           <Heading as='h3'>Cart</Heading>
-          <table>
-            <thead>
-              <tr>
-                <th>Item Name</th>
-                <th>Price</th>
-                <th>Quantity</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table>
+            <Thead>
+              <Tr>
+                <Th>Item Name</Th>
+                <Th>Price</Th>
+                <Th>Quantity</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
               {storeCart
                 .sort((a, b) => a.name.localeCompare(b.name))
                 .map((item: any) => (
-                  <tr key={item.name}>
-                    <td>{item.name}</td>
-                    <td>{item.price}</td>
-                    <td>{item.quantity}</td>
-                    <td>
+                  <Tr key={item.name}>
+                    <Td>{item.name}</Td>
+                    <Td>{item.price}</Td>
+                    <Td>{item.quantity}</Td>
+                    <Td>
                       <Button onClick={() => handleReturnItem(item.name)}>Return</Button>
-                    </td>
-                  </tr>
+                    </Td>
+                  </Tr>
                 ))}
-            </tbody>
-          </table>
-        </div>
+            </Tbody>
+          </Table>
+        </Container>
       )}
       <p>Total Price: {totalPrice}</p>
       <Button onClick={() => handleCheckout()}>Checkout</Button>
-    </div>
+    </Container>
   );
 }
 
