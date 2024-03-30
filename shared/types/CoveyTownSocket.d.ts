@@ -235,16 +235,16 @@ GameMoveCommand<TicTacToeMove> |
 GameMoveCommand<ConnectFourMove> | 
 StartGameCommand | 
 LeaveGameCommand |
-// OpenGroceryStoreCommand |
+OpenGroceryStoreCommand |
 // CalculateTotalCartPriceCommand |
 AddToCartCommand |
 RemoveFromCartCommand |
 CheckOutCommand |
 PostTradingOfferCommand |
 AcceptTradingOfferCommand
-// export interface OpenGroceryStoreCommand {
-//   type: 'OpenGroceryStore';
-// }
+export interface OpenGroceryStoreCommand {
+  type: 'OpenGroceryStore';
+}
 // export interface CalculateTotalCartPriceCommand {
 //   type: 'CalculateTotalCartPrice';
 // }
