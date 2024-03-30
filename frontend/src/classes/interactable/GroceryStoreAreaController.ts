@@ -77,6 +77,12 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
     }
   }
 
+  public handleOpenGroceryStore(): void {
+    this._townController.sendInteractableCommand(this.id, {
+      type: 'OpenGroceryStore',
+    });
+  }
+
   /**
    * To add an item to the cart and remove it from the store inventory.
    *
