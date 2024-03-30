@@ -58,6 +58,11 @@ export default class GroceryStoreArea extends InteractableArea {
     command: CommandType,
     player: Player,
   ): InteractableCommandReturnType<CommandType> {
+    if (command.type === 'OpenGroceryStore') {
+      // maybe add handle total price and inventory?
+      this._emitAreaChanged();
+      return undefined as InteractableCommandReturnType<CommandType>;
+    }
     if (command.type === 'AddToCart') {
       this._handleAddItem(command.itemName, command.price);
       return undefined as InteractableCommandReturnType<CommandType>;
