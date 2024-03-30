@@ -103,6 +103,8 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
     };
   }, [groceryStoreAreaController, storeInventory, dbError, storeCart, totalPrice]);
 
+  groceryStoreAreaController.handleOpenGroceryStore();
+
   // sort((a, b) => a.name.localeCompare(b.name)) for sorting items but it makes everything slow down
   // so I commented it out
   return (
