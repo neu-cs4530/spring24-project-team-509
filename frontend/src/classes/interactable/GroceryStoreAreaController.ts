@@ -1,5 +1,4 @@
 import {
-  GroceryStoreArea,
   GroceryStoreArea as GroceryStoreAreaModel,
   InteractableID,
 } from '../../types/CoveyTownSocket';
@@ -7,7 +6,6 @@ import InteractableAreaController, {
   BaseInteractableEventMap,
   GROCERY_AREA_TYPE,
 } from './InteractableAreaController';
-import { supabase } from '../../supabaseClient';
 import TownController from '../TownController';
 
 export type GroceryStoreAreaEvents = BaseInteractableEventMap & {
@@ -24,7 +22,7 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
 
   protected _storeInventory: any[] = [];
 
-  // protected _cart: any[] = [];
+  protected _cart: any[] = [];
 
   constructor(id: InteractableID, townController: TownController) {
     super(id);
@@ -38,7 +36,7 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
       type: 'GroceryStoreArea',
       totalPrice: this._totalPrice,
       storeInventory: this._storeInventory,
-      // cart: this._cart,
+      cart: this._cart,
     };
   }
 
@@ -62,22 +60,22 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
     return this._storeInventory;
   }
 
-  // get cart(): any[] {
-  //   return this._cart;
-  // }
-
-  protected _updateFrom(updatedModel: GroceryStoreAreaModel): void {
-    if (updatedModel.totalPrice !== this._totalPrice) {
-      this._totalPrice = updatedModel.totalPrice;
-      this.emit('groceryStoreAreaUpdated');
-    }
-    if (updatedModel.storeInventory !== this._storeInventory) {
-      this._storeInventory = updatedModel.storeInventory;
-      this.emit('groceryStoreAreaUpdated');
-    }
+  get cart(): any[] {
+    return this._cart;
   }
 
-  public handleOpenGroceryStore(): void {
+  protected _updateFrom(updatedModel: GroceryStoreAreaModel): void {
+    this._totalPrice = updatedModel.totalPrice;
+    this._storeInventory = updatedModel.storeInventory;
+    this._cart = updatedModel.cart;
+    this.emit('groceryStoreAreaUpdated');
+  }
+
+  /**
+   * To open the grocery store.
+   * To initialize the store inventory and cart.
+   */
+  public async handleOpenGroceryStore(): Promise<void> {
     this._townController.sendInteractableCommand(this.id, {
       type: 'OpenGroceryStore',
     });
