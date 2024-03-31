@@ -28,7 +28,7 @@ export interface Interactable {
 export interface GroceryStoreArea extends Interactable {
   totalPrice: number;
   storeInventory: any[];
-  // cart: any[];
+  cart: any[];
 }
 
 // export type GroceryStoreArea = Interactable

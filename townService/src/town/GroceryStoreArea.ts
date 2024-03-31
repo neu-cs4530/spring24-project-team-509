@@ -15,7 +15,7 @@ export default class GroceryStoreArea extends InteractableArea {
 
   protected _storeInventory: any[] = [];
 
-  // protected _cart: any[] = [];
+  protected _cart: any[] = [];
 
   public constructor(
     { id }: Omit<GroceryStoreAreaModel, 'type'>,
@@ -24,6 +24,7 @@ export default class GroceryStoreArea extends InteractableArea {
   ) {
     super(id, coordinates, townEmitter);
     this._updateStoreInventory();
+    this._updateCart();
     this._updateCartTotalPrice();
   }
 
@@ -34,7 +35,7 @@ export default class GroceryStoreArea extends InteractableArea {
       type: 'GroceryStoreArea',
       totalPrice: this._totalPrice,
       storeInventory: this._storeInventory,
-      // cart: this._cart,
+      cart: this._cart,
     };
   }
 
@@ -48,7 +49,7 @@ export default class GroceryStoreArea extends InteractableArea {
     }
     const rect: BoundingBox = { x: mapObject.x, y: mapObject.y, width, height };
     return new GroceryStoreArea(
-      { id: name, occupants: [], totalPrice: 0, storeInventory: [] },
+      { id: name, occupants: [], totalPrice: 0, storeInventory: [], cart: [] },
       rect,
       broadcastEmitter,
     );
@@ -59,7 +60,6 @@ export default class GroceryStoreArea extends InteractableArea {
     player: Player,
   ): InteractableCommandReturnType<CommandType> {
     if (command.type === 'OpenGroceryStore') {
-      // maybe add handle total price and inventory?
       this._emitAreaChanged();
       return undefined as InteractableCommandReturnType<CommandType>;
     }
@@ -75,7 +75,7 @@ export default class GroceryStoreArea extends InteractableArea {
   }
 
   /**
-   * To fetch the store inventory.
+   * To update the store inventory.
    */
   private async _updateStoreInventory(): Promise<void> {
     const { data, error } = await supabase.from('StoreInventory').select();
@@ -88,19 +88,19 @@ export default class GroceryStoreArea extends InteractableArea {
     this._emitAreaChanged();
   }
 
-  /** TODO:
-   * To fetch the cart.
+  /**
+   * To update the cart.
    */
-  // private async _updateCart(): Promise<void> {
-  //   const { data, error } = await supabase.from('storeCart').select();
-  //   if (data) {
-  //     this._cart = data;
-  //   }
-  //   if (error) {
-  //     throw new Error('Error fetching store cart');
-  //   }
-  //   this._emitAreaChanged
-  // }
+  private async _updateCart(): Promise<void> {
+    const { data, error } = await supabase.from('storeCart').select();
+    if (data) {
+      this._cart = data;
+    }
+    if (error) {
+      throw new Error('Error fetching store cart');
+    }
+    this._emitAreaChanged();
+  }
 
   /**
    * To find the total price of the items in the cart.
@@ -159,6 +159,7 @@ export default class GroceryStoreArea extends InteractableArea {
     } else {
       await supabase.from('storeCart').insert([{ name: itemName, price, quantity: 1 }]);
     }
+    this._updateCart();
     this._updateCartTotalPrice();
     this._emitAreaChanged();
   }
@@ -186,6 +187,7 @@ export default class GroceryStoreArea extends InteractableArea {
         await supabase.from('storeCart').delete().eq('name', itemName);
       }
     }
+    this._updateCart();
     this._updateCartTotalPrice();
     this._emitAreaChanged();
   }
