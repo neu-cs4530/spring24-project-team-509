@@ -45,20 +45,6 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
   };
 
   let isMounted = true;
-  // const fetchStoreInventory = async () => {
-  //   const { data, error } = await supabase.from('StoreInventory').select();
-  //   if (isMounted) {
-  //     if (data) {
-  //       setStoreInventory(data);
-  //       setdbError(null);
-  //     }
-  //     if (error) {
-  //       setdbError(error.message);
-  //       console.error('Error fetching store cart:', error.message);
-  //       setStoreInventory(null);
-  //     }
-  //   }
-  // };
   const fetchStoreInventory = () => {
     const data = groceryStoreAreaController.storeInventory;
     if (isMounted) {
@@ -69,18 +55,11 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
     }
   };
 
-  const fetchCart = async () => {
-    const { data, error } = await supabase.from('storeCart').select();
-    if (isMounted) {
-      if (data) {
-        setStoreCart(data);
-        setdbError(null);
-      }
-      if (error) {
-        setdbError(error.message);
-        console.error('Error fetching store cart:', error.message);
-        setStoreCart(null);
-      }
+  const fetchCart = () => {
+    const data = groceryStoreAreaController.cart;
+    if (data) {
+      setStoreCart(data);
+      setdbError(null);
     }
   };
 
@@ -103,7 +82,8 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
     };
   }, [groceryStoreAreaController, storeInventory, dbError, storeCart, totalPrice]);
 
-  groceryStoreAreaController.handleOpenGroceryStore();
+  // To initialize the grocery store interface data
+  // groceryStoreAreaController.handleOpenGroceryStore();
 
   // sort((a, b) => a.name.localeCompare(b.name)) for sorting items but it makes everything slow down
   // so I commented it out
