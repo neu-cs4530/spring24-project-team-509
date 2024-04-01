@@ -78,7 +78,7 @@ export default class TradingArea extends InteractableArea {
   ): Promise<void> {
     const { data, error } = await supabase
       .from('tradingBoard')
-      .insert([{ playerID: playerID, playerName: playerName, item: item, quantity: quantity }]);
+      .insert([{ playerID, playerName, item, quantity }]);
     if (data) {
       this._tradingBoard = data;
     }

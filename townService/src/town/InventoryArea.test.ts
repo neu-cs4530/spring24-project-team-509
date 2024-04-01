@@ -14,7 +14,7 @@ describe('InventoryArea', () => {
 
   beforeEach(() => {
     mockClear(townEmitter);
-    testArea = new InventoryArea({ id, occupants: [] }, testAreaBox, townEmitter);
+    testArea = new InventoryArea({ id, occupants: [], playerInventory: [] }, testAreaBox, townEmitter);
     newPlayer = new Player(nanoid(), mock<TownEmitter>());
     testArea.add(newPlayer);
   });

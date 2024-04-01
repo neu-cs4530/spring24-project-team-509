@@ -162,18 +162,22 @@ export default class GroceryStoreArea extends InteractableArea {
       });
       await supabase.from('playerInventory').upsert([
         {
-          playerID: playerID,
+          playerID,
           itemList: JSON.stringify(inventoryList),
           balance: 100,
         },
       ]);
       for (const item of cartData) {
-        await supabase.from('storeCart').delete().eq('name', item.name);
+        this._removeItem(item.name);
       }
       this._updateCart();
       this._totalPrice = 0;
       this._emitAreaChanged();
     }
+  }
+
+  private async _removeItem(itemName: string): Promise<void> {
+    await supabase.from('storeCart').delete().eq('name', itemName);
   }
 
   /**

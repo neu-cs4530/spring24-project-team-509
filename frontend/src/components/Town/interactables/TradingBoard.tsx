@@ -31,7 +31,7 @@ type tradingRows = {
 };
 
 export function TradingBoard({ interactableID }: { interactableID: InteractableID }): JSX.Element {
-  const [items, setItems] = useState<any[] | null>([]);
+  const [tradingBoard, setTradingBoard] = useState<any[] | null>([]);
   const [dbError, setdbError] = useState<string | null>(null);
 
   const tradingAreaController =
@@ -42,7 +42,7 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
   );
 
   const fetchTradingBoard = async () => {
-    setItems(tradingAreaController.tradingBoard);
+    setTradingBoard(tradingAreaController.tradingBoard);
   }
 
   useEffect(() => {
@@ -55,12 +55,12 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
     return () => {
       tradingAreaController.removeListener('tradingAreaUpdated', updateInventoryAreaModel);
     };
-  }, []);
+  }, [tradingAreaController, tradingBoard]);
 
   return (
     <Container className='TradingBoard'>
       <Heading>Trading Board</Heading>
-      {items && (
+      {tradingBoard && (
         <Container>
       <Table>
         <Thead>
@@ -71,7 +71,7 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
           </Tr>
         </Thead>
         <Tbody>
-            {items
+            {tradingBoard
                 .sort((a, b) => a.name.localeCompare(b.name))
                 .map((item: any) => (
                   <Tr key={item.playerName}>
