@@ -21,8 +21,8 @@ import {
   Tr,
 } from '@chakra-ui/react';
 import { InventoryArea as InventoryAreaModel } from '../../../types/CoveyTownSocket';
-import { supabase } from '../../../supabaseClient';
 import { set } from 'lodash';
+import GroceryStoreAreaController from '../../../classes/interactable/GroceryStoreAreaController';
 
 type playerItems = {
   name: string;
@@ -31,64 +31,59 @@ type playerItems = {
 };
 
 export function Inventory({ interactableID }: { interactableID: InteractableID }): JSX.Element {
-  const [items, setItems] = useState<playerItems[] | null>([]);
-  const [dbError, setdbError] = useState<string | null>(null);
-
   const inventoryAreaController =
     useInteractableAreaController<InventoryAreaController>(interactableID);
+  const [items, setItems] = useState<playerItems[] | null>([]);
+  const [dbError, setdbError] = useState<string | null>(null);
+  const [playerInventory, setPlayerInventory] = useState<null[] | null>(inventoryAreaController.playerInventory);
 
   const [inventoryAreaModel, setInventoryAreaModel] = useState<InventoryAreaModel>(
     inventoryAreaController.toInteractableAreaModel(),
   );
 
+  const fetchInventory = async () => {
+    //await inventoryAreaController.handleOpenInventory();
+    setItems(inventoryAreaController.playerInventory);
+  }
+
   useEffect(() => {
     const updateInventoryAreaModel = () => {
-      setInventoryAreaModel(inventoryAreaController.toInteractableAreaModel());
+      fetchInventory();
+      console.log('inventoryArea', playerInventory);
     };
     inventoryAreaController.addListener('inventoryAreaUpdated', updateInventoryAreaModel);
-
-    let isMounted = true;
-    const fetchStoreInventory = async () => {
-      const { data, error } = await supabase.from('playerInventory').select();
-      if (isMounted) {
-        if (data) {
-          setItems(data[0].itemList);
-          setdbError(null);
-        }
-        if (error) {
-          setdbError(error.message);
-        }
-      }
-    };
-
-    fetchStoreInventory();
+    fetchInventory();
+    inventoryAreaController.handleOpenInventory();
     return () => {
-      isMounted = false;
       inventoryAreaController.removeListener('iventoryAreaUpdated', updateInventoryAreaModel);
     };
-  }, []);
+  }, [inventoryAreaController, playerInventory]);
 
   return (
+    
     <Container className='Inventory Table'>
       <Heading>Inventory</Heading>
+      {playerInventory && (
       <Table>
         <Thead>
           <Tr>
             <Th>Item Name</Th>
-            <Th>Quantity</Th>
             <Th>Price</Th>
+            <Th>Quantity</Th>
           </Tr>
         </Thead>
         <Tbody>
-          {items?.map((item, index) => (
-            <Tr key={index}>
-              <Td>{item.name}</Td>
-              <Td>{item.quantity}</Td>
-              <Td>{item.price}</Td>
-            </Tr>
-          ))}
+        {playerInventory
+                .map((item: any) => (
+                  <Tr key={item.name}>
+                    <Td>{item.name}</Td>
+                    <Td>{item.price}</Td>
+                    <Td>{item.quantity}</Td>
+                  </Tr>
+                ))}
         </Tbody>
       </Table>
+      )};
     </Container>
   );
 }
@@ -96,6 +91,10 @@ export function Inventory({ interactableID }: { interactableID: InteractableID }
 export default function InventoryAreaWrapper(): JSX.Element {
   const inventoryArea = useInteractable<InventoryAreaInteractable>('inventoryArea');
   const townController = useTownController();
+  let controller;
+  if (inventoryArea) {
+    controller = townController.getInventoryAreaController(inventoryArea);
+  }
   const closeModal = useCallback(() => {
     if (inventoryArea) {
       townController.interactEnd(inventoryArea);
@@ -111,6 +110,7 @@ export default function InventoryAreaWrapper(): JSX.Element {
   }, [townController, inventoryArea]);
 
   if (inventoryArea) {
+    controller?.handleOpenInventory();
     return (
       <Modal
         isOpen={true}

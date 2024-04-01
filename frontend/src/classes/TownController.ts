@@ -667,9 +667,9 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
               new GroceryStoreAreaController(eachInteractable.id, this),
             );
           } else if (isTradingArea(eachInteractable)) {
-            this._interactableControllers.push(new TradingAreaController(eachInteractable.id));
+            this._interactableControllers.push(new TradingAreaController(eachInteractable.id, this));
           } else if (isInventoryArea(eachInteractable)) {
-            this._interactableControllers.push(new InventoryAreaController(eachInteractable.id));
+            this._interactableControllers.push(new InventoryAreaController(eachInteractable.id, this));
           }
         });
         this._userID = initialData.userID;

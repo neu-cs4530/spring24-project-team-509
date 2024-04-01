@@ -60,32 +60,11 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
     setTotalPrice(groceryStoreAreaController.totalPrice);
   }
 
-  const handleCheckout = async () => {
-    const { data: cartData, error: cartError } = await supabase.from('storeCart').select();
-    if (cartData && cartData.length > 0) {
-      const itemList = cartData.map((item: any) => ({
-        name: item.name,
-        price: item.price,
-        quantity: item.quantity,
-      }));
-      await supabase.from('playerInventory').upsert([
-        {
-          playerID: 5,
-          itemList: JSON.stringify(itemList),
-          balance: 100,
-        },
-      ]);
-      await supabase.from('storeCart').delete();
-      setStoreCart([]);
-      setTotalPrice(0);
-    }
-  };
-
   useEffect(() => {
     const updateGroceryStoreAreaModel = () => {
       setGroceryStoreAreaModel(groceryStoreAreaController.toInteractableAreaModel());
       fetchStore();
-      console.log(storeCart, totalPrice, storeInventory);
+      console.log('groceryarea', storeCart, totalPrice, storeInventory);
     };
     groceryStoreAreaController.addListener('groceryStoreAreaUpdated', updateGroceryStoreAreaModel);
     fetchStore();
@@ -95,9 +74,10 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
         updateGroceryStoreAreaModel,
       );
     };
-  }, [groceryStoreAreaController, dbError, groceryStoreAreaController, storeCart, totalPrice, storeInventory]);
-  //groceryStoreAreaController.handleOpenGroceryStore();
-  
+  }, [dbError, groceryStoreAreaController, storeCart, totalPrice, storeInventory]);
+
+
+
   return (
     <Container className='GroceryStoreMenu'>
       {dbError && <p>{dbError}</p>}

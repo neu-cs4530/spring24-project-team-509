@@ -22,7 +22,6 @@ import {
 } from '@chakra-ui/react';
 import { TradingArea as TradingAreaModel } from '../../../types/CoveyTownSocket';
 import { supabase } from '../../../supabaseClient';
-import { set } from 'lodash';
 
 type tradingRows = {
   id: string;
@@ -42,29 +41,18 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
     tradingAreaController.toInteractableAreaModel(),
   );
 
+  const fetchTradingBoard = async () => {
+    setItems(tradingAreaController.tradingBoard);
+  }
+
   useEffect(() => {
     const updateInventoryAreaModel = () => {
       setTradingAreaModel(tradingAreaController.toInteractableAreaModel());
     };
     tradingAreaController.addListener('tradingAreaUpdated', updateInventoryAreaModel);
-
-    let isMounted = true;
-    const fetchStoreInventory = async () => {
-      const { data, error } = await supabase.from('tradingBoard').select();
-      if (isMounted) {
-        if (data) {
-          setItems(data);
-          setdbError(null);
-        }
-        if (error) {
-          setdbError(error.message);
-        }
-      }
-    };
-
-    fetchStoreInventory();
+    fetchTradingBoard();
+    
     return () => {
-      isMounted = false;
       tradingAreaController.removeListener('tradingAreaUpdated', updateInventoryAreaModel);
     };
   }, []);
@@ -103,6 +91,10 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
 export default function TradingAreaWrapper(): JSX.Element {
   const tradingArea = useInteractable<TradingAreaInteractable>('tradingArea');
   const townController = useTownController();
+  let controller;
+  if (tradingArea) {
+    controller = townController.getTradingAreaController(tradingArea);
+  }
   const closeModal = useCallback(() => {
     if (tradingArea) {
       townController.interactEnd(tradingArea);
@@ -118,6 +110,7 @@ export default function TradingAreaWrapper(): JSX.Element {
   }, [townController, tradingArea]);
 
   if (tradingArea) {
+    controller?.handleOpenTradingBoard();
     return (
       <Modal
         isOpen={true}

@@ -1,3 +1,5 @@
+import { type } from "os";
+
 export type TownJoinResponse = {
   /** Unique ID that represents this player * */
   userID: string;
@@ -33,9 +35,11 @@ export interface GroceryStoreArea extends Interactable {
 }
 
 export interface TradingArea extends Interactable {
+  tradingBoard: any[];
 }
 
 export interface InventoryArea extends Interactable {
+  playerInventory: any[];
 }
 
 export type TownSettingsUpdate = {
@@ -245,7 +249,18 @@ AddToCartCommand |
 RemoveFromCartCommand |
 CheckOutCommand |
 PostTradingOfferCommand |
-AcceptTradingOfferCommand
+AcceptTradingOfferCommand |
+OpenInventoryCommand |
+OpenTradingBoardCommand;
+
+export interface OpenTradingBoardCommand {
+  type : 'OpenTradingBoard';
+}
+
+export interface OpenInventoryCommand {
+  type: 'OpenInventory';
+}
+
 export interface OpenGroceryStoreCommand {
   type: 'OpenGroceryStore';
 }
@@ -266,12 +281,16 @@ export interface CheckOutCommand {
 }
 export interface PostTradingOfferCommand {
   type: 'PostTradingOffer';
-  tradingOffer: TradingOffer;
+  item: string;
+  quantity: number;
 }
+
 export interface AcceptTradingOfferCommand {
   type: 'AcceptTradingOffer';
-  tradingOffer: TradingOffer;
+  item: string;
+  quantity: number;
 }
+
 export interface ViewingAreaUpdateCommand  {
   type: 'ViewingAreaUpdate';
   update: ViewingArea;

@@ -140,26 +140,41 @@ export default class GroceryStoreArea extends InteractableArea {
   private async _handleCheckout(playerID: string): Promise<void> {
     const { data: cartData, error: cartError } = await supabase.from('storeCart').select();
     if (cartData && cartData.length > 0) {
-      const itemList = cartData.map((item: any) => ({
-        name: item.name,
-        price: item.price,
-        quantity: item.quantity,
-      }));
+      const { data: inventoryData, error: inventoryError } = await supabase
+        .from('playerInventory')
+        .select('itemList')
+        .eq('playerID', playerID);
+      let inventoryList: { name: any; price: any; quantity: any }[] = [];
+      if (inventoryData && inventoryData.length > 0) {
+        inventoryList = JSON.parse(inventoryData[0].itemList);
+      }
+      cartData.forEach((cartItem: any) => {
+        const existingItem = inventoryList.find((item: any) => item.name === cartItem.name);
+        if (existingItem) {
+          existingItem.quantity += cartItem.quantity;
+        } else {
+          inventoryList.push({
+            name: cartItem.name,
+            price: cartItem.price,
+            quantity: cartItem.quantity,
+          });
+        }
+      });
       await supabase.from('playerInventory').upsert([
         {
           playerID: playerID,
-          itemList: JSON.stringify(itemList),
+          itemList: JSON.stringify(inventoryList),
           balance: 100,
         },
       ]);
       for (const item of cartData) {
         await supabase.from('storeCart').delete().eq('name', item.name);
-    }
+      }
       this._updateCart();
       this._totalPrice = 0;
       this._emitAreaChanged();
+    }
   }
-}
 
   /**
    * To add an item to the cart and remove it from the store inventory.
