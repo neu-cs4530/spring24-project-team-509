@@ -35,7 +35,9 @@ export function Inventory({ interactableID }: { interactableID: InteractableID }
     useInteractableAreaController<InventoryAreaController>(interactableID);
   const [items, setItems] = useState<playerItems[] | null>([]);
   const [dbError, setdbError] = useState<string | null>(null);
-  const [playerInventory, setPlayerInventory] = useState<null[] | null>(inventoryAreaController.playerInventory);
+  const [playerInventory, setPlayerInventory] = useState<null[] | null>(
+    inventoryAreaController.playerInventory,
+  );
 
   const [inventoryAreaModel, setInventoryAreaModel] = useState<InventoryAreaModel>(
     inventoryAreaController.toInteractableAreaModel(),
@@ -44,7 +46,7 @@ export function Inventory({ interactableID }: { interactableID: InteractableID }
   const fetchInventory = async () => {
     //await inventoryAreaController.handleOpenInventory();
     setItems(inventoryAreaController.playerInventory);
-  }
+  };
 
   useEffect(() => {
     const updateInventoryAreaModel = () => {
@@ -60,30 +62,29 @@ export function Inventory({ interactableID }: { interactableID: InteractableID }
   }, [inventoryAreaController, playerInventory]);
 
   return (
-    
     <Container className='Inventory Table'>
       <Heading>Inventory</Heading>
       {playerInventory && (
-      <Table>
-        <Thead>
-          <Tr>
-            <Th>Item Name</Th>
-            <Th>Price</Th>
-            <Th>Quantity</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-        {playerInventory
-                .map((item: any) => (
-                  <Tr key={item.name}>
-                    <Td>{item.name}</Td>
-                    <Td>{item.price}</Td>
-                    <Td>{item.quantity}</Td>
-                  </Tr>
-                ))}
-        </Tbody>
-      </Table>
-      )};
+        <Table>
+          <Thead>
+            <Tr>
+              <Th>Item Name</Th>
+              <Th>Price</Th>
+              <Th>Quantity</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {playerInventory.map((item: any) => (
+              <Tr key={item.name}>
+                <Td>{item.name}</Td>
+                <Td>{item.price}</Td>
+                <Td>{item.quantity}</Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      )}
+      ;
     </Container>
   );
 }

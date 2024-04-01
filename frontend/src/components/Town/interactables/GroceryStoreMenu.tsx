@@ -25,14 +25,16 @@ import GroceryStoreAreaInteractable from './GroceryStoreArea';
 import useTownController from '../../../hooks/useTownController';
 import { supabase } from '../../../supabaseClient';
 import React from 'react';
-import { Icon } from '@chakra-ui/react'
+import { Icon } from '@chakra-ui/react';
 import { set } from 'lodash';
 
 export function GroceryMenu({ interactableID }: { interactableID: InteractableID }): JSX.Element {
   const groceryStoreAreaController =
     useInteractableAreaController<GroceryStoreAreaController>(interactableID);
 
-  const [storeInventory, setStoreInventory] = useState<any[] | null>(groceryStoreAreaController.storeInventory);
+  const [storeInventory, setStoreInventory] = useState<any[] | null>(
+    groceryStoreAreaController.storeInventory,
+  );
   const [dbError, setdbError] = useState<string | null>(null);
   const [storeCart, setStoreCart] = useState<any[] | null>(groceryStoreAreaController.cart);
   const [totalPrice, setTotalPrice] = useState<number>(groceryStoreAreaController.totalPrice);
@@ -56,9 +58,9 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
 
   const fetchStore = () => {
     setStoreInventory(groceryStoreAreaController.storeInventory);
-    setStoreCart(groceryStoreAreaController.cart); 
+    setStoreCart(groceryStoreAreaController.cart);
     setTotalPrice(groceryStoreAreaController.totalPrice);
-  }
+  };
 
   useEffect(() => {
     const updateGroceryStoreAreaModel = () => {
@@ -75,8 +77,6 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
       );
     };
   }, [dbError, groceryStoreAreaController, storeCart, totalPrice, storeInventory]);
-
-
 
   return (
     <Container className='GroceryStoreMenu'>
@@ -101,18 +101,21 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
                     <Td>{item.price}</Td>
                     <Td>{item.quantity}</Td>
                     <Td>
-                      <Button onClick={async () => {
-                        try {
-                          await handleAddItem(item.name, item.price);
-                        } catch (err) {
-                          toast({
-                            title: 'Error adding item',
-                            description: (err as Error).toString(),
-                            status: 'error',
-                          });
-                        }
-                      }}
-                      >Add</Button>
+                      <Button
+                        onClick={async () => {
+                          try {
+                            await handleAddItem(item.name, item.price);
+                          } catch (err) {
+                            toast({
+                              title: 'Error adding item',
+                              description: (err as Error).toString(),
+                              status: 'error',
+                            });
+                          }
+                        }}
+                      >
+                        Add
+                      </Button>
                     </Td>
                   </Tr>
                 ))}
@@ -185,7 +188,8 @@ export default function GroceryStoreAreaWrapper(): JSX.Element {
           townController.unPause();
         }}
         closeOnOverlayClick={false}
-        size='xl'>
+        size='xl'
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>{groceryStoreArea.name}</ModalHeader>
