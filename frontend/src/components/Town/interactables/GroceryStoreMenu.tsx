@@ -4,20 +4,14 @@ import { InteractableID } from '../../../types/CoveyTownSocket';
 import { useCallback, useEffect, useState } from 'react';
 import {
   Button,
-  Container,
   Heading,
+  Icon,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  Table,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
   useToast,
 } from '@chakra-ui/react';
 import { GroceryStoreArea as GroceryStoreAreaModel } from '../../../types/CoveyTownSocket';
@@ -25,9 +19,7 @@ import GroceryStoreAreaInteractable from './GroceryStoreArea';
 import useTownController from '../../../hooks/useTownController';
 import { supabase } from '../../../supabaseClient';
 import React from 'react';
-import { Icon } from '@chakra-ui/react'
-import { FaStroopwafel,
-  FaPizzaSlice,
+import {
   FaPepperHot,
   FaLemon,
   FaIceCream,
@@ -42,30 +34,30 @@ import { FaStroopwafel,
   FaBreadSlice,
   FaBacon,
   FaAppleAlt,
-  FaQuestionCircle } from 'react-icons/fa'
-
-const iconMap: {[key: string]: any} = {
-  'stroopwafel': FaStroopwafel,
-  'pizza-slice': FaPizzaSlice,
-  'pepper-hot': FaPepperHot,
-  'lemon': FaLemon,
-  'ice-cream': FaIceCream,
-  'hotdog': FaHotdog,
-  'hamburger': FaHamburger,
-  'fish': FaFish,
-  'egg': FaEgg,
-  'cookie': FaCookie,
-  'cheese': FaCheese,
-  'carrot': FaCarrot,
-  'candy-cane': FaCandyCane,
-  'bread-slice': FaBreadSlice,
-  'bacon': FaBacon,
-  'apple': FaAppleAlt,
-  'question-circle': FaQuestionCircle,
-};
-}
+  FaQuestionCircle,
+  FaPizzaSlice,
+} from 'react-icons/fa';
 
 export function GroceryMenu({ interactableID }: { interactableID: InteractableID }): JSX.Element {
+  const iconMap = {
+    'pizza-slice': FaPizzaSlice,
+    'hot-pepper': FaPepperHot,
+    'lemon': FaLemon,
+    'ice-cream': FaIceCream,
+    'hotdog': FaHotdog,
+    'hamburger': FaHamburger,
+    'fish': FaFish,
+    'egg': FaEgg,
+    'cookie': FaCookie,
+    'cheese': FaCheese,
+    'carrot': FaCarrot,
+    'candy-cane': FaCandyCane,
+    'bread-slice': FaBreadSlice,
+    'bacon': FaBacon,
+    'apple': FaAppleAlt,
+    'question-circle': FaQuestionCircle,
+  };
+
   const groceryStoreAreaController =
     useInteractableAreaController<GroceryStoreAreaController>(interactableID);
 
@@ -107,7 +99,6 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
       }
     }
   };
-  
 
   const handleAddItemToInventory = async (itemName: string) => {
     const { data } = await supabase.from('StoreInventory').select().eq('name', itemName);
@@ -152,7 +143,6 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
       await supabase.from('storeCart').upsert([{ name: itemName, price: price, quantity: 1 }]);
     }
   };
-  
 
   const handleAddItem = async (itemName: string, price: number) => {
     handleAddItemToCart(itemName, price);
@@ -232,68 +222,70 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
   // sort((a, b) => a.name.localeCompare(b.name)) for sorting items but it makes everything slow down
   // so I commented it out
   return (
-    <Container className='GroceryStoreMenu'>
+    <div className='GroceryStoreMenu'>
       {dbError && <p>{dbError}</p>}
       {storeInventory && (
-        <Container>
+        <div>
           <Heading as='h3'>GroceryStore</Heading>
-          <Table>
-            <Thead>
-              <Tr>
-                <Th>Item Name</Th>
-                <Th>Price</Th>
-                <Th>Quantity</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
+          <table>
+            <thead>
+              <tr>
+                <th>Item Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+              </tr>
+            </thead>
+            <tbody>
               {storeInventory
                 .sort((a, b) => a.name.localeCompare(b.name))
                 .map((item: any) => (
-                  <Tr key={item.name}>
-                    <Td>{item.name}</Td>
-                    <Td>{item.price}</Td>
-                    <Td>{item.quantity}</Td>
-                    <Td>
+                  <tr key={item.name}>
+                    <td>{item.name}</td>
+                    <td>{item.price}</td>
+                    <td>{item.quantity}</td>
+                    <td>
                       <Button onClick={() => handleAddItem(item.name, item.price)}>Add</Button>
-                    </Td>
-                  </Tr>
+                    </td>
+                  </tr>
                 ))}
-            </Tbody>
-          </Table>
-        </Container>
+            </tbody>
+          </table>
+        </div>
       )}
       {storeCart && (
-        <Container>
+        <div>
           <Heading as='h3'>Cart</Heading>
-          <Table>
-            <Thead>
-              <Tr>
-                <Th>Item Name</Th>
-                <Th>Price</Th>
-                <Th>Quantity</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
+          <table>
+            <thead>
+              <tr>
+                <th>Item Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+              </tr>
+            </thead>
+            <tbody>
               {storeCart
                 .sort((a, b) => a.name.localeCompare(b.name))
                 .map((item: any) => (
-                  <Tr key={item.name}>
-                    <Td><Icon as = {iconMap[item.name] || FaQuestionCircle}/></Td>
-                    <Td>{item.name}</Td>
-                    <Td>{item.price}</Td>
-                    <Td>{item.quantity}</Td>
-                    <Td>
+                  <tr key={item.name}>
+                    <td>
+                      <Icon as={iconMap[item.name] || FaQuestionCircle} />
+                    </td>
+                    <td>{item.name}</td>
+                    <td>{item.price}</td>
+                    <td>{item.quantity}</td>
+                    <td>
                       <Button onClick={() => handleReturnItem(item.name)}>Return</Button>
-                    </Td>
-                  </Tr>
+                    </td>
+                  </tr>
                 ))}
-            </Tbody>
-          </Table>
-        </Container>
+            </tbody>
+          </table>
+        </div>
       )}
       <p>Total Price: {totalPrice}</p>
       <Button onClick={() => handleCheckout()}>Checkout</Button>
-    </Container>
+    </div>
   );
 }
 

@@ -22,7 +22,7 @@ import {
 } from '@chakra-ui/react';
 import { InventoryArea as InventoryAreaModel } from '../../../types/CoveyTownSocket';
 import { supabase } from '../../../supabaseClient';
-import { set } from 'lodash';
+import React from 'react';
 
 type playerItems = {
   name: string;
@@ -64,7 +64,7 @@ export function Inventory({ interactableID }: { interactableID: InteractableID }
     fetchStoreInventory();
     return () => {
       isMounted = false;
-      inventoryAreaController.removeListener('iventoryAreaUpdated', updateInventoryAreaModel);
+      inventoryAreaController.removeListener('inventoryAreaUpdated', updateInventoryAreaModel);
     };
   }, []);
 
@@ -119,8 +119,7 @@ export default function InventoryAreaWrapper(): JSX.Element {
           townController.unPause();
         }}
         closeOnOverlayClick={false}
-        size='xl'
-      >
+        size='xl'>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>{inventoryArea.name}</ModalHeader>
