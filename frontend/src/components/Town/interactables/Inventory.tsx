@@ -45,7 +45,7 @@ export function Inventory({ interactableID }: { interactableID: InteractableID }
 
   const fetchInventory = async () => {
     //await inventoryAreaController.handleOpenInventory();
-    setItems(inventoryAreaController.playerInventory);
+    setPlayerInventory(inventoryAreaController.playerInventory);
   };
 
   useEffect(() => {
@@ -84,7 +84,6 @@ export function Inventory({ interactableID }: { interactableID: InteractableID }
           </Tbody>
         </Table>
       )}
-      ;
     </Container>
   );
 }

@@ -167,17 +167,16 @@ export default class GroceryStoreArea extends InteractableArea {
           balance: 100,
         },
       ]);
-      for (const item of cartData) {
-        this._removeItem(item.name);
-      }
+
+      const deletePromises = cartData.map(item =>
+        supabase.from('storeCart').delete().eq('name', item.name),
+      );
+      await Promise.all(deletePromises);
+
       this._updateCart();
       this._totalPrice = 0;
       this._emitAreaChanged();
     }
-  }
-
-  private async _removeItem(itemName: string): Promise<void> {
-    await supabase.from('storeCart').delete().eq('name', itemName);
   }
 
   /**
