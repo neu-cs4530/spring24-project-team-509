@@ -22,7 +22,7 @@ import {
 } from '@chakra-ui/react';
 import { InventoryArea as InventoryAreaModel } from '../../../types/CoveyTownSocket';
 import { set } from 'lodash';
-import GroceryStoreAreaController from '../../../classes/interactable/GroceryStoreAreaController';
+import React from 'react';
 
 type playerItems = {
   name: string;

@@ -49,7 +49,7 @@ class MockInventoryAreaController extends InventoryAreaController {
 
   public constructor() {
     const id = nanoid();
-    super(id);
+    super(id, mock<TownController>());
     this._mockID = id;
   }
 
