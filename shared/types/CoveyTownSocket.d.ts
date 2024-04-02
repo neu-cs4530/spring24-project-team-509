@@ -1,3 +1,5 @@
+import { type } from "os";
+
 export type TownJoinResponse = {
   /** Unique ID that represents this player * */
   userID: string;
@@ -17,11 +19,27 @@ export type TownJoinResponse = {
   interactables: TypedInteractable[];
 }
 
-export type InteractableType = 'ConversationArea' | 'ViewingArea' | 'TicTacToeArea' | 'ConnectFourArea' | 'GroceryStoreArea' | 'TradingArea';
+export type InteractableType = 'ConversationArea' | 'ViewingArea' | 'TicTacToeArea' | 'ConnectFourArea' | 'GroceryStoreArea' 
+| 'TradingArea' | 'InventoryArea';
 export interface Interactable {
   type: InteractableType;
   id: InteractableID;
   occupants: PlayerID[];
+}
+
+// TODO
+export interface GroceryStoreArea extends Interactable {
+  totalPrice: number;
+  storeInventory: any[];
+  cart: any[];
+}
+
+export interface TradingArea extends Interactable {
+  tradingBoard: any[];
+}
+
+export interface InventoryArea extends Interactable {
+  playerInventory: any[];
 }
 
 export type TownSettingsUpdate = {
@@ -60,13 +78,6 @@ export type ChatMessage = {
 
 export interface ConversationArea extends Interactable {
   topic?: string;
-};
-
-export interface GroceryStoreArea extends Interactable {
-}
-
-
-export interface TradingArea extends Interactable {
 };
 
 export interface BoundingBox {
@@ -225,29 +236,61 @@ interface InteractableCommandBase {
   type: string;
 }
 
-export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | GameMoveCommand<ConnectFourMove> | StartGameCommand | LeaveGameCommand
+export type InteractableCommand =  
+ViewingAreaUpdateCommand | 
+JoinGameCommand | 
+GameMoveCommand<TicTacToeMove> | 
+GameMoveCommand<ConnectFourMove> | 
+StartGameCommand | 
+LeaveGameCommand |
+OpenGroceryStoreCommand |
+// CalculateTotalCartPriceCommand |
+AddToCartCommand |
+RemoveFromCartCommand |
+CheckOutCommand |
+PostTradingOfferCommand |
+AcceptTradingOfferCommand |
+OpenInventoryCommand |
+OpenTradingBoardCommand;
+
+export interface OpenTradingBoardCommand {
+  type : 'OpenTradingBoard';
+}
+
+export interface OpenInventoryCommand {
+  type: 'OpenInventory';
+}
+
 export interface OpenGroceryStoreCommand {
   type: 'OpenGroceryStore';
 }
+// export interface CalculateTotalCartPriceCommand {
+//   type: 'CalculateTotalCartPrice';
+// }
 export interface AddToCartCommand {
   type: 'AddToCart';
-  item: GroceryStoreItem;
+  itemName: string;
+  price: number
 }
 export interface RemoveFromCartCommand {
   type: 'RemoveFromCart';
-  item: GroceryStoreItem;
+  itemName: string;
 }
 export interface CheckOutCommand {
   type: 'CheckOut';
 }
 export interface PostTradingOfferCommand {
   type: 'PostTradingOffer';
-  tradingOffer: TradingOffer;
+  item: string;
+  quantity: number;
 }
+
 export interface AcceptTradingOfferCommand {
   type: 'AcceptTradingOffer';
-  tradingOffer: TradingOffer;
+  item: string;
+  quantity: number;
 }
+
 export interface ViewingAreaUpdateCommand  {
   type: 'ViewingAreaUpdate';
   update: ViewingArea;
@@ -269,7 +312,6 @@ export interface GameMoveCommand<MoveType> {
   move: MoveType;
 }
 
-// TODO? What are the command returning?
 export type InteractableCommandReturnType<CommandType extends InteractableCommand> = 
   CommandType extends JoinGameCommand ? { gameID: string}:
   CommandType extends ViewingAreaUpdateCommand ? undefined :

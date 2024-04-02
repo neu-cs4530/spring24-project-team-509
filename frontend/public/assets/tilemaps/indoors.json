@@ -509,15 +509,15 @@
                 {
                  "height":224,
                  "id":31,
-                 "name":"Tic Tac Toe 2",
+                 "name":"Inventory Table",
                  "properties":[
                         {
                          "name":"type",
                          "type":"string",
-                         "value":"TicTacToe"
+                         "value":"InventoryArea"
                         }],
                  "rotation":0,
-                 "type":"ConversationArea",
+                 "type":"InventoryArea",
                  "visible":true,
                  "width":164.667,
                  "x":3482.99983333333,
@@ -641,7 +641,8 @@
                  "width":110,
                  "x":3863.33333333333,
                  "y":1082.66666666667
-                }, 
+                },
+                 
                 {
                  "height":81.3333333333334,
                  "id":75,
@@ -658,7 +659,8 @@
                  "width":132.666666666667,
                  "x":3874.66666666667,
                  "y":684.666666666667
-                }],
+                }
+              ],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -666,7 +668,7 @@
          "y":0
         }],
  "nextlayerid":8,
- "nextobjectid":76,
+ "nextobjectid":77,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.2",

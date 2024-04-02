@@ -69,6 +69,7 @@ export default class ConversationAreaController extends InteractableAreaControll
 
   protected _updateFrom(newModel: ConversationAreaModel): void {
     this.topic = newModel.topic;
+    console.log('topic');
   }
 
   /**

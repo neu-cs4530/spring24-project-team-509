@@ -23,6 +23,7 @@ export const VIEWING_AREA_TYPE = 'Viewing Area';
 export const GAME_AREA_TYPE = 'Game Area';
 export const GROCERY_AREA_TYPE = 'Grocery Store Area';
 export const TRADING_AREA_TYPE = 'Trading Area';
+export const INVENTORY_AREA_TYPE = 'Inventory Area';
 /**
  * A InteractableAreaController manages the local behavior of a interactable area in the frontend,
  * implementing the logic to bridge between the townService's interpretation of interactable areas and the
