@@ -15,7 +15,6 @@ export default class InventoryAreaController extends InteractableAreaController<
   InventoryAreaEvents,
   InventoryAreaModel
 > {
-
   protected _townController: TownController;
 
   protected _playerInventory: any[] = [];
@@ -25,7 +24,7 @@ export default class InventoryAreaController extends InteractableAreaController<
     this._townController = townController;
     this._playerInventory = [];
   }
-  
+
   toInteractableAreaModel(): InventoryAreaModel {
     return {
       id: this.id,
@@ -65,7 +64,7 @@ export default class InventoryAreaController extends InteractableAreaController<
    * To initialize the store inventory and cart.
    */
   public async handleOpenInventory(): Promise<void> {
-    console.log('controller opens')
+    console.log('controller opens');
     await this._townController.sendInteractableCommand(this.id, {
       type: 'OpenInventory',
     });

@@ -90,7 +90,7 @@ export default function TownMap(): JSX.Element {
       <GameAreaWrapper />
       <GroceryStoreAreaWrapper />
       <InventoryAreaWrapper />
-      <TradingAreaWrapper/>
+      <TradingAreaWrapper />
       <aside className={clsx(classes.chatWindowContainer, { [classes.hide]: !isChatWindowOpen })}>
         <ChatWindow />
       </aside>

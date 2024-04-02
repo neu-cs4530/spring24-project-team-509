@@ -77,7 +77,7 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
    * To initialize the store inventory and cart.
    */
   public async handleOpenGroceryStore(): Promise<void> {
-    console.log('controller opens')
+    console.log('controller opens');
     await this._townController.sendInteractableCommand(this.id, {
       type: 'OpenGroceryStore',
     });

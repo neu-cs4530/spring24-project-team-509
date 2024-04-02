@@ -14,8 +14,8 @@ export default class TradingAreaController extends InteractableAreaController<
   TradingAreaEvents,
   TradingAreaModel
 > {
-
   protected _tradingBoard: any[] = [];
+
   protected _townController: TownController;
 
   constructor(id: string, townController: TownController) {
@@ -45,7 +45,7 @@ export default class TradingAreaController extends InteractableAreaController<
     return this.id;
   }
 
-  get tradingBoard(): any[] { 
+  get tradingBoard(): any[] {
     return this._tradingBoard;
   }
 
@@ -59,18 +59,18 @@ export default class TradingAreaController extends InteractableAreaController<
   }
 
   public async handleOpenTradingBoard(): Promise<void> {
-    console.log('tradingControl opens')
+    console.log('tradingControl opens');
     await this._townController.sendInteractableCommand(this.id, {
       type: 'OpenTradingBoard',
     });
   }
 
   public async handlePostTradingOffer(item: string, quantity: number): Promise<void> {
-    console.log('tradingControl post')
+    console.log('tradingControl post');
     await this._townController.sendInteractableCommand(this.id, {
       type: 'PostTradingOffer',
       item: item,
-      quantity: quantity, 
+      quantity: quantity,
     });
   }
 }

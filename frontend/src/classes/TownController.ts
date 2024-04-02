@@ -481,7 +481,7 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
         const controller = this._interactableControllers.find(c => c.id === interactable.id);
         if (controller) {
           const activeBefore = controller.isActive();
-          console.log("Called")
+          console.log('Called');
           controller.updateFrom(interactable, this._playersByIDs(interactable.occupants));
           const activeNow = controller.isActive();
           if (activeBefore !== activeNow) {
@@ -667,9 +667,13 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
               new GroceryStoreAreaController(eachInteractable.id, this),
             );
           } else if (isTradingArea(eachInteractable)) {
-            this._interactableControllers.push(new TradingAreaController(eachInteractable.id, this));
+            this._interactableControllers.push(
+              new TradingAreaController(eachInteractable.id, this),
+            );
           } else if (isInventoryArea(eachInteractable)) {
-            this._interactableControllers.push(new InventoryAreaController(eachInteractable.id, this));
+            this._interactableControllers.push(
+              new InventoryAreaController(eachInteractable.id, this),
+            );
           }
         });
         this._userID = initialData.userID;
