@@ -31,6 +31,7 @@ describe('InventoryArea', () => {
         id,
         occupants: [newPlayer.id],
         type: 'InventoryArea',
+        playerInventory: [],
       });
     });
     it("Sets the player's conversationLabel and emits an update for their location", () => {
@@ -53,6 +54,7 @@ describe('InventoryArea', () => {
         id,
         occupants: [extraPlayer.id],
         type: 'InventoryArea',
+        playerInventory: [],
       });
     });
     it("Clears the player's conversationLabel and emits an update for their location", () => {
@@ -68,6 +70,7 @@ describe('InventoryArea', () => {
       id,
       occupants: [newPlayer.id],
       type: 'InventoryArea',
+      playerInventory: [],
     });
   });
   describe('fromMapObject', () => {
