@@ -54,8 +54,6 @@ export function Inventory({ interactableID }: { interactableID: InteractableID }
     };
     console.log('here');
     inventoryAreaController.addListener('inventoryAreaUpdated', updateInventoryAreaModel);
-    fetchInventory();
-    inventoryAreaController.handleOpenInventory();
     return () => {
       inventoryAreaController.removeListener('inventoryAreaUpdated', updateInventoryAreaModel);
     };

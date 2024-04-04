@@ -114,17 +114,7 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
           value={desireQuantity}
           onChange={e => setDesireQuantity(Number(e.target.value) || 0)}
         />
-        <Button colorScheme='blue' onClick={async () => {
-          try {
-            await handlePostItem(postItem, postQuantity, desireItem, desireQuantity)
-          } catch (err) {
-            toast({
-              title: 'Error posting offer',
-              description: (err as Error).toString(),
-              status: 'error',
-            });
-          }
-        }}>
+        <Button colorScheme='blue' onClick={() => handlePostItem(postItem, postQuantity, desireItem, desireQuantity)}>
           Post
         </Button>
       </InputGroup>
@@ -153,17 +143,7 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
                       <Button
                         colorScheme='green'
                         size='md'
-                        onClick={async () => {
-                        try {
-                          await handleAcceptItem(item.playerID, item.name, item.quantity, item.itemDesire, item.quantityDesire)
-                        } catch (err) {
-                          toast({
-                            title: 'Error posting offer',
-                            description: (err as Error).toString(),
-                            status: 'error',
-                          });
-                        }
-                        }}>
+                        onClick={async () => handleAcceptItem(item.playerID, item.name, item.quantity, item.itemDesire, item.quantityDesire)}>
                         Accept
                       </Button>
                     </Td>
