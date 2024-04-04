@@ -52,11 +52,12 @@ export function Inventory({ interactableID }: { interactableID: InteractableID }
       fetchInventory();
       console.log('inventoryArea', playerInventory);
     };
+    console.log('here');
     inventoryAreaController.addListener('inventoryAreaUpdated', updateInventoryAreaModel);
     fetchInventory();
     inventoryAreaController.handleOpenInventory();
     return () => {
-      inventoryAreaController.removeListener('iventoryAreaUpdated', updateInventoryAreaModel);
+      inventoryAreaController.removeListener('inventoryAreaUpdated', updateInventoryAreaModel);
     };
   }, [inventoryAreaController, playerInventory]);
 

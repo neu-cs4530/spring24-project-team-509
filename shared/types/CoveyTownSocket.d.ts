@@ -283,12 +283,16 @@ export interface PostTradingOfferCommand {
   type: 'PostTradingOffer';
   item: string;
   quantity: number;
+  itemDesire: string;
+  quantityDesire: number;
 }
-
 export interface AcceptTradingOfferCommand {
   type: 'AcceptTradingOffer';
+  playerID: string;
   item: string;
   quantity: number;
+  itemDesire: string;
+  quantityDesire: number;
 }
 
 export interface ViewingAreaUpdateCommand  {

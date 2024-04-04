@@ -3,7 +3,6 @@ import InteractableAreaController, {
   TRADING_AREA_TYPE,
 } from './InteractableAreaController';
 import { TradingArea as TradingAreaModel } from '../../types/CoveyTownSocket';
-import { Tr } from '@chakra-ui/react';
 import TownController from '../TownController';
 
 export type TradingAreaEvents = BaseInteractableEventMap & {
@@ -65,12 +64,26 @@ export default class TradingAreaController extends InteractableAreaController<
     });
   }
 
-  public async handlePostTradingOffer(item: string, quantity: number): Promise<void> {
+  public async handlePostTradingOffer(item: string, quantity: number, itemDesire: string, quantityDesire: number): Promise<void> {
     console.log('tradingControl post');
     await this._townController.sendInteractableCommand(this.id, {
       type: 'PostTradingOffer',
-      item: item,
-      quantity: quantity,
+      item,
+      quantity,
+      itemDesire,
+      quantityDesire,
+    });
+  }
+
+  public async handleAcceptTradingOffer(playerID: string, item: string, quantity: number, itemDesire: string, quantityDesire: number): Promise<void> {
+    console.log('tradingControl accepts');
+    await this._townController.sendInteractableCommand(this.id, {
+      type: 'AcceptTradingOffer',
+      playerID,
+      item,
+      quantity,
+      itemDesire,
+      quantityDesire,
     });
   }
 }
