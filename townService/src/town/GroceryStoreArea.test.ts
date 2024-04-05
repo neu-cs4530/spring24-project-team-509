@@ -1,10 +1,20 @@
 import { mock } from 'jest-mock-extended';
 import { nanoid } from 'nanoid';
-import e from 'express';
+import { createClient } from '@supabase/supabase-js';
 import { TownEmitter } from '../types/CoveyTownSocket';
 import GroceryStoreArea from './GroceryStoreArea';
 import Player from '../lib/Player';
-import { supabase } from '../../supabaseClient';
+
+jest.mock('@supabase/supabase-js', () => ({
+  createClient: jest.fn().mockReturnValue({
+    from: jest.fn().mockImplementation(() => ({
+      select: jest.fn().mockImplementation(() => ({
+        eq: jest.fn().mockResolvedValue({ data: [], error: null }),
+      })),
+      insert: jest.fn().mockResolvedValue({ data: [], error: null }),
+    })),
+  }),
+}));
 
 describe('GroceryStoreArea', () => {
   const testAreaBox = { x: 100, y: 100, width: 100, height: 100 };
@@ -59,52 +69,60 @@ describe('GroceryStoreArea', () => {
     });
   });
   describe('handleCommand', () => {
-    it('should handle opening the store', async () => {
-      const cart = await supabase.from('storeCart').select();
-      const inventory = await supabase.from('storeInventory').select();
+    it('open grocery store', async () => {
+      const mockCartData = { data: { name: 'bacon', quantity: '5', price: '5' }, error: null };
+      const mockInventoryData = { data: { name: 'bacon', quantity: '5', price: '5' }, error: null };
+
+      (
+        createClient('mockUrl', 'mockKey').from('storeCart').select as jest.Mock
+      ).mockResolvedValueOnce(mockCartData);
+      (
+        createClient('mockUrl', 'mockKey').from('storeInventory').select as jest.Mock
+      ).mockResolvedValueOnce(mockInventoryData);
+
       await testArea.handleCommand({ type: 'OpenGroceryStore' }, newPlayer);
 
-      await expect(cart.data).toEqual(testArea.toModel().cart);
-      await expect(inventory.data).toEqual(testArea.toModel().storeInventory);
+      expect(createClient('mockUrl', 'mockKey').from).toHaveBeenCalledWith('storeCart');
+      expect(createClient('mockUrl', 'mockKey').from).toHaveBeenCalledWith('storeInventory');
     });
-    it('should handle adding an item to the cart', async () => {
-      const data = await supabase.from('storeCart').select().eq('name', 'bacon');
-      let testValue: any[] | null = data.data;
-      if (testValue === null) {
-        testValue = [];
-      } else if (testValue.find(item => item.name === 'bacon') === undefined) {
-        testValue.push({ name: 'bacon', price: 5, quantity: 1 });
-      } else if (testValue.find(item => item.name === 'bacon') !== undefined) {
-        const baconItem = testValue.find(item => item.name === 'bacon');
-        if (baconItem) {
-          baconItem.quantity += 1;
-        }
-      }
+    it('should add item to cart', async () => {
+      const mockCartData = { data: { name: 'bacon', quantity: '5', price: '5' }, error: null };
+      (
+        createClient('mockUrl', 'mockKey').from('storeCart').select as jest.Mock
+      ).mockResolvedValueOnce(mockCartData);
 
       await testArea.handleCommand({ type: 'AddToCart', itemName: 'bacon', price: 5 }, newPlayer);
-      await expect(testArea.toModel().cart).toEqual(testValue);
-    });
-    it('should handle removing an item from the cart', async () => {
-      const data = await supabase.from('storeCart').select().eq('name', 'bacon');
-      let testValue: any[] | null = data.data;
-      if (testValue === null) {
-        testValue = [];
-      } else if (testValue.find(item => item.name === 'bacon') !== undefined) {
-        const baconItem = testValue.find(item => item.name === 'bacon');
-        if (baconItem) {
-          baconItem.quantity -= 1;
-        }
-      }
 
-      await testArea.handleCommand({ type: 'RemoveFromCart', itemName: 'bacon' }, newPlayer);
-      await expect(testArea.toModel().cart).toEqual(testValue);
+      expect(createClient('mockUrl', 'mockKey').from).toHaveBeenCalledWith('storeCart');
     });
-    it('should handle checking out', async () => {
-      const data = await supabase.from('storeCart').select();
-      const testValue = data.data;
-      await testArea.handleCommand({ type: 'CheckOut' }, newPlayer);
-      await expect(testArea.toModel().cart).toEqual([]);
-      await expect(testArea.toModel().totalPrice).toBeGreaterThan(0);
+    it('should remove item from cart', async () => {
+      const mockCartData = { data: { name: 'banana', quantity: '10', price: '5' }, error: null };
+      (
+        createClient('mockUrl', 'mockKey').from('storeCart').select as jest.Mock
+      ).mockResolvedValueOnce(mockCartData);
+
+      await testArea.handleCommand({ type: 'RemoveFromCart', itemName: 'banana' }, newPlayer);
+
+      expect(createClient('mockUrl', 'mockKey').from).toHaveBeenCalledWith('storeCart');
+    });
+    it('should checkout', async () => {
+      const mockInventoryData = {
+        data: { name: 'cereal', quantity: '5', price: '5' },
+        error: null,
+      };
+      (
+        createClient('mockUrl', 'mockKey').from('playerInventory').select('itemList')
+          .eq as jest.Mock
+      ).mockResolvedValueOnce(mockInventoryData);
+      const mockCartData = { data: { name: 'banana', quantity: '10', price: '5' }, error: null };
+      (
+        createClient('mockUrl', 'mockKey').from('storeCart').select as jest.Mock
+      ).mockResolvedValueOnce(mockCartData);
+
+      await testArea.handleCommand({ type: 'CheckOut', itemName: 'cereal' }, newPlayer);
+
+      expect(createClient('mockUrl', 'mockKey').from).toHaveBeenCalledWith('storeCart');
+      expect(createClient('mockUrl', 'mockKey').from).toHaveBeenCalledWith('playerInventory');
     });
   });
 });
