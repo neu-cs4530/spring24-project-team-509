@@ -9,7 +9,7 @@ import { render, screen } from '@testing-library/react';
 import TownControllerContext from '../../../contexts/TownControllerContext';
 import InventoryAreaWrapper from './Inventory';
 import PhaserInventoryArea from './InventoryArea';
-import * as Inventory from './Inventory';
+import { act } from 'react-dom/test-utils';
 import React from 'react';
 import { InventoryArea as InventoryAreaModel } from '../../../types/CoveyTownSocket';
 
@@ -36,9 +36,6 @@ const useInteractableAreaControllerSpy = jest.spyOn(
   'useInteractableAreaController',
 );
 
-const INVENTORY_TEST_ID = 'inventory';
-const inventorySpy = jest.spyOn(Inventory, 'default');
-inventorySpy.mockReturnValue(<div data-testid={INVENTORY_TEST_ID} />);
 
 class MockInventoryAreaController extends InventoryAreaController {
   mockPlayerItems = [];
@@ -126,30 +123,38 @@ describe('InventoryArea', () => {
   beforeEach(() => {
     mockInventoryArea.name = nanoid();
     mockReset(townController);
-    inventoryAreaController.mockReset();
     useInteractableAreaControllerSpy.mockReturnValue(inventoryAreaController);
     mockToast.mockClear();
   });
 
-  describe('Rendering the correct area', () => {
-    test('If the interactableID is for a ConnectFour game, the ConnectFourGameArea should be rendered', () => {
-      //InteractableController.type = 'InventoryArea';
+  describe('Listeners', () => {
+    it('Registers exactly one listeners when mounted: for inventoryAreaUpdated', () => {
+      const addListenerSpy = jest.spyOn(inventoryAreaController, 'addListener');
+      addListenerSpy.mockClear();
+
       renderInventoryArea();
-      expect(screen.getByTestId(INVENTORY_TEST_ID)).toBeInTheDocument();
+      expect(addListenerSpy).toBeCalledTimes(1);
+      expect(addListenerSpy).toHaveBeenCalledWith('inventoryAreaUpdated', expect.any(Function));
     });
-    // test('If the interactableID is for a TicTacToe game, the TicTacToeGameArea should be rendered', () => {
-    //   gameAreaController.type = 'TicTacToeArea';
-    //   renderGamesArea();
-    //   expect(screen.getByTestId(TIC_TAC_TOE_AREA_TEST_ID)).toBeInTheDocument();
-    // });
-    // test('If the interactableID is NOT for a ConnectFour or TicTacToe game, an error should be displayed', () => {
-    //   gameAreaController.type = 'ViewingArea'; //Not a game!
-    //   renderGamesArea();
+    it('Does not register listeners on every render', () => {
+      const removeListenerSpy = jest.spyOn(inventoryAreaController, 'removeListener');
+      const addListenerSpy = jest.spyOn(inventoryAreaController, 'addListener');
+      addListenerSpy.mockClear();
+      removeListenerSpy.mockClear();
+      const renderData = renderInventoryArea();
+      expect(addListenerSpy).toBeCalledTimes(1);
+      addListenerSpy.mockClear();
 
-    //   expect(screen.queryByTestId(CONNECT_FOUR_AREA_TEST_ID)).toBeNull();
-    //   expect(screen.queryByTestId(TIC_TAC_TOE_AREA_TEST_ID)).toBeNull();
+      renderData.rerender(
+        <ChakraProvider>
+          <TownControllerContext.Provider value={townController}>
+            <InventoryAreaWrapper />
+          </TownControllerContext.Provider>
+        </ChakraProvider>,
+      );
 
-    //   expect(screen.getByText(INVALID_GAME_AREA_TYPE_MESSAGE)).toBeInTheDocument();
-    // });
+      expect(addListenerSpy).not.toBeCalled();
+      expect(removeListenerSpy).not.toBeCalled();
+    });
   });
 });
