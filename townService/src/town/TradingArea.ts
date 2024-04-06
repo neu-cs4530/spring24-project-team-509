@@ -150,14 +150,12 @@ export default class TradingArea extends InteractableArea {
       .select('price')
       .eq('name', item);
 
+    const itemPricee = itemPrice ? itemPrice[0].price : 0;
+
     if (addItem) {
       addItem.quantity += quantity;
     } else {
-      if (itemPrice) {
-        inventoryList.push({ name: item, price: Number(itemPrice[0]), quantity });
-      } else {
-        throw new Error('Item price not found');
-      }
+      inventoryList.push({ name: item, price: itemPricee, quantity });
     }
 
     const { data: playerBalance } = await supabase
@@ -231,11 +229,18 @@ export default class TradingArea extends InteractableArea {
       inventoryList = JSON.parse(inventoryData[0].itemList);
     }
 
+    const { data: itemPrice } = await supabase
+      .from('StoreInventory')
+      .select('price')
+      .eq('name', item);
+
+    const itemPricee = itemPrice ? itemPrice[0].price : 0;
+
     const addItem = inventoryList.find((i: GroceryItem) => i.name === item);
     if (addItem) {
       addItem.quantity += quantity;
     } else {
-      inventoryList.push({ name: item, price: 10, quantity });
+      inventoryList.push({ name: item, price: itemPricee, quantity });
     }
 
     const { data: playerBalance } = await supabase
