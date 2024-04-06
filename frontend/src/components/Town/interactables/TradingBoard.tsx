@@ -128,14 +128,15 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
                         description: (err as Error).toString(),
                         status: 'error',
                       });
-                    }}}>
+                    }
+                  }}>
                   Post
                 </Button>
               </AccordionPanel>
             </Heading>
           </AccordionItem>
         </Accordion>
-        
+
         {tradingBoard && (
           <Container>
             <Table>
@@ -188,7 +189,7 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
         )}
       </Container>
       <Container>
-      <Accordion allowToggle>
+        <Accordion allowToggle>
           <AccordionItem>
             <Heading as='h2'>
               <AccordionButton>
@@ -198,27 +199,27 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
                 <AccordionIcon />
               </AccordionButton>
               <AccordionPanel>
-        <Box
-          style={{
-            height: '100px',
-            overflowY: 'scroll',
-          }}>
-          <div
-            style={{
-              height: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-            }}>
-            <ChatChannel interactableID={interactableID} />
-          </div>
-        </Box>
+                <Box
+                  style={{
+                    height: '100px',
+                    overflowY: 'scroll',
+                  }}>
+                  <div
+                    style={{
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                    }}>
+                    <ChatChannel interactableID={interactableID} />
+                  </div>
+                </Box>
               </AccordionPanel>
             </Heading>
           </AccordionItem>
         </Accordion>
       </Container>
       <Container className='Inventory Table'>
-      <Accordion allowToggle>
+        <Accordion allowToggle>
           <AccordionItem>
             <Heading as='h2'>
               <AccordionButton>
@@ -228,32 +229,32 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
                 <AccordionIcon />
               </AccordionButton>
               <AccordionPanel>
-      <Heading>Inventory</Heading>
-      {playerInventory && (
-        <Table>
-          <Thead>
-            <Tr>
-              <Th>Item Name</Th>
-              <Th>Price</Th>
-              <Th>Quantity</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {playerInventory.map((item: any) => (
-              <Tr key={item.name}>
-                <Td>{item.name}</Td>
-                <Td>{item.price}</Td>
-                <Td>{item.quantity}</Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      )}
-      </AccordionPanel>
+                <Heading>Inventory</Heading>
+                {playerInventory && (
+                  <Table>
+                    <Thead>
+                      <Tr>
+                        <Th>Item Name</Th>
+                        <Th>Price</Th>
+                        <Th>Quantity</Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      {playerInventory.map((item: any) => (
+                        <Tr key={item.name}>
+                          <Td>{item.name}</Td>
+                          <Td>{item.price}</Td>
+                          <Td>{item.quantity}</Td>
+                        </Tr>
+                      ))}
+                    </Tbody>
+                  </Table>
+                )}
+              </AccordionPanel>
             </Heading>
           </AccordionItem>
         </Accordion>
-    </Container>
+      </Container>
     </Container>
   );
 }

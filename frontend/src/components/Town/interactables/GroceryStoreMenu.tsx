@@ -35,17 +35,16 @@ import PizzaIcon from './icons/PizzaIcon';
 import NoIcon from './icons/NoIcon';
 
 export function GroceryMenu({ interactableID }: { interactableID: InteractableID }): JSX.Element {
-  
   const iconMap: { [key: string]: any } = {
-    'apple': AppleIcon,
-    'bacon': BaconIcon,
-    'banana': BananaIcon,
-    'pizza': PizzaIcon,
-    'bread': BreadIcon,
-    'carrot': CarrotIcon,
-    'donut': DonutIcon,
-    'fish': FishIcon,
-    'egg': EggIcon,
+    apple: AppleIcon,
+    bacon: BaconIcon,
+    banana: BananaIcon,
+    pizza: PizzaIcon,
+    bread: BreadIcon,
+    carrot: CarrotIcon,
+    donut: DonutIcon,
+    fish: FishIcon,
+    egg: EggIcon,
   };
   const groceryStoreAreaController =
     useInteractableAreaController<GroceryStoreAreaController>(interactableID);
@@ -118,11 +117,7 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
                   <Tr key={item.name}>
                     <Td>{item.name}</Td>
                     <Td>
-                      {iconMap[item.name] ? 
-                      
-                        React.createElement(iconMap[item.name])
-                      
-                      : <NoIcon />}
+                      {iconMap[item.name] ? React.createElement(iconMap[item.name]) : <NoIcon />}
                     </Td>
                     <Td>{item.price}</Td>
                     <Td>{item.quantity}</Td>
