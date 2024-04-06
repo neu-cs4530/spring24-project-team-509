@@ -12,7 +12,11 @@ describe('TradingArea', () => {
   let newPlayer: Player;
 
   beforeEach(() => {
-    testArea = new TradingArea({ id, occupants: [], tradingBoard: [] }, testAreaBox, townEmitter);
+    testArea = new TradingArea(
+      { id, occupants: [], tradingBoard: [], inventory: [] },
+      testAreaBox,
+      townEmitter,
+    );
     newPlayer = new Player(nanoid(), mock<TownEmitter>());
     testArea.add(newPlayer);
   });

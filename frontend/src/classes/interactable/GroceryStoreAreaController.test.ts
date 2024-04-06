@@ -19,6 +19,7 @@ describe('[GroceryStoreAreaController]', () => {
       totalPrice: 0,
       storeInventory: [],
       cart: [],
+      balance: 0,
     };
     groceryStoreArea = new GroceryStoreAreaController(interactableID, townController);
     mockClear(townController);
@@ -98,6 +99,22 @@ describe('isActive method', () => {
     it('should emit groceryStoreAreaUpdated event on update', () => {
       groceryStoreArea['_updateFrom']({ ...groceryStoreModel, totalPrice: 20 });
       expect(mockListeners.groceryStoreAreaUpdated).toHaveBeenCalled();
+    });
+    it('should update everything with the updateFrom', () => {
+      const updatedGroceryStore: GroceryStoreAreaModel = {
+        id: interactableID,
+        occupants: [],
+        type: 'GroceryStoreArea',
+        totalPrice: 20,
+        storeInventory: [{ name: 'Milk', price: 3 }],
+        cart: [{ name: 'Milk', price: 3 }],
+        balance: 20,
+      };
+      groceryStoreArea['_updateFrom'](updatedGroceryStore);
+      expect(groceryStoreArea.totalPrice).toEqual(20);
+      expect(groceryStoreArea.storeInventory).toEqual([{ name: 'Milk', price: 3 }]);
+      expect(groceryStoreArea.cart).toEqual([{ name: 'Milk', price: 3 }]);
+      expect(groceryStoreArea.balance).toEqual(20);
     });
   });
 });

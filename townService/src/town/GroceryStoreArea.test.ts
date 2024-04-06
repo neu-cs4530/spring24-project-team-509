@@ -25,7 +25,7 @@ describe('GroceryStoreArea', () => {
 
   beforeEach(() => {
     testArea = new GroceryStoreArea(
-      { id, occupants: [], totalPrice: 0, storeInventory: [], cart: [] },
+      { id, occupants: [], totalPrice: 0, storeInventory: [], cart: [], balance: 0 },
       testAreaBox,
       townEmitter,
     );
