@@ -74,7 +74,7 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
         updateGroceryStoreAreaModel,
       );
     };
-  }, [groceryStoreAreaController, storeCart, totalPrice, storeInventory, playerBalance, toast,]);
+  }, [groceryStoreAreaController, storeCart, totalPrice, storeInventory, playerBalance, toast]);
 
   return (
     <Container className='GroceryStoreMenu'>
