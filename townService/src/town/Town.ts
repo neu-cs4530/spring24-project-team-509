@@ -192,6 +192,7 @@ export default class Town {
           });
         } catch (err) {
           if (err instanceof InvalidParametersError) {
+            console.log('town');
             socket.emit('commandResponse', {
               commandID: command.commandID,
               interactableID: command.interactableID,
