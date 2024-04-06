@@ -32,10 +32,18 @@ export interface GroceryStoreArea extends Interactable {
   totalPrice: number;
   storeInventory: any[];
   cart: any[];
+  balance: number;
+}
+
+export type GroceryItem = {
+  name: string;
+  price: number;
+  quantity: number;
 }
 
 export interface TradingArea extends Interactable {
   tradingBoard: any[];
+  inventory: any[];
 }
 
 export interface InventoryArea extends Interactable {

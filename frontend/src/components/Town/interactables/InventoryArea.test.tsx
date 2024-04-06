@@ -36,7 +36,6 @@ const useInteractableAreaControllerSpy = jest.spyOn(
   'useInteractableAreaController',
 );
 
-
 class MockInventoryAreaController extends InventoryAreaController {
   mockPlayerItems = [];
 

@@ -22,6 +22,8 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
 
   protected _storeInventory: any[] = [];
 
+  protected _totalBalance = 0;
+
   protected _cart: any[] = [];
 
   constructor(id: InteractableID, townController: TownController) {
@@ -37,11 +39,16 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
       totalPrice: this._totalPrice,
       storeInventory: this._storeInventory,
       cart: this._cart,
+      balance: this._totalBalance,
     };
   }
 
   public isActive(): boolean {
     return this.occupants.length > 0;
+  }
+
+  get balance(): number {
+    return this._totalBalance;
   }
 
   get type(): string {
@@ -68,7 +75,9 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
     this._totalPrice = updatedModel.totalPrice;
     this._storeInventory = updatedModel.storeInventory;
     this._cart = updatedModel.cart;
-    console.log('controller updates', this._storeInventory, this._cart, this._totalPrice);
+    this._totalBalance = updatedModel.balance;
+    console.log('grocConroller updates', this._storeInventory, this._cart, this._totalPrice);
+    console.log('balance', this._totalBalance);
     this.emit('groceryStoreAreaUpdated');
   }
 
@@ -78,9 +87,13 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
    */
   public async handleOpenGroceryStore(): Promise<void> {
     console.log('controller opens');
-    await this._townController.sendInteractableCommand(this.id, {
-      type: 'OpenGroceryStore',
-    });
+    try {
+      await this._townController.sendInteractableCommand(this.id, {
+        type: 'OpenGroceryStore',
+      });
+    } catch (e) {
+      console.log('controller error');
+    }
   }
 
   public async handleCheckout(): Promise<void> {

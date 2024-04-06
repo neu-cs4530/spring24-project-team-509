@@ -23,17 +23,9 @@ import {
 import { InventoryArea as InventoryAreaModel } from '../../../types/CoveyTownSocket';
 import React from 'react';
 
-type PlayerItems = {
-  name: string;
-  quantity: number;
-  price: number;
-};
-
 export function Inventory({ interactableID }: { interactableID: InteractableID }): JSX.Element {
   const inventoryAreaController =
     useInteractableAreaController<InventoryAreaController>(interactableID);
-  const [items, setItems] = useState<PlayerItems[] | null>([]);
-  const [dbError, setdbError] = useState<string | null>(null);
   const [playerInventory, setPlayerInventory] = useState<null[] | null>(
     inventoryAreaController.playerInventory,
   );

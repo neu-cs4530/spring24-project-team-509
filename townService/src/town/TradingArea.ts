@@ -1,4 +1,5 @@
 import { ITiledMapObject } from '@jonbell/tiled-map-type-guard';
+import InvalidParametersError, { SAME_PLAYER_TRYING_TO_TRADE } from '../lib/InvalidParametersError';
 import Player from '../lib/Player';
 import InteractableArea from './InteractableArea';
 import {
@@ -7,11 +8,14 @@ import {
   InteractableCommand,
   InteractableCommandReturnType,
   TownEmitter,
+  GroceryItem,
 } from '../types/CoveyTownSocket';
 import { supabase } from '../../supabaseClient';
 
 export default class TradingArea extends InteractableArea {
   protected _tradingBoard: any[] = [];
+
+  protected _inventory: GroceryItem[] = [];
 
   public constructor(
     { id }: Omit<TradingAreaModel, 'type'>,
@@ -27,6 +31,7 @@ export default class TradingArea extends InteractableArea {
       occupants: this.occupantsByID,
       type: 'TradingArea',
       tradingBoard: this._tradingBoard,
+      inventory: this._inventory,
     };
   }
 
@@ -39,7 +44,11 @@ export default class TradingArea extends InteractableArea {
       throw new Error(`Malformed viewing area ${name}`);
     }
     const rect: BoundingBox = { x: mapObject.x, y: mapObject.y, width, height };
-    return new TradingArea({ id: name, occupants: [], tradingBoard: [] }, rect, broadcastEmitter);
+    return new TradingArea(
+      { id: name, occupants: [], tradingBoard: [], inventory: [] },
+      rect,
+      broadcastEmitter,
+    );
   }
 
   public handleCommand<CommandType extends InteractableCommand>(
@@ -49,16 +58,37 @@ export default class TradingArea extends InteractableArea {
     if (command.type === 'OpenTradingBoard') {
       console.log('Open Board');
       this._openTradingBoard();
+      this._fetchInventory(player.id);
       return undefined as InteractableCommandReturnType<CommandType>;
     }
     if (command.type === 'PostTradingOffer') {
       console.log('Post Offer');
-      this._postTradingOffer(player.id, player.userName, command.item, command.quantity, command.itemDesire, command.quantityDesire);
+      try {
+        this._postTradingOffer(
+          player.id,
+          player.userName,
+          command.item,
+          command.quantity,
+          command.itemDesire,
+          command.quantityDesire,
+        );
+      } catch (error) {
+        throw new InvalidParametersError((error as Error).message);
+      }
+      this._fetchInventory(player.id);
       return undefined as InteractableCommandReturnType<CommandType>;
     }
     if (command.type === 'AcceptTradingOffer') {
       console.log('Accept Offer');
-      this._acceptTradingOffer(player.id, command.playerID, command.item, command.quantity, command.itemDesire, command.quantityDesire);
+      this._acceptTradingOffer(
+        player.id,
+        command.playerID,
+        command.item,
+        command.quantity,
+        command.itemDesire,
+        command.quantityDesire,
+      );
+      this._fetchInventory(player.id);
       return undefined as InteractableCommandReturnType<CommandType>;
     }
     throw new Error('Method not implemented.');
@@ -75,37 +105,147 @@ export default class TradingArea extends InteractableArea {
     }
   }
 
-  private async _modifyAcceptingPlayerInventory(playerID: string, item: string, quantity: number, itemDesire: string, quantityDesire: number): Promise<void> {
+  private async _fetchInventory(playerId: string): Promise<void> {
+    const { data } = await supabase.from('playerInventory').select().eq('playerID', playerId);
+    let inventoryList: GroceryItem[] = [];
+    if (data && data.length > 0) {
+      inventoryList = JSON.parse(data[0].itemList);
+    }
+    this._inventory = inventoryList;
+    this._emitAreaChanged();
+  }
+
+  private async _modifyAcceptingPlayerInventory(
+    playerID: string,
+    item: string,
+    quantity: number,
+    itemDesire: string,
+    quantityDesire: number,
+  ): Promise<void> {
     const { data: inventoryData, error: inventoryError } = await supabase
       .from('playerInventory')
       .select('itemList')
       .eq('playerID', playerID);
-    
+
     if (inventoryError) {
       throw new Error('Error fetching current player inventory');
     }
 
-    let inventoryList: { name: any; price: any; quantity: any }[] = [];
+    let inventoryList: { name: string; price: number; quantity: number }[] = [];
     if (inventoryData && inventoryData.length > 0) {
       inventoryList = JSON.parse(inventoryData[0].itemList);
     }
 
-    let addItem = inventoryList.find((i: any) => i.name === item);
-    console.log("add item ", item)
-    let removeItem = inventoryList.find((i: any) => i.name === itemDesire);
-    if (removeItem) {
-      removeItem.quantity -= quantityDesire;
+    const addItem = inventoryList.find((i: GroceryItem) => i.name === item);
+    const itemIndex = inventoryList.findIndex(i => i.name === itemDesire);
+
+    if (inventoryList[itemIndex].quantity === quantityDesire) {
+      inventoryList.splice(itemIndex, 1);
+    } else {
+      inventoryList[itemIndex].quantity -= quantityDesire;
     }
+
+    const { data: itemPrice } = await supabase
+      .from('StoreInventory')
+      .select('price')
+      .eq('name', item);
 
     if (addItem) {
       addItem.quantity += quantity;
     } else {
-      inventoryList.push({ name: item, price: 10, quantity: quantity });
+      if (itemPrice) {
+        inventoryList.push({ name: item, price: Number(itemPrice[0]), quantity });
+      } else {
+        throw new Error('Item price not found');
+      }
     }
 
-    await supabase.from('playerInventory').upsert([
-      { playerID: playerID, itemList: JSON.stringify(inventoryList), balance: 100 },
-    ]);
+    const { data: playerBalance } = await supabase
+      .from('playerInventory')
+      .select('balance')
+      .eq('playerID', playerID);
+
+    await supabase
+      .from('playerInventory')
+      .upsert([{ playerID, itemList: JSON.stringify(inventoryList), balance: playerBalance }]);
+  }
+
+  private async _removeFromOfferMakerInventory(
+    playerID: string,
+    item: string,
+    quantity: number,
+  ): Promise<void> {
+    const { data: inventoryData, error: inventoryError } = await supabase
+      .from('playerInventory')
+      .select('itemList')
+      .eq('playerID', playerID);
+
+    if (inventoryError) {
+      throw new Error('Error fetching current player inventory');
+    }
+
+    let inventoryList: { name: string; price: number; quantity: number }[] = [];
+    if (inventoryData && inventoryData.length > 0) {
+      inventoryList = JSON.parse(inventoryData[0].itemList);
+    }
+
+    const itemIndex = inventoryList.findIndex(i => i.name === item);
+    if (itemIndex === -1 || inventoryList[itemIndex].quantity < quantity) {
+      throw new InvalidParametersError(
+        'Item not found in inventory or quantity is less than requested',
+      );
+    }
+
+    if (inventoryList[itemIndex].quantity === quantity) {
+      inventoryList.splice(itemIndex, 1);
+    } else {
+      inventoryList[itemIndex].quantity -= quantity;
+    }
+
+    const { data: playerBalance } = await supabase
+      .from('playerInventory')
+      .select('balance')
+      .eq('playerID', playerID);
+
+    await supabase
+      .from('playerInventory')
+      .upsert([{ playerID, itemList: JSON.stringify(inventoryList), balance: playerBalance }]);
+  }
+
+  private async _addToOfferMakerInventory(
+    playerID: string,
+    item: string,
+    quantity: number,
+  ): Promise<void> {
+    const { data: inventoryData, error: inventoryError } = await supabase
+      .from('playerInventory')
+      .select('itemList')
+      .eq('playerID', playerID);
+
+    if (inventoryError) {
+      throw new Error('Error fetching current player inventory');
+    }
+
+    let inventoryList: GroceryItem[] = [];
+    if (inventoryData && inventoryData.length > 0) {
+      inventoryList = JSON.parse(inventoryData[0].itemList);
+    }
+
+    const addItem = inventoryList.find((i: GroceryItem) => i.name === item);
+    if (addItem) {
+      addItem.quantity += quantity;
+    } else {
+      inventoryList.push({ name: item, price: 10, quantity });
+    }
+
+    const { data: playerBalance } = await supabase
+      .from('playerInventory')
+      .select('balance')
+      .eq('playerID', playerID);
+
+    await supabase
+      .from('playerInventory')
+      .upsert([{ playerID, itemList: JSON.stringify(inventoryList), balance: playerBalance }]);
   }
 
   private async _acceptTradingOffer(
@@ -116,71 +256,15 @@ export default class TradingArea extends InteractableArea {
     itemDesire: string,
     quantityDesire: number,
   ): Promise<void> {
-    // // Fetch the current player's inventory
-    // const { data: inventoryData, error: inventoryError } = await supabase
-    //   .from('playerInventory')
-    //   .select('itemList')
-    //   .eq('playerID', playerID);
-    // if (inventoryError) {
-    //   throw new Error('Error fetching current player inventory');
-    // }
-
-    // let inventoryList: { name: any; price: any; quantity: any }[] = [];
-    // if (inventoryData && inventoryData.length > 0) {
-    //   inventoryList = JSON.parse(inventoryData[0].itemList);
-    // }
-
-    // // Update the inventory based on the trading offer
-    // const existingItem = inventoryList.find((i: any) => i.name === item);
-    // const existingDesireItem = inventoryList.find((i: any) => i.name === itemDesire);
-    // if (existingDesireItem) {
-    //   existingDesireItem.quantity -= quantityDesire;
-    // }
-
-    // if (existingItem) {
-    //   existingItem.quantity += quantity;
-    // } else {
-    //   inventoryList.push({ name: item, price: 10 , quantity: quantity });
-    // }
-
-    // // Update the playerInventory table with the new inventory
-    // await supabase.from('playerInventory').upsert([
-    //   { playerID: playerID, itemList: JSON.stringify(inventoryList) },
-    // ]);
+    if (playerID === offerId) {
+      throw new InvalidParametersError(SAME_PLAYER_TRYING_TO_TRADE);
+    }
 
     this._modifyAcceptingPlayerInventory(playerID, item, quantity, itemDesire, quantityDesire);
 
-    // Fetch the offer maker's inventory
-    const { data: offerMakerInventoryData, error: offerMakerInventoryError } = await supabase
-      .from('playerInventory')
-      .select('itemList')
-      .eq('playerID', offerId);
-    if (offerMakerInventoryError) {
-      throw new Error('Error fetching offer maker inventory');
-    }
+    this._addToOfferMakerInventory(offerId, itemDesire, quantityDesire);
 
-    let offerMakerInventoryList: { name: any; price: any; quantity: any }[] = [];
-    if (offerMakerInventoryData && offerMakerInventoryData.length > 0) {
-      offerMakerInventoryList = JSON.parse(offerMakerInventoryData[0].itemList);
-    }
-   
-    // Update the offer maker's inventory
-    const offerMakerExistingDesireItem = offerMakerInventoryList.find((i: any) => i.name === itemDesire);
-    if (offerMakerExistingDesireItem) {
-      offerMakerExistingDesireItem.quantity += quantity;
-    } else {
-      offerMakerInventoryList.push({ name: itemDesire, price:10, quantity: quantityDesire });
-    }
-
-    // Update the playerInventory table with the new offer maker's inventory
-    await supabase.from('playerInventory').upsert([
-      { playerID: offerId, itemList: JSON.stringify(offerMakerInventoryList) },
-    ]);
-
-    await supabase
-      .from('tradingBoard')
-      .delete()
-      .eq('playerID', offerId);
+    await supabase.from('tradingBoard').delete().eq('playerID', offerId);
 
     const { data: updatedTradingBoardData, error: fetchError } = await supabase
       .from('tradingBoard')
@@ -201,41 +285,26 @@ export default class TradingArea extends InteractableArea {
     quantity: number,
     itemDesire: string,
     quantityDesire: number,
-  ): Promise<void> { 
-    // Fetch the offer maker's inventory
-    const { data: offerMakerInventoryData, error: offerMakerInventoryError } = await supabase
-      .from('playerInventory')
-      .select('itemList')
-      .eq('playerID', playerID);
-    if (offerMakerInventoryError) {
-      throw new Error('Error fetching offer maker inventory');
-    }
+  ): Promise<void> {
+    this._removeFromOfferMakerInventory(playerID, item, quantity);
 
-    let offerMakerInventoryList: { name: any; price: any; quantity: any }[] = [];
-    if (offerMakerInventoryData && offerMakerInventoryData.length > 0) {
-      offerMakerInventoryList = JSON.parse(offerMakerInventoryData[0].itemList);
-    }
-
-    // Update the offer maker's inventory
-    const offerMakerExistingItem = offerMakerInventoryList.find((i: any) => i.name === item);
-    if (offerMakerExistingItem) {
-      offerMakerExistingItem.quantity -= quantity;
-    }
-    // Update the playerInventory table with the new offer maker's inventory
-    await supabase.from('playerInventory').upsert([
-      { playerID: playerID, itemList: JSON.stringify(offerMakerInventoryList), balance:100 },
+    await supabase.from('tradingBoard').insert([
+      {
+        playerID,
+        playerName,
+        item,
+        quantity,
+        itemDesire,
+        quantityDesire,
+      },
     ]);
-
-    const { data, error } = await supabase
-      .from('tradingBoard')
-      .insert([{ playerID: playerID, playerName, item, quantity, itemDesire, quantityDesire: quantityDesire}]);
-    console.log("trading board ",data);
+    const { data, error } = await supabase.from('tradingBoard').select();
     if (data) {
       this._tradingBoard = data;
       this._emitAreaChanged();
     }
     if (error) {
-      throw new Error('Error posting trading offer');
+      throw new InvalidParametersError('Error posting trading offer');
     }
   }
 }
