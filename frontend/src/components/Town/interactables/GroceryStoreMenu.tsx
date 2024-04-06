@@ -23,11 +23,32 @@ import {
 import GroceryStoreAreaInteractable from './GroceryStoreArea';
 import useTownController from '../../../hooks/useTownController';
 import React from 'react';
+import AppleIcon from './icons/AppleIcon';
+import BaconIcon from './icons/BaconIcon';
+import BananaIcon from './icons/BananaIcon';
+import BreadIcon from './icons/BreadIcon';
+import CarrotIcon from './icons/CarrotIcon';
+import DonutIcon from './icons/DonutIcon';
+import EggIcon from './icons/EggIcon';
+import FishIcon from './icons/FishIcon';
+import PizzaIcon from './icons/PizzaIcon';
+import NoIcon from './icons/NoIcon';
 
 export function GroceryMenu({ interactableID }: { interactableID: InteractableID }): JSX.Element {
+  
+  const iconMap: { [key: string]: any } = {
+    'apple': AppleIcon,
+    'bacon': BaconIcon,
+    'banana': BananaIcon,
+    'pizza': PizzaIcon,
+    'bread': BreadIcon,
+    'carrot': CarrotIcon,
+    'donut': DonutIcon,
+    'fish': FishIcon,
+    'egg': EggIcon,
+  };
   const groceryStoreAreaController =
     useInteractableAreaController<GroceryStoreAreaController>(interactableID);
-
   const [storeInventory, setStoreInventory] = useState<any[] | null>(
     groceryStoreAreaController.storeInventory,
   );
@@ -80,11 +101,12 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
     <Container className='GroceryStoreMenu'>
       {storeInventory && (
         <Container>
-          <Heading as='h3'>GroceryStore</Heading>
+          <Heading as='h3'>Grocery Store</Heading>
           <Table variant='striped' colorScheme='yellow'>
             <Thead>
               <Tr>
                 <Th>Item Name</Th>
+                <Th></Th>
                 <Th>Price</Th>
                 <Th>Quantity</Th>
               </Tr>
@@ -95,6 +117,13 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
                 .map((item: any) => (
                   <Tr key={item.name}>
                     <Td>{item.name}</Td>
+                    <Td>
+                      {iconMap[item.name] ? 
+                      
+                        React.createElement(iconMap[item.name])
+                      
+                      : <NoIcon />}
+                    </Td>
                     <Td>{item.price}</Td>
                     <Td>{item.quantity}</Td>
                     <Td>
@@ -201,10 +230,10 @@ export default function GroceryStoreAreaWrapper(): JSX.Element {
         closeOnOverlayClick={false}
         size='xl'>
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent minWidth='fit-content' minHeight='fit-content'>
           <ModalHeader>{groceryStoreArea.name}</ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
+          <ModalBody overflow='auto'>
             <GroceryMenu interactableID={groceryStoreArea.id} />
           </ModalBody>
         </ModalContent>

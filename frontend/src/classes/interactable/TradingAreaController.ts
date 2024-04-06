@@ -63,7 +63,8 @@ export default class TradingAreaController extends InteractableAreaController<
 
   protected _updateFrom(updatedModel: TradingAreaModel): void {
     this._tradingBoard = updatedModel.tradingBoard;
-    console.log('tradingControl updates', this._tradingBoard);
+    this._inventory = updatedModel.inventory;
+    console.log('tradingControl updates', this._tradingBoard, this._inventory);
     this.emit('tradingAreaUpdated');
   }
 

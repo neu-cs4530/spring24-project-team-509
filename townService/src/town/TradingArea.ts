@@ -15,7 +15,7 @@ import { supabase } from '../../supabaseClient';
 export default class TradingArea extends InteractableArea {
   protected _tradingBoard: any[] = [];
 
-  protected _inventory: GroceryItem[] = [];
+  protected _inventory: any[] = [];
 
   public constructor(
     { id }: Omit<TradingAreaModel, 'type'>,
@@ -107,7 +107,7 @@ export default class TradingArea extends InteractableArea {
 
   private async _fetchInventory(playerId: string): Promise<void> {
     const { data } = await supabase.from('playerInventory').select().eq('playerID', playerId);
-    let inventoryList: GroceryItem[] = [];
+    let inventoryList: any[] = [];
     if (data && data.length > 0) {
       inventoryList = JSON.parse(data[0].itemList);
     }

@@ -27,13 +27,11 @@ import {
   Th,
   Thead,
   Tr,
-  useDisclosure,
   useToast,
 } from '@chakra-ui/react';
 import React from 'react';
 import { InputLabel } from '@material-ui/core';
 import ChatChannel from './ChatChannel';
-import Inventory from './Inventory';
 
 export function TradingBoard({ interactableID }: { interactableID: InteractableID }): JSX.Element {
   const [tradingBoard, setTradingBoard] = useState<any[] | null>([]);
@@ -130,15 +128,14 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
                         description: (err as Error).toString(),
                         status: 'error',
                       });
-                    }
-                  }}>
+                    }}}>
                   Post
                 </Button>
               </AccordionPanel>
             </Heading>
           </AccordionItem>
         </Accordion>
-
+        
         {tradingBoard && (
           <Container>
             <Table>
@@ -191,9 +188,19 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
         )}
       </Container>
       <Container>
+      <Accordion allowToggle>
+          <AccordionItem>
+            <Heading as='h2'>
+              <AccordionButton>
+                <Box flex='1' textAlign='left'>
+                  Chat with others
+                </Box>
+                <AccordionIcon />
+              </AccordionButton>
+              <AccordionPanel>
         <Box
           style={{
-            height: '400px',
+            height: '100px',
             overflowY: 'scroll',
           }}>
           <div
@@ -205,7 +212,48 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
             <ChatChannel interactableID={interactableID} />
           </div>
         </Box>
+              </AccordionPanel>
+            </Heading>
+          </AccordionItem>
+        </Accordion>
       </Container>
+      <Container className='Inventory Table'>
+      <Accordion allowToggle>
+          <AccordionItem>
+            <Heading as='h2'>
+              <AccordionButton>
+                <Box flex='1' textAlign='left'>
+                  Your Inventory
+                </Box>
+                <AccordionIcon />
+              </AccordionButton>
+              <AccordionPanel>
+      <Heading>Inventory</Heading>
+      {playerInventory && (
+        <Table>
+          <Thead>
+            <Tr>
+              <Th>Item Name</Th>
+              <Th>Price</Th>
+              <Th>Quantity</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {playerInventory.map((item: any) => (
+              <Tr key={item.name}>
+                <Td>{item.name}</Td>
+                <Td>{item.price}</Td>
+                <Td>{item.quantity}</Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      )}
+      </AccordionPanel>
+            </Heading>
+          </AccordionItem>
+        </Accordion>
+    </Container>
     </Container>
   );
 }
