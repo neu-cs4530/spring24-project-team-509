@@ -9,9 +9,12 @@ import {
 } from '../types/CoveyTownSocket';
 import Player from '../lib/Player';
 import { supabase } from '../../supabaseClient';
+import InvalidParametersError from '../lib/InvalidParametersError';
 
 export default class GroceryStoreArea extends InteractableArea {
   protected _totalPrice = 0;
+
+  protected _totalBalance = 100;
 
   protected _storeInventory: any[] = [];
 
@@ -36,6 +39,7 @@ export default class GroceryStoreArea extends InteractableArea {
       totalPrice: this._totalPrice,
       storeInventory: this._storeInventory,
       cart: this._cart,
+      balance: this._totalBalance,
     };
   }
 
@@ -49,7 +53,7 @@ export default class GroceryStoreArea extends InteractableArea {
     }
     const rect: BoundingBox = { x: mapObject.x, y: mapObject.y, width, height };
     return new GroceryStoreArea(
-      { id: name, occupants: [], totalPrice: 0, storeInventory: [], cart: [] },
+      { id: name, occupants: [], totalPrice: 0, storeInventory: [], cart: [], balance: 0 },
       rect,
       broadcastEmitter,
     );
@@ -62,6 +66,7 @@ export default class GroceryStoreArea extends InteractableArea {
     if (command.type === 'OpenGroceryStore') {
       console.log('Open Grocery Store');
       this._updateStoreInventory();
+      this._updateBalance(player.id);
       this._updateCart();
       this._emitAreaChanged();
       return undefined as InteractableCommandReturnType<CommandType>;
@@ -75,10 +80,28 @@ export default class GroceryStoreArea extends InteractableArea {
       return undefined as InteractableCommandReturnType<CommandType>;
     }
     if (command.type === 'CheckOut') {
-      this._handleCheckout(player.id);
+      try {
+        this._handleCheckout(player.id);
+        this._emitAreaChanged();
+      } catch (error) {
+        console.log('handleCommand');
+      }
       return undefined as InteractableCommandReturnType<CommandType>;
     }
     throw new Error('Invalid command');
+  }
+
+  private async _updateBalance(playerID: string): Promise<void> {
+    const { data } = await supabase
+      .from('playerInventory')
+      .select('balance')
+      .eq('playerID', playerID);
+    if (data && data.length > 0) {
+      this._totalBalance = data[0].balance;
+    } else {
+      this._totalBalance = 100;
+    }
+    this._emitAreaChanged();
   }
 
   /**
@@ -109,19 +132,6 @@ export default class GroceryStoreArea extends InteractableArea {
     }
   }
 
-  // private async _updateCart2(playerID: string): Promise<void> {
-  //   const { data, error } = await supabase.from('cart').select().eq('playerID', playerID);
-  //   if (data) {
-  //     this._cart = data;
-  //     this._emitAreaChanged();
-  //   } else {
-  //     await supabase.from('cart').insert([{ playerID: playerID, itemList: JSON.stringify([]) }]);
-  //   }
-  //   if (error) {
-  //     throw new Error('Error fetching store cart');
-  //   }
-  // }
-
   /**
    * To find the total price of the items in the cart.
    * To do this, we first fetch the items in the cart.
@@ -134,20 +144,36 @@ export default class GroceryStoreArea extends InteractableArea {
       totalPrice = data.reduce((acc: number, item: any) => acc + item.price * item.quantity, 0);
     }
     this._totalPrice = totalPrice;
-    this._emitAreaChanged();
   }
 
   private async _handleCheckout(playerID: string): Promise<void> {
     const { data: cartData, error: cartError } = await supabase.from('storeCart').select();
+
     if (cartData && cartData.length > 0) {
       const { data: inventoryData, error: inventoryError } = await supabase
         .from('playerInventory')
         .select('itemList')
         .eq('playerID', playerID);
+      if (inventoryError) {
+        throw new Error('Error fetching inventory data');
+      }
+      const { data: balance, error: balanceError } = await supabase
+        .from('playerInventory')
+        .select('balance')
+        .eq('playerID', playerID);
+      if (balanceError) {
+        throw new Error('Error fetching balance data');
+      }
+
       let inventoryList: { name: any; price: any; quantity: any }[] = [];
       if (inventoryData && inventoryData.length > 0) {
         inventoryList = JSON.parse(inventoryData[0].itemList);
       }
+      let playerBalance = 100;
+      if (balance && balance.length > 0) {
+        playerBalance = balance[0].balance;
+      }
+
       cartData.forEach((cartItem: any) => {
         const existingItem = inventoryList.find((item: any) => item.name === cartItem.name);
         if (existingItem) {
@@ -164,7 +190,7 @@ export default class GroceryStoreArea extends InteractableArea {
         {
           playerID,
           itemList: JSON.stringify(inventoryList),
-          balance: 100,
+          balance: playerBalance - this._totalPrice,
         },
       ]);
 
@@ -175,7 +201,7 @@ export default class GroceryStoreArea extends InteractableArea {
 
       this._updateCart();
       this._totalPrice = 0;
-      this._emitAreaChanged();
+      this._updateBalance(playerID);
     }
   }
 
@@ -186,8 +212,9 @@ export default class GroceryStoreArea extends InteractableArea {
    * @param price is the price of the item to be added to the cart
    */
   private async _handleAddItem(itemName: string, price: number): Promise<void> {
-    this._handleAddItemToCart(itemName, price);
-    this._handleRemoveItemFromStoreInventory(itemName);
+    await this._handleAddItemToCart(itemName, price);
+    await this._handleRemoveItemFromStoreInventory(itemName);
+    this._emitAreaChanged();
   }
 
   /**
@@ -196,8 +223,8 @@ export default class GroceryStoreArea extends InteractableArea {
    * @param itemName is the name of the item to be removed from the cart
    */
   private async _handleRemoveItem(itemName: string): Promise<void> {
-    this._handleRemoveItemFromCart(itemName);
-    this._handleAddItemToStoreInventory(itemName);
+    await this._handleRemoveItemFromCart(itemName);
+    await this._handleAddItemToStoreInventory(itemName);
   }
 
   /**

@@ -481,7 +481,6 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
         const controller = this._interactableControllers.find(c => c.id === interactable.id);
         if (controller) {
           const activeBefore = controller.isActive();
-          console.log('Called');
           controller.updateFrom(interactable, this._playersByIDs(interactable.occupants));
           const activeNow = controller.isActive();
           if (activeBefore !== activeNow) {

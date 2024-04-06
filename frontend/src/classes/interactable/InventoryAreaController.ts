@@ -51,12 +51,9 @@ export default class InventoryAreaController extends InteractableAreaController<
   }
 
   protected _updateFrom(updatedModel: InventoryAreaModel): void {
-    const oldInventory = this._playerInventory;
-    if (oldInventory !== updatedModel.playerInventory) {
-      this._playerInventory = updatedModel.playerInventory;
-      console.log('invencontrol updates', this._playerInventory);
-      this.emit('inventoryAreaUpdated');
-    }
+    this._playerInventory = updatedModel.playerInventory;
+    console.log('invencontrol updates', this._playerInventory);
+    this.emit('inventoryAreaUpdated');
   }
 
   /**

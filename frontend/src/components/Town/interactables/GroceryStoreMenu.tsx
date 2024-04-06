@@ -20,13 +20,9 @@ import {
   Tr,
   useToast,
 } from '@chakra-ui/react';
-import { GroceryStoreArea as GroceryStoreAreaModel } from '../../../types/CoveyTownSocket';
 import GroceryStoreAreaInteractable from './GroceryStoreArea';
 import useTownController from '../../../hooks/useTownController';
-import { supabase } from '../../../supabaseClient';
 import React from 'react';
-import { Icon } from '@chakra-ui/react';
-import { set } from 'lodash';
 
 export function GroceryMenu({ interactableID }: { interactableID: InteractableID }): JSX.Element {
   const groceryStoreAreaController =
@@ -35,14 +31,10 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
   const [storeInventory, setStoreInventory] = useState<any[] | null>(
     groceryStoreAreaController.storeInventory,
   );
-  const [dbError, setdbError] = useState<string | null>(null);
   const [storeCart, setStoreCart] = useState<any[] | null>(groceryStoreAreaController.cart);
   const [totalPrice, setTotalPrice] = useState<number>(groceryStoreAreaController.totalPrice);
+  const [playerBalance, setPlayerBalance] = useState<number>(groceryStoreAreaController.balance);
   const toast = useToast();
-
-  const [groceryStoreAreaModel, setGroceryStoreAreaModel] = useState<GroceryStoreAreaModel>(
-    groceryStoreAreaController.toInteractableAreaModel(),
-  );
 
   const handleRemoveItem = async (itemName: string) => {
     await groceryStoreAreaController.handleRemoveItem(itemName);
@@ -60,31 +52,36 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
     setStoreInventory(groceryStoreAreaController.storeInventory);
     setStoreCart(groceryStoreAreaController.cart);
     setTotalPrice(groceryStoreAreaController.totalPrice);
+    setPlayerBalance(groceryStoreAreaController.balance);
+    if (totalPrice > playerBalance) {
+      toast({
+        title: 'Error adding item',
+        description: 'Not enough balance',
+        status: 'error',
+      });
+    }
   };
 
   useEffect(() => {
     const updateGroceryStoreAreaModel = () => {
-      setGroceryStoreAreaModel(groceryStoreAreaController.toInteractableAreaModel());
       fetchStore();
-      console.log('groceryarea', storeCart, totalPrice, storeInventory);
     };
     groceryStoreAreaController.addListener('groceryStoreAreaUpdated', updateGroceryStoreAreaModel);
-    fetchStore();
+
     return () => {
       groceryStoreAreaController.removeListener(
         'groceryStoreAreaUpdated',
         updateGroceryStoreAreaModel,
       );
     };
-  }, [dbError, groceryStoreAreaController, storeCart, totalPrice, storeInventory]);
+  }, [groceryStoreAreaController, storeCart, totalPrice, storeInventory, playerBalance, toast]);
 
   return (
     <Container className='GroceryStoreMenu'>
-      {dbError && <p>{dbError}</p>}
       {storeInventory && (
         <Container>
           <Heading as='h3'>GroceryStore</Heading>
-          <Table>
+          <Table variant='striped' colorScheme='yellow'>
             <Thead>
               <Tr>
                 <Th>Item Name</Th>
@@ -125,7 +122,7 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
       {storeCart && (
         <Container>
           <Heading as='h3'>Cart</Heading>
-          <Table>
+          <Table variant='striped' colorScheme='yellow'>
             <Thead>
               <Tr>
                 <Th>Item Name</Th>
@@ -151,7 +148,22 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
         </Container>
       )}
       <p>Total Price: {totalPrice}</p>
-      <Button onClick={() => handleCheckout2()}>Checkout</Button>
+      <p>Your Balance: {playerBalance}</p>
+      <Button
+        onClick={async () => {
+          try {
+            await groceryStoreAreaController.handleCheckout();
+          } catch (err) {
+            console.log('this is the error in menu');
+            toast({
+              title: 'Error adding item',
+              description: (err as Error).toString(),
+              status: 'error',
+            });
+          }
+        }}>
+        Checkout
+      </Button>
     </Container>
   );
 }
