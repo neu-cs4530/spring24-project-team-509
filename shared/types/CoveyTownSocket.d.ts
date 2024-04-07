@@ -31,8 +31,9 @@ export interface Interactable {
 export interface GroceryStoreArea extends Interactable {
   totalPrice: number;
   storeInventory: any[];
-  cart: any[];
+  cart: GroceryItem[];
   balance: number;
+  history: GroceryItem[];
 }
 
 export type GroceryItem = {
@@ -44,6 +45,7 @@ export type GroceryItem = {
 export interface TradingArea extends Interactable {
   tradingBoard: any[];
   inventory: any[];
+  name: string;
 }
 
 export interface InventoryArea extends Interactable {
@@ -259,7 +261,13 @@ CheckOutCommand |
 PostTradingOfferCommand |
 AcceptTradingOfferCommand |
 OpenInventoryCommand |
-OpenTradingBoardCommand;
+OpenTradingBoardCommand |
+DeleteOfferCommand;
+
+export interface DeleteOfferCommand {
+  type: 'DeleteOffer';
+  playerID: string;
+}
 
 export interface OpenTradingBoardCommand {
   type : 'OpenTradingBoard';
@@ -272,9 +280,7 @@ export interface OpenInventoryCommand {
 export interface OpenGroceryStoreCommand {
   type: 'OpenGroceryStore';
 }
-// export interface CalculateTotalCartPriceCommand {
-//   type: 'CalculateTotalCartPrice';
-// }
+
 export interface AddToCartCommand {
   type: 'AddToCart';
   itemName: string;

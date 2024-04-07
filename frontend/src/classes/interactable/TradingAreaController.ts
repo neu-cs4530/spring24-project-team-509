@@ -21,6 +21,8 @@ export default class TradingAreaController extends InteractableAreaController<
 
   protected _inventory: any[] = [];
 
+  protected _playerID: string | undefined = undefined;
+
   constructor(id: string, townController: TownController) {
     super(id);
     this._townController = townController;
@@ -34,6 +36,7 @@ export default class TradingAreaController extends InteractableAreaController<
       type: 'TradingArea',
       tradingBoard: this._tradingBoard,
       inventory: this._inventory,
+      name: this.id,
     };
   }
 
@@ -56,6 +59,10 @@ export default class TradingAreaController extends InteractableAreaController<
   get error(): string | undefined {
     return this._error;
   }
+  
+  get playerID(): string | undefined {  
+    return this._playerID;
+  }
 
   get tradingBoard(): any[] {
     return this._tradingBoard;
@@ -64,6 +71,7 @@ export default class TradingAreaController extends InteractableAreaController<
   protected _updateFrom(updatedModel: TradingAreaModel): void {
     this._tradingBoard = updatedModel.tradingBoard;
     this._inventory = updatedModel.inventory;
+    this._playerID = updatedModel.name;
     console.log('tradingControl updates', this._tradingBoard, this._inventory);
     this.emit('tradingAreaUpdated');
   }
@@ -75,13 +83,20 @@ export default class TradingAreaController extends InteractableAreaController<
     });
   }
 
+  public async handleDeleteOffer(playerID: string): Promise<void> {
+    console.log('tradingControl closes');
+    await this._townController.sendInteractableCommand(this.id, {
+      type: 'DeleteOffer',
+      playerID,
+    });
+  }
+
   public async handlePostTradingOffer(
     item: string,
     quantity: number,
     itemDesire: string,
     quantityDesire: number,
   ): Promise<void> {
-    console.log('tradingControl post');
     await this._townController.sendInteractableCommand(this.id, {
       type: 'PostTradingOffer',
       item,
@@ -98,7 +113,6 @@ export default class TradingAreaController extends InteractableAreaController<
     itemDesire: string,
     quantityDesire: number,
   ): Promise<void> {
-    console.log('tradingControl accepts');
     await this._townController.sendInteractableCommand(this.id, {
       type: 'AcceptTradingOffer',
       playerID,

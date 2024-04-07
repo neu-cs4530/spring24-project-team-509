@@ -26,6 +26,8 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
 
   protected _cart: any[] = [];
 
+  protected _history: any[] = [];
+
   constructor(id: InteractableID, townController: TownController) {
     super(id);
     this._townController = townController;
@@ -40,6 +42,7 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
       storeInventory: this._storeInventory,
       cart: this._cart,
       balance: this._totalBalance,
+      history: this._history,
     };
   }
 
@@ -71,13 +74,17 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
     return this._cart;
   }
 
+  get history(): any[] {
+    return this._history;
+  }
+
   protected _updateFrom(updatedModel: GroceryStoreAreaModel): void {
     this._totalPrice = updatedModel.totalPrice;
     this._storeInventory = updatedModel.storeInventory;
     this._cart = updatedModel.cart;
     this._totalBalance = updatedModel.balance;
-    console.log('grocConroller updates', this._storeInventory, this._cart, this._totalPrice);
-    console.log('balance', this._totalBalance);
+    this._history = updatedModel.history;
+    console.log('grocConroller updates', this._history, this._storeInventory);
     this.emit('groceryStoreAreaUpdated');
   }
 
@@ -86,7 +93,6 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
    * To initialize the store inventory and cart.
    */
   public async handleOpenGroceryStore(): Promise<void> {
-    console.log('controller opens');
     try {
       await this._townController.sendInteractableCommand(this.id, {
         type: 'OpenGroceryStore',

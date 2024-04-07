@@ -15,7 +15,9 @@ import { supabase } from '../../supabaseClient';
 export default class TradingArea extends InteractableArea {
   protected _tradingBoard: any[] = [];
 
-  protected _inventory: any[] = [];
+  protected _inventory: GroceryItem[] = [];
+
+  protected _name: string = '';
 
   public constructor(
     { id }: Omit<TradingAreaModel, 'type'>,
@@ -32,6 +34,7 @@ export default class TradingArea extends InteractableArea {
       type: 'TradingArea',
       tradingBoard: this._tradingBoard,
       inventory: this._inventory,
+      name: this._name,
     };
   }
 
@@ -45,7 +48,7 @@ export default class TradingArea extends InteractableArea {
     }
     const rect: BoundingBox = { x: mapObject.x, y: mapObject.y, width, height };
     return new TradingArea(
-      { id: name, occupants: [], tradingBoard: [], inventory: [] },
+      { id: name, occupants: [], tradingBoard: [], inventory: [], name: '' },
       rect,
       broadcastEmitter,
     );
@@ -63,18 +66,14 @@ export default class TradingArea extends InteractableArea {
     }
     if (command.type === 'PostTradingOffer') {
       console.log('Post Offer');
-      try {
-        this._postTradingOffer(
-          player.id,
-          player.userName,
-          command.item,
-          command.quantity,
-          command.itemDesire,
-          command.quantityDesire,
-        );
-      } catch (error) {
-        throw new InvalidParametersError((error as Error).message);
-      }
+      this._postTradingOffer(
+        player.id,
+        player.userName,
+        command.item,
+        command.quantity,
+        command.itemDesire,
+        command.quantityDesire,
+      );
       this._fetchInventory(player.id);
       return undefined as InteractableCommandReturnType<CommandType>;
     }
@@ -88,6 +87,12 @@ export default class TradingArea extends InteractableArea {
         command.itemDesire,
         command.quantityDesire,
       );
+      this._fetchInventory(player.id);
+      return undefined as InteractableCommandReturnType<CommandType>;
+    }
+    if (command.type === 'DeleteOffer') {
+      console.log('Delete Offer');
+      this._deleteOffer(player.id);
       this._fetchInventory(player.id);
       return undefined as InteractableCommandReturnType<CommandType>;
     }
@@ -105,13 +110,31 @@ export default class TradingArea extends InteractableArea {
     }
   }
 
-  private async _fetchInventory(playerId: string): Promise<void> {
-    const { data } = await supabase.from('playerInventory').select().eq('playerID', playerId);
-    let inventoryList: any[] = [];
+  private async _fetchInventory(playerID: string): Promise<void> {
+    const { data } = await supabase.from('playerInventory').select().eq('playerID', playerID);
+    let inventoryList: GroceryItem[] = [];
     if (data && data.length > 0) {
       inventoryList = JSON.parse(data[0].itemList);
     }
     this._inventory = inventoryList;
+    this._name = playerID;
+
+    this._emitAreaChanged();
+  }
+
+  private async _deleteOffer(playerID: string): Promise<void> {
+    const {data: items} = await supabase.from('tradingBoard').select().eq('playerID', playerID);
+    if (items && items.length > 0) {
+      const item = items[0];
+      this._addToOfferMakerInventory(playerID, item.item, item.quantity);
+    }
+
+    await supabase.from('tradingBoard').delete().eq('playerID', playerID);
+
+    const { data: board } = await supabase.from('tradingBoard').select();
+    if (board) {
+      this._tradingBoard = board;
+    }
     this._emitAreaChanged();
   }
 
@@ -158,14 +181,14 @@ export default class TradingArea extends InteractableArea {
       inventoryList.push({ name: item, price: itemPricee, quantity });
     }
 
-    const { data: playerBalance } = await supabase
-      .from('playerInventory')
-      .select('balance')
-      .eq('playerID', playerID);
+    let balance = 100;
+    for (const procItem of inventoryList) {
+      balance -= procItem.price * procItem.quantity;
+    }
 
     await supabase
       .from('playerInventory')
-      .upsert([{ playerID, itemList: JSON.stringify(inventoryList), balance: playerBalance }]);
+      .upsert([{ playerID, itemList: JSON.stringify(inventoryList), balance }]);
   }
 
   private async _removeFromOfferMakerInventory(
@@ -200,14 +223,14 @@ export default class TradingArea extends InteractableArea {
       inventoryList[itemIndex].quantity -= quantity;
     }
 
-    const { data: playerBalance } = await supabase
-      .from('playerInventory')
-      .select('balance')
-      .eq('playerID', playerID);
+    let balance = 100;
+    for (const procItem of inventoryList) {
+      balance -= procItem.price * procItem.quantity;
+    }
 
     await supabase
       .from('playerInventory')
-      .upsert([{ playerID, itemList: JSON.stringify(inventoryList), balance: playerBalance }]);
+      .upsert([{ playerID, itemList: JSON.stringify(inventoryList), balance }]);
   }
 
   private async _addToOfferMakerInventory(
@@ -243,14 +266,14 @@ export default class TradingArea extends InteractableArea {
       inventoryList.push({ name: item, price: itemPricee, quantity });
     }
 
-    const { data: playerBalance } = await supabase
-      .from('playerInventory')
-      .select('balance')
-      .eq('playerID', playerID);
+    let balance = 100;
+    for (const procItem of inventoryList) {
+      balance -= procItem.price * procItem.quantity;
+    }
 
     await supabase
       .from('playerInventory')
-      .upsert([{ playerID, itemList: JSON.stringify(inventoryList), balance: playerBalance }]);
+      .upsert([{ playerID, itemList: JSON.stringify(inventoryList), balance }]);
   }
 
   private async _acceptTradingOffer(

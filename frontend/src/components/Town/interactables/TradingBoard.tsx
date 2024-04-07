@@ -32,6 +32,7 @@ import {
 import React from 'react';
 import { InputLabel } from '@material-ui/core';
 import ChatChannel from './ChatChannel';
+import { Inventory } from './Inventory';
 
 export function TradingBoard({ interactableID }: { interactableID: InteractableID }): JSX.Element {
   const [tradingBoard, setTradingBoard] = useState<any[] | null>([]);
@@ -57,7 +58,6 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
     wantedItem: string,
     wantedQuantity: number,
   ) => {
-    console.log('posting item', item, quantity, wantedItem, wantedQuantity);
     await tradingAreaController.handlePostTradingOffer(item, quantity, wantedItem, wantedQuantity);
     setPostItem('');
     setPostQuantity(0);
@@ -74,7 +74,7 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
     return () => {
       tradingAreaController.removeListener('tradingAreaUpdated', updateInventoryAreaModel);
     };
-  }, [tradingAreaController, tradingBoard]);
+  }, [tradingAreaController, tradingBoard, playerInventory]);
 
   return (
     <Container className='TradingBoard' display='grid' grid-template-columns='70% 30%' gap='10px'>
@@ -136,8 +136,73 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
             </Heading>
           </AccordionItem>
         </Accordion>
-
-        {tradingBoard && (
+      </Container>
+      <Container>
+        <Accordion allowToggle>
+          <AccordionItem>
+            <Heading as='h2'>
+              <AccordionButton>
+                <Box flex='1' textAlign='left'>
+                  Chat with others
+                </Box>
+                <AccordionIcon />
+              </AccordionButton>
+              <AccordionPanel>
+                <Box
+                  style={{
+                    height: '400px',
+                    overflowY: 'scroll',
+                  }}>
+                  <div
+                    style={{
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                    }}>
+                    <ChatChannel interactableID={interactableID} />
+                  </div>
+                </Box>
+              </AccordionPanel>
+            </Heading>
+          </AccordionItem>
+        </Accordion>
+      </Container>
+      <Container className='Inventory Table'>
+        
+        <Accordion allowToggle>
+          <AccordionItem>
+              <AccordionButton>
+                <Box flex='1' textAlign='left'>
+                  Want to take a look at your inventory?
+                </Box>
+                <AccordionIcon />
+              </AccordionButton>
+              <AccordionPanel>
+                {playerInventory && (
+                  <Table>
+                    <Thead>
+                      <Tr>
+                        <Th>Item Name</Th>
+                        <Th>Price</Th>
+                        <Th>Quantity</Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      {playerInventory.map((item: any) => (
+                        <Tr key={item.name}>
+                          <Td>{item.name}</Td>
+                          <Td>{item.price}</Td>
+                          <Td>{item.quantity}</Td>
+                        </Tr>
+                      ))}
+                    </Tbody>
+                  </Table>
+                )}
+              </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
+      </Container>
+      {tradingBoard && (
           <Container>
             <Table>
               <Thead>
@@ -160,7 +225,7 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
                     <Td>
                       <Button
                         colorScheme='green'
-                        size='md'
+                        size='0.5md'
                         onClick={async () => {
                           try {
                             await tradingAreaController.handleAcceptTradingOffer(
@@ -181,80 +246,22 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
                         Accept
                       </Button>
                     </Td>
+
+                    <Td>
+                      <Button
+                        colorScheme='red'
+                        size='0.5md' 
+                        disabled={item.playerID !== tradingAreaController.playerID}
+                        onClick= {async () => await tradingAreaController.handleDeleteOffer(item.playerID) }>
+                        Delete
+                      </Button>
+                    </Td>
                   </Tr>
                 ))}
               </Tbody>
             </Table>
           </Container>
         )}
-      </Container>
-      <Container>
-        <Accordion allowToggle>
-          <AccordionItem>
-            <Heading as='h2'>
-              <AccordionButton>
-                <Box flex='1' textAlign='left'>
-                  Chat with others
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-              <AccordionPanel>
-                <Box
-                  style={{
-                    height: '100px',
-                    overflowY: 'scroll',
-                  }}>
-                  <div
-                    style={{
-                      height: '100%',
-                      display: 'flex',
-                      flexDirection: 'column',
-                    }}>
-                    <ChatChannel interactableID={interactableID} />
-                  </div>
-                </Box>
-              </AccordionPanel>
-            </Heading>
-          </AccordionItem>
-        </Accordion>
-      </Container>
-      <Container className='Inventory Table'>
-        <Accordion allowToggle>
-          <AccordionItem>
-            <Heading as='h2'>
-              <AccordionButton>
-                <Box flex='1' textAlign='left'>
-                  Your Inventory
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-              <AccordionPanel>
-                <Heading>Inventory</Heading>
-                {playerInventory && (
-                  <Table>
-                    <Thead>
-                      <Tr>
-                        <Th>Item Name</Th>
-                        <Th>Price</Th>
-                        <Th>Quantity</Th>
-                      </Tr>
-                    </Thead>
-                    <Tbody>
-                      {playerInventory.map((item: any) => (
-                        <Tr key={item.name}>
-                          <Td>{item.name}</Td>
-                          <Td>{item.price}</Td>
-                          <Td>{item.quantity}</Td>
-                        </Tr>
-                      ))}
-                    </Tbody>
-                  </Table>
-                )}
-              </AccordionPanel>
-            </Heading>
-          </AccordionItem>
-        </Accordion>
-      </Container>
     </Container>
   );
 }

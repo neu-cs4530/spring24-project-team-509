@@ -54,6 +54,7 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
   const [storeCart, setStoreCart] = useState<any[] | null>(groceryStoreAreaController.cart);
   const [totalPrice, setTotalPrice] = useState<number>(groceryStoreAreaController.totalPrice);
   const [playerBalance, setPlayerBalance] = useState<number>(groceryStoreAreaController.balance);
+  const [history, setHistory] = useState<any[]>(groceryStoreAreaController.history);
   const toast = useToast();
 
   const handleRemoveItem = async (itemName: string) => {
@@ -73,6 +74,7 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
     setStoreCart(groceryStoreAreaController.cart);
     setTotalPrice(groceryStoreAreaController.totalPrice);
     setPlayerBalance(groceryStoreAreaController.balance);
+    setHistory(groceryStoreAreaController.history);
     if (totalPrice > playerBalance) {
       toast({
         title: 'Error adding item',
@@ -94,7 +96,7 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
         updateGroceryStoreAreaModel,
       );
     };
-  }, [groceryStoreAreaController, storeCart, totalPrice, storeInventory, playerBalance, toast]);
+  }, [groceryStoreAreaController, storeCart, totalPrice, storeInventory, playerBalance, toast, history]);
 
   return (
     <Container className='GroceryStoreMenu'>
@@ -188,6 +190,48 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
         }}>
         Checkout
       </Button>
+      <Container>
+          <Heading as='h3'>Cart History</Heading>
+          <Table variant='striped' colorScheme='yellow'>
+            <Thead>
+              <Tr>
+                <Th>Item Name</Th>
+                <Th></Th>
+                <Th>Price</Th>
+                <Th>Quantity</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {history
+                .map((item: any) => (
+                  <Tr key={item.name}>
+                    <Td>{item.name}</Td>
+                    <Td>
+                      {iconMap[item.name] ? React.createElement(iconMap[item.name]) : <NoIcon />}
+                    </Td>
+                    <Td>{item.price}</Td>
+                    <Td>{item.quantity}</Td>
+                    <Td>
+                      <Button
+                        onClick={async () => {
+                          try {
+                            await handleAddItem(item.name, item.price);
+                          } catch (err) {
+                            toast({
+                              title: 'Error adding item',
+                              description: (err as Error).toString(),
+                              status: 'error',
+                            });
+                          }
+                        }}>
+                        Add
+                      </Button>
+                    </Td>
+                  </Tr>
+                ))}
+            </Tbody>
+          </Table>
+        </Container>
     </Container>
   );
 }
