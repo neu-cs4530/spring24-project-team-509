@@ -2,7 +2,7 @@ import InteractableAreaController, {
   BaseInteractableEventMap,
   TRADING_AREA_TYPE,
 } from './InteractableAreaController';
-import { TradingArea as TradingAreaModel } from '../../types/CoveyTownSocket';
+import { TradingArea as TradingAreaModel, GroceryItem } from '../../types/CoveyTownSocket';
 import TownController from '../TownController';
 
 export type TradingAreaEvents = BaseInteractableEventMap & {
@@ -19,7 +19,7 @@ export default class TradingAreaController extends InteractableAreaController<
 
   protected _townController: TownController;
 
-  protected _inventory: any[] = [];
+  protected _inventory: GroceryItem[] = [];
 
   protected _playerID: string | undefined = undefined;
 
@@ -44,7 +44,7 @@ export default class TradingAreaController extends InteractableAreaController<
     return this.occupants.length > 0;
   }
 
-  get inventory(): any[] {
+  get inventory(): GroceryItem[] {
     return this._inventory;
   }
 
@@ -59,8 +59,8 @@ export default class TradingAreaController extends InteractableAreaController<
   get error(): string | undefined {
     return this._error;
   }
-  
-  get playerID(): string | undefined {  
+
+  get playerID(): string | undefined {
     return this._playerID;
   }
 

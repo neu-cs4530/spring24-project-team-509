@@ -6,12 +6,13 @@ import {
   InteractableCommand,
   InteractableCommandReturnType,
   TownEmitter,
+  GroceryItem,
 } from '../types/CoveyTownSocket';
 import Player from '../lib/Player';
 import { supabase } from '../../supabaseClient';
 
 export default class InventoryArea extends InteractableArea {
-  protected _playerInventory: any[] = [];
+  protected _playerInventory: GroceryItem[] = [];
 
   public constructor(
     { id }: Omit<InventoryAreaModel, 'type'>,
@@ -51,7 +52,6 @@ export default class InventoryArea extends InteractableArea {
     player: Player,
   ): InteractableCommandReturnType<CommandType> {
     if (command.type === 'OpenInventory') {
-      console.log('Open Inventory');
       this._openInventory(player.id);
       return undefined as InteractableCommandReturnType<CommandType>;
     }
@@ -63,9 +63,12 @@ export default class InventoryArea extends InteractableArea {
       .from('playerInventory')
       .select()
       .eq('playerID', playerID);
-    let inventoryList: { name: any; price: any; quantity: any }[] = [];
+    let inventoryList: GroceryItem[] = [];
     if (data && data.length > 0) {
       inventoryList = JSON.parse(data[0].itemList);
+    }
+    if (error) {
+      throw new Error(error.message);
     }
     this._playerInventory = inventoryList;
     this._emitAreaChanged();

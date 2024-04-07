@@ -105,8 +105,6 @@ describe('InventoryArea', () => {
   const townController = mock<TownController>();
   Object.defineProperty(townController, 'ourPlayer', { get: () => ourPlayer });
   let inventoryAreaController = new MockInventoryAreaController();
-  let joinAreaResolve: () => void;
-  let joinAreaReject: (err: Error) => void;
 
   function renderInventoryArea() {
     return render(

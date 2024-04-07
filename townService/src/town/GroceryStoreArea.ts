@@ -75,7 +75,6 @@ export default class GroceryStoreArea extends InteractableArea {
     player: Player,
   ): InteractableCommandReturnType<CommandType> {
     if (command.type === 'OpenGroceryStore') {
-      console.log('Open Grocery Store');
       this._updateStoreInventory();
       this._updateBalance(player.id);
       this._updateCart();
@@ -92,12 +91,8 @@ export default class GroceryStoreArea extends InteractableArea {
       return undefined as InteractableCommandReturnType<CommandType>;
     }
     if (command.type === 'CheckOut') {
-      try {
-        this._handleCheckout(player.id);
-        this._emitAreaChanged();
-      } catch (error) {
-        console.log('handleCommand');
-      }
+      this._handleCheckout(player.id);
+      this._emitAreaChanged();
       return undefined as InteractableCommandReturnType<CommandType>;
     }
     throw new Error('Invalid command');
@@ -148,11 +143,8 @@ export default class GroceryStoreArea extends InteractableArea {
   }
 
   private async _updateHistory(playerID: string): Promise<void> {
-    const { data } = await supabase
-      .from('playerInventory')
-      .select()
-      .eq('playerID', playerID);
-    let historyList: { name: any; price: any; quantity: any }[] = [];
+    const { data } = await supabase.from('playerInventory').select().eq('playerID', playerID);
+    let historyList: { name: string; price: number; quantity: number }[] = [];
     if (data && data.length > 0) {
       historyList = JSON.parse(data[0].itemList);
     }
@@ -187,6 +179,9 @@ export default class GroceryStoreArea extends InteractableArea {
 
   private async _handleCheckout(playerID: string): Promise<void> {
     const { data: cartData, error: cartError } = await supabase.from('storeCart').select();
+    if (cartError) {
+      throw new Error('Error fetching cart data');
+    }
 
     if (cartData && cartData.length > 0) {
       const { data: inventoryData, error: inventoryError } = await supabase

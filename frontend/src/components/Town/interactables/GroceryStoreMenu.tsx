@@ -3,6 +3,12 @@ import { useInteractable, useInteractableAreaController } from '../../../classes
 import { InteractableID } from '../../../types/CoveyTownSocket';
 import { useCallback, useEffect, useState } from 'react';
 import {
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
+  Box,
   Button,
   Container,
   Heading,
@@ -35,7 +41,7 @@ import PizzaIcon from './icons/PizzaIcon';
 import NoIcon from './icons/NoIcon';
 
 export function GroceryMenu({ interactableID }: { interactableID: InteractableID }): JSX.Element {
-  const iconMap: { [key: string]: any } = {
+  const iconMap: { [key: string]: React.ComponentType } = {
     apple: AppleIcon,
     bacon: BaconIcon,
     banana: BananaIcon,
@@ -65,10 +71,6 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
     await groceryStoreAreaController.handleAddItem(itemName, price);
   };
 
-  const handleCheckout2 = async () => {
-    await groceryStoreAreaController.handleCheckout();
-  };
-
   const fetchStore = () => {
     setStoreInventory(groceryStoreAreaController.storeInventory);
     setStoreCart(groceryStoreAreaController.cart);
@@ -96,7 +98,15 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
         updateGroceryStoreAreaModel,
       );
     };
-  }, [groceryStoreAreaController, storeCart, totalPrice, storeInventory, playerBalance, toast, history]);
+  }, [
+    groceryStoreAreaController,
+    storeCart,
+    totalPrice,
+    storeInventory,
+    playerBalance,
+    toast,
+    history,
+  ]);
 
   return (
     <Container className='GroceryStoreMenu'>
@@ -173,65 +183,67 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
           </Table>
         </Container>
       )}
-      <p>Total Price: {totalPrice}</p>
-      <p>Your Balance: {playerBalance}</p>
-      <Button
-        onClick={async () => {
-          try {
-            await groceryStoreAreaController.handleCheckout();
-          } catch (err) {
-            console.log('this is the error in menu');
-            toast({
-              title: 'Error adding item',
-              description: (err as Error).toString(),
-              status: 'error',
-            });
-          }
-        }}>
-        Checkout
-      </Button>
+      <Box display='flex' justifyContent='space-between' alignItems='center' mt={4}>
+        <Box>
+          <p>Total Price: {totalPrice}</p>
+          <p>Your Balance: {playerBalance}</p>
+        </Box>
+        <Button
+          colorScheme='green'
+          variant='solid'
+          size='md'
+          borderRadius='md'
+          onClick={async () => {
+            try {
+              await groceryStoreAreaController.handleCheckout();
+            } catch (err) {
+              console.log('this is the error in menu');
+              toast({
+                title: 'Error adding item',
+                description: (err as Error).toString(),
+                status: 'error',
+              });
+            }
+          }}>
+          Checkout
+        </Button>
+      </Box>
       <Container>
-          <Heading as='h3'>Cart History</Heading>
-          <Table variant='striped' colorScheme='yellow'>
-            <Thead>
-              <Tr>
-                <Th>Item Name</Th>
-                <Th></Th>
-                <Th>Price</Th>
-                <Th>Quantity</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {history
-                .map((item: any) => (
-                  <Tr key={item.name}>
-                    <Td>{item.name}</Td>
-                    <Td>
-                      {iconMap[item.name] ? React.createElement(iconMap[item.name]) : <NoIcon />}
-                    </Td>
-                    <Td>{item.price}</Td>
-                    <Td>{item.quantity}</Td>
-                    <Td>
-                      <Button
-                        onClick={async () => {
-                          try {
-                            await handleAddItem(item.name, item.price);
-                          } catch (err) {
-                            toast({
-                              title: 'Error adding item',
-                              description: (err as Error).toString(),
-                              status: 'error',
-                            });
-                          }
-                        }}>
-                        Add
-                      </Button>
-                    </Td>
+        <Accordion allowToggle>
+          <AccordionItem>
+            <Heading as='h3'>Cart History</Heading>
+            <AccordionButton>
+              <Box flex='1' textAlign='left'></Box>
+              <AccordionIcon />
+            </AccordionButton>
+            <AccordionPanel>
+              <Table variant='striped' colorScheme='yellow'>
+                <Thead>
+                  <Tr>
+                    <Th>Item Name</Th>
+                    <Th></Th>
+                    <Th>Price</Th>
+                    <Th>Quantity</Th>
                   </Tr>
-                ))}
-            </Tbody>
-          </Table>
-        </Container>
+                </Thead>
+                <Tbody>
+                  {history.map((item: any) => (
+                    <Tr key={item.name}>
+                      <Td>{item.name}</Td>
+                      <Td>
+                        {iconMap[item.name] ? React.createElement(iconMap[item.name]) : <NoIcon />}
+                      </Td>
+                      <Td>{item.price}</Td>
+                      <Td>{item.quantity}</Td>
+                      <Td></Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
+      </Container>
     </Container>
   );
 }

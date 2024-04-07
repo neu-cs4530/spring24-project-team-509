@@ -9,15 +9,16 @@ import {
   InteractableCommandReturnType,
   TownEmitter,
   GroceryItem,
+  TradingOffer,
 } from '../types/CoveyTownSocket';
 import { supabase } from '../../supabaseClient';
 
 export default class TradingArea extends InteractableArea {
-  protected _tradingBoard: any[] = [];
+  protected _tradingBoard: TradingOffer[] = [];
 
   protected _inventory: GroceryItem[] = [];
 
-  protected _name: string = '';
+  protected _name = '';
 
   public constructor(
     { id }: Omit<TradingAreaModel, 'type'>,
@@ -59,13 +60,11 @@ export default class TradingArea extends InteractableArea {
     player: Player,
   ): InteractableCommandReturnType<CommandType> {
     if (command.type === 'OpenTradingBoard') {
-      console.log('Open Board');
       this._openTradingBoard();
       this._fetchInventory(player.id);
       return undefined as InteractableCommandReturnType<CommandType>;
     }
     if (command.type === 'PostTradingOffer') {
-      console.log('Post Offer');
       this._postTradingOffer(
         player.id,
         player.userName,
@@ -78,7 +77,6 @@ export default class TradingArea extends InteractableArea {
       return undefined as InteractableCommandReturnType<CommandType>;
     }
     if (command.type === 'AcceptTradingOffer') {
-      console.log('Accept Offer');
       this._acceptTradingOffer(
         player.id,
         command.playerID,
@@ -91,7 +89,6 @@ export default class TradingArea extends InteractableArea {
       return undefined as InteractableCommandReturnType<CommandType>;
     }
     if (command.type === 'DeleteOffer') {
-      console.log('Delete Offer');
       this._deleteOffer(player.id);
       this._fetchInventory(player.id);
       return undefined as InteractableCommandReturnType<CommandType>;
@@ -123,7 +120,7 @@ export default class TradingArea extends InteractableArea {
   }
 
   private async _deleteOffer(playerID: string): Promise<void> {
-    const {data: items} = await supabase.from('tradingBoard').select().eq('playerID', playerID);
+    const { data: items } = await supabase.from('tradingBoard').select().eq('playerID', playerID);
     if (items && items.length > 0) {
       const item = items[0];
       this._addToOfferMakerInventory(playerID, item.item, item.quantity);

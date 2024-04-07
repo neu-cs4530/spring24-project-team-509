@@ -1,10 +1,8 @@
-import { useEffect, useState } from 'react';
 import { InventoryArea as InventoryAreaModel } from '../../types/CoveyTownSocket';
 import InteractableAreaController, {
   BaseInteractableEventMap,
   INVENTORY_AREA_TYPE,
 } from './InteractableAreaController';
-import { supabase } from '../../supabaseClient';
 import TownController from '../TownController';
 
 export type InventoryAreaEvents = BaseInteractableEventMap & {

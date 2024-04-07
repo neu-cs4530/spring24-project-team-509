@@ -42,6 +42,15 @@ export type GroceryItem = {
   quantity: number;
 }
 
+export type TradingOffer = {
+  playerID: string;
+  playerName: string;
+  item: string;
+  quantity: number;
+  itemDesire: string;
+  quantityDesire: number;
+};
+
 export interface TradingArea extends Interactable {
   tradingBoard: any[];
   inventory: any[];
