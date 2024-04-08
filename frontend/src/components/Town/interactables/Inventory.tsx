@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useInteractable, useInteractableAreaController } from '../../../classes/TownController';
 import InventoryAreaController from '../../../classes/interactable/InventoryAreaController';
-import { InteractableID } from '../../../types/CoveyTownSocket';
+import { GroceryItem, InteractableID } from '../../../types/CoveyTownSocket';
 import useTownController from '../../../hooks/useTownController';
 import InventoryAreaInteractable from './InventoryArea';
 import {
@@ -47,25 +47,20 @@ export function Inventory({ interactableID }: { interactableID: InteractableID }
 
   const inventoryAreaController =
     useInteractableAreaController<InventoryAreaController>(interactableID);
-  const [playerInventory, setPlayerInventory] = useState<null[] | null>(
+  const [playerInventory, setPlayerInventory] = useState<GroceryItem[] | null>(
     inventoryAreaController.playerInventory,
   );
 
-  const fetchInventory = async () => {
-    //await inventoryAreaController.handleOpenInventory();
-    setPlayerInventory(inventoryAreaController.playerInventory);
-  };
-
   useEffect(() => {
     const updateInventoryAreaModel = () => {
-      fetchInventory();
+      setPlayerInventory(inventoryAreaController.playerInventory);
       console.log('inventoryArea', playerInventory);
     };
     inventoryAreaController.addListener('inventoryAreaUpdated', updateInventoryAreaModel);
     return () => {
       inventoryAreaController.removeListener('inventoryAreaUpdated', updateInventoryAreaModel);
     };
-  }, [inventoryAreaController, playerInventory, fetch]);
+  }, [inventoryAreaController, playerInventory]);
 
   return (
     <Container className='Inventory Table'>
@@ -81,7 +76,7 @@ export function Inventory({ interactableID }: { interactableID: InteractableID }
             </Tr>
           </Thead>
           <Tbody>
-            {playerInventory.map((item: any) => (
+            {playerInventory.map((item: GroceryItem) => (
               <Tr key={item.name}>
                 <Td>{item.name}</Td>
                 <Td>{iconMap[item.name] ? React.createElement(iconMap[item.name]) : <NoIcon />}</Td>

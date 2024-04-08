@@ -136,14 +136,37 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
                 <Button
                   colorScheme='blue'
                   onClick={async () => {
-                    try {
-                      await handlePostItem(postItem, postQuantity, desireItem, desireQuantity);
-                    } catch (err) {
+                    if (!playerInventory) {
                       toast({
-                        title: 'Error post item',
-                        description: (err as Error).toString(),
+                        title: 'You dont have any items in your inventory',
+                        description: 'You dont have any items in your inventory',
                         status: 'error',
                       });
+                    } else {
+                      const selectedItem = playerInventory.find(item => item.name === postItem);
+                      if (
+                        selectedItem &&
+                        postQuantity <= selectedItem.quantity &&
+                        postItem in iconMap &&
+                        desireItem in iconMap
+                      ) {
+                        try {
+                          await handlePostItem(postItem, postQuantity, desireItem, desireQuantity);
+                        } catch (err) {
+                          toast({
+                            title: 'Error post item',
+                            description: (err as Error).toString(),
+                            status: 'error',
+                          });
+                        }
+                      } else {
+                        toast({
+                          title: 'Error post item',
+                          description:
+                            'There is an error in posting the item. Please check the item name and quantity',
+                          status: 'error',
+                        });
+                      }
                     }
                   }}>
                   Post

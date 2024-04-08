@@ -1,6 +1,7 @@
 import {
   GroceryStoreArea as GroceryStoreAreaModel,
   InteractableID,
+  GroceryItem,
 } from '../../types/CoveyTownSocket';
 import InteractableAreaController, {
   BaseInteractableEventMap,
@@ -20,13 +21,13 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
 
   protected _totalPrice = 0;
 
-  protected _storeInventory: any[] = [];
+  protected _storeInventory: GroceryItem[] = [];
 
   protected _totalBalance = 0;
 
-  protected _cart: any[] = [];
+  protected _cart: GroceryItem[] = [];
 
-  protected _history: any[] = [];
+  protected _history: GroceryItem[] = [];
 
   constructor(id: InteractableID, townController: TownController) {
     super(id);
@@ -66,15 +67,15 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
     return this._totalPrice;
   }
 
-  get storeInventory(): any[] {
+  get storeInventory(): GroceryItem[] {
     return this._storeInventory;
   }
 
-  get cart(): any[] {
+  get cart(): GroceryItem[] {
     return this._cart;
   }
 
-  get history(): any[] {
+  get history(): GroceryItem[] {
     return this._history;
   }
 
