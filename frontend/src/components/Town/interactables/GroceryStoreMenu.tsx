@@ -1,6 +1,6 @@
 import GroceryStoreAreaController from '../../../classes/interactable/GroceryStoreAreaController';
 import { useInteractable, useInteractableAreaController } from '../../../classes/TownController';
-import { InteractableID } from '../../../types/CoveyTownSocket';
+import { GroceryItem, InteractableID } from '../../../types/CoveyTownSocket';
 import { useCallback, useEffect, useState } from 'react';
 import {
   Accordion,
@@ -54,13 +54,13 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
   };
   const groceryStoreAreaController =
     useInteractableAreaController<GroceryStoreAreaController>(interactableID);
-  const [storeInventory, setStoreInventory] = useState<any[] | null>(
+  const [storeInventory, setStoreInventory] = useState<GroceryItem[] | null>(
     groceryStoreAreaController.storeInventory,
   );
-  const [storeCart, setStoreCart] = useState<any[] | null>(groceryStoreAreaController.cart);
+  const [storeCart, setStoreCart] = useState<GroceryItem[] | null>(groceryStoreAreaController.cart);
   const [totalPrice, setTotalPrice] = useState<number>(groceryStoreAreaController.totalPrice);
   const [playerBalance, setPlayerBalance] = useState<number>(groceryStoreAreaController.balance);
-  const [history, setHistory] = useState<any[]>(groceryStoreAreaController.history);
+  const [history, setHistory] = useState<GroceryItem[]>(groceryStoreAreaController.history);
   const toast = useToast();
 
   const handleRemoveItem = async (itemName: string) => {
@@ -71,24 +71,20 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
     await groceryStoreAreaController.handleAddItem(itemName, price);
   };
 
-  const fetchStore = () => {
-    setStoreInventory(groceryStoreAreaController.storeInventory);
-    setStoreCart(groceryStoreAreaController.cart);
-    setTotalPrice(groceryStoreAreaController.totalPrice);
-    setPlayerBalance(groceryStoreAreaController.balance);
-    setHistory(groceryStoreAreaController.history);
-    if (totalPrice > playerBalance) {
-      toast({
-        title: 'Error adding item',
-        description: 'Not enough balance',
-        status: 'error',
-      });
-    }
-  };
-
   useEffect(() => {
     const updateGroceryStoreAreaModel = () => {
-      fetchStore();
+      setStoreInventory(groceryStoreAreaController.storeInventory);
+      setStoreCart(groceryStoreAreaController.cart);
+      setTotalPrice(groceryStoreAreaController.totalPrice);
+      setPlayerBalance(groceryStoreAreaController.balance);
+      setHistory(groceryStoreAreaController.history);
+      if (totalPrice > playerBalance) {
+        toast({
+          title: 'Error adding item',
+          description: 'Not enough balance',
+          status: 'error',
+        });
+      }
     };
     groceryStoreAreaController.addListener('groceryStoreAreaUpdated', updateGroceryStoreAreaModel);
 
@@ -130,7 +126,7 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {history.map((item: any) => (
+                  {history.map((item: GroceryItem) => (
                     <Tr key={item.name}>
                       <Td>{item.name}</Td>
                       <Td>
@@ -162,7 +158,7 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
             <Tbody>
               {storeInventory
                 .sort((a, b) => a.name.localeCompare(b.name))
-                .map((item: any) => (
+                .map((item: GroceryItem) => (
                   <Tr key={item.name}>
                     <Td>{item.name}</Td>
                     <Td>
@@ -216,7 +212,7 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
                     <Tbody>
                       {storeCart
                         .sort((a, b) => a.name.localeCompare(b.name))
-                        .map((item: any) => (
+                        .map((item: GroceryItem) => (
                           <Tr key={item.name}>
                             <Td>{item.name}</Td>
                             <Td>{item.price}</Td>

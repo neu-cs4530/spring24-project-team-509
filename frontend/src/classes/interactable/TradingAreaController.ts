@@ -2,10 +2,11 @@ import InteractableAreaController, {
   BaseInteractableEventMap,
   TRADING_AREA_TYPE,
 } from './InteractableAreaController';
-import { 
-  TradingArea as TradingAreaModel, 
-  GroceryItem, 
-  TradingOffer } from '../../types/CoveyTownSocket';
+import {
+  TradingArea as TradingAreaModel,
+  GroceryItem,
+  TradingOffer, 
+} from '../../types/CoveyTownSocket';
 import TownController from '../TownController';
 
 export type TradingAreaEvents = BaseInteractableEventMap & {
