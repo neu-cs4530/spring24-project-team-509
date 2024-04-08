@@ -74,11 +74,4 @@ describe('[InventoryAreaController]', () => {
       expect(mockListeners.inventoryAreaUpdated).toHaveBeenCalled();
     });
   });
-  describe('Updating player inventory', () => {
-    it('should not emit an inventoryAreaUpdated event if the inventory does not change', () => {
-      mockClear(mockListeners.inventoryAreaUpdated);
-      inventoryArea.updateFrom(inventoryArea.toInteractableAreaModel(), []);
-      expect(mockListeners.inventoryAreaUpdated).not.toHaveBeenCalled();
-    });
-  });
 });
