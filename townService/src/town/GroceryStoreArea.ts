@@ -175,6 +175,7 @@ export default class GroceryStoreArea extends InteractableArea {
       historyList = JSON.parse(data[0].itemList);
     }
     this._history = historyList;
+    this._emitAreaChanged();
   }
 
   /**

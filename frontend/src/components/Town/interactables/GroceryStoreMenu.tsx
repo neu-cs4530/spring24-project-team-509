@@ -110,6 +110,43 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
 
   return (
     <Container className='GroceryStoreMenu'>
+      <Container>
+        <Accordion allowToggle>
+          <AccordionItem>
+            <AccordionButton>
+              <Box flex='1' textAlign='left'>
+                Want to look at your last purchase?
+              </Box>
+              <AccordionIcon />
+            </AccordionButton>
+            <AccordionPanel>
+              <Table variant='striped' colorScheme='yellow'>
+                <Thead>
+                  <Tr>
+                    <Th>Item Name</Th>
+                    <Th></Th>
+                    <Th>Price</Th>
+                    <Th>Quantity</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {history.map((item: any) => (
+                    <Tr key={item.name}>
+                      <Td>{item.name}</Td>
+                      <Td>
+                        {iconMap[item.name] ? React.createElement(iconMap[item.name]) : <NoIcon />}
+                      </Td>
+                      <Td>{item.price}</Td>
+                      <Td>{item.quantity}</Td>
+                      <Td></Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
+      </Container>
       {storeInventory && (
         <Container>
           <Heading as='h3'>Grocery Store</Heading>
@@ -155,91 +192,69 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
           </Table>
         </Container>
       )}
-      {storeCart && (
-        <Container>
-          <Heading as='h3'>Cart</Heading>
-          <Table variant='striped' colorScheme='yellow'>
-            <Thead>
-              <Tr>
-                <Th>Item Name</Th>
-                <Th>Price</Th>
-                <Th>Quantity</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {storeCart
-                .sort((a, b) => a.name.localeCompare(b.name))
-                .map((item: any) => (
-                  <Tr key={item.name}>
-                    <Td>{item.name}</Td>
-                    <Td>{item.price}</Td>
-                    <Td>{item.quantity}</Td>
-                    <Td>
-                      <Button onClick={() => handleRemoveItem(item.name)}>Return</Button>
-                    </Td>
-                  </Tr>
-                ))}
-            </Tbody>
-          </Table>
-        </Container>
-      )}
-      <Box display='flex' justifyContent='space-between' alignItems='center' mt={4}>
-        <Box>
-          <p>Total Price: {totalPrice}</p>
-          <p>Your Balance: {playerBalance}</p>
-        </Box>
-        <Button
-          colorScheme='green'
-          variant='solid'
-          size='md'
-          borderRadius='md'
-          onClick={async () => {
-            try {
-              await groceryStoreAreaController.handleCheckout();
-            } catch (err) {
-              console.log('this is the error in menu');
-              toast({
-                title: 'Error adding item',
-                description: (err as Error).toString(),
-                status: 'error',
-              });
-            }
-          }}>
-          Checkout
-        </Button>
-      </Box>
       <Container>
         <Accordion allowToggle>
           <AccordionItem>
-            <Heading as='h3'>Cart History</Heading>
             <AccordionButton>
-              <Box flex='1' textAlign='left'></Box>
+              <Box flex='1' textAlign='left'>
+                Check out here!
+              </Box>
               <AccordionIcon />
             </AccordionButton>
             <AccordionPanel>
-              <Table variant='striped' colorScheme='yellow'>
-                <Thead>
-                  <Tr>
-                    <Th>Item Name</Th>
-                    <Th></Th>
-                    <Th>Price</Th>
-                    <Th>Quantity</Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {history.map((item: any) => (
-                    <Tr key={item.name}>
-                      <Td>{item.name}</Td>
-                      <Td>
-                        {iconMap[item.name] ? React.createElement(iconMap[item.name]) : <NoIcon />}
-                      </Td>
-                      <Td>{item.price}</Td>
-                      <Td>{item.quantity}</Td>
-                      <Td></Td>
-                    </Tr>
-                  ))}
-                </Tbody>
-              </Table>
+              {storeCart && (
+                <Container>
+                  <Heading as='h4'>Cart</Heading>
+                  <Table variant='striped' colorScheme='yellow'>
+                    <Thead>
+                      <Tr>
+                        <Th>Item Name</Th>
+                        <Th>Price</Th>
+                        <Th>Quantity</Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      {storeCart
+                        .sort((a, b) => a.name.localeCompare(b.name))
+                        .map((item: any) => (
+                          <Tr key={item.name}>
+                            <Td>{item.name}</Td>
+                            <Td>{item.price}</Td>
+                            <Td>{item.quantity}</Td>
+                            <Td>
+                              <Button onClick={() => handleRemoveItem(item.name)}>Return</Button>
+                            </Td>
+                          </Tr>
+                        ))}
+                    </Tbody>
+                  </Table>
+                </Container>
+              )}
+              <Box display='flex' justifyContent='space-between' alignItems='center' mt={4}>
+                <Box>
+                  <p>Total Price: {totalPrice}</p>
+                  <p>Your Balance: {playerBalance}</p>
+                </Box>
+                <Button
+                  colorScheme='green'
+                  variant='solid'
+                  size='md'
+                  borderRadius='md'
+                  onClick={async () => {
+                    try {
+                      await groceryStoreAreaController.handleCheckout();
+                    } catch (err) {
+                      console.log('this is the error in menu');
+                      toast({
+                        title: 'Error adding item',
+                        description: (err as Error).toString(),
+                        status: 'error',
+                      });
+                    }
+                  }}>
+                  Checkout
+                </Button>
+              </Box>
             </AccordionPanel>
           </AccordionItem>
         </Accordion>

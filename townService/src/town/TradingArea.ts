@@ -13,7 +13,6 @@ import {
 } from '../types/CoveyTownSocket';
 import { supabase } from '../../supabaseClient';
 
-
 /**
  * Represents a trading area in the town.
  * This class extends the `InteractableArea` class and provides functionality for trading items between players.
@@ -79,7 +78,7 @@ export default class TradingArea extends InteractableArea {
   /**
    * Handle a command from a player in this trading area.
    * Supported commands:
-   * - PostTradingOfferCommand 
+   * - PostTradingOfferCommand
    * - AcceptTradingOfferCommand
    * - OpenTradingBoardCommand
    * - DeleteOfferCommand
@@ -130,7 +129,6 @@ export default class TradingArea extends InteractableArea {
     }
     if (command.type === 'DeleteOffer') {
       this._deleteOffer(player.id);
-      this._fetchInventory(player.id);
       return undefined as InteractableCommandReturnType<CommandType>;
     }
     throw new Error('Method not implemented.');
@@ -183,6 +181,7 @@ export default class TradingArea extends InteractableArea {
     if (board) {
       this._tradingBoard = board;
     }
+    this._fetchInventory(playerID);
     this._emitAreaChanged();
   }
 
@@ -346,7 +345,7 @@ export default class TradingArea extends InteractableArea {
 
   /**
    * Modifies the inventory of the player who accepts the trading offer.
-   * 
+   *
    * @param playerID The ID of the player who accepts the trading offer.
    * @param item The name of the item to be added to the inventory.
    * @param quantity The quantity of the item to be added to the inventory.

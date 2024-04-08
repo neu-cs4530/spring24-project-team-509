@@ -31,7 +31,6 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 import { InputLabel } from '@material-ui/core';
-import ChatChannel from './ChatChannel';
 import DonutIcon from './icons/DonutIcon';
 import AppleIcon from './icons/AppleIcon';
 import BaconIcon from './icons/BaconIcon';
@@ -264,13 +263,7 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
                       disabled={item.playerID !== tradingAreaController.playerID}
                       onClick={async () => {
                         try {
-                          await tradingAreaController.handleAcceptTradingOffer(
-                            item.playerID,
-                            item.item,
-                            item.quantity,
-                            item.itemDesire,
-                            item.quantityDesire,
-                          );
+                          await tradingAreaController.handleDeleteOffer(item.playerID);
                         } catch (err) {
                           toast({
                             title: 'Error post item',
