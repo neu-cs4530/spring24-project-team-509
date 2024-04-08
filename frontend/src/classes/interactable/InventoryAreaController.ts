@@ -8,7 +8,11 @@ import TownController from '../TownController';
 export type InventoryAreaEvents = BaseInteractableEventMap & {
   inventoryAreaUpdated: () => void;
 };
-
+/**
+ * InventoryAreaController is a class that extends InteractableAreaController.
+ * It is responsible for handling the inventory area.
+ * It contains methods to open the inventory area.
+ */
 export default class InventoryAreaController extends InteractableAreaController<
   InventoryAreaEvents,
   InventoryAreaModel
@@ -50,6 +54,7 @@ export default class InventoryAreaController extends InteractableAreaController<
 
   /**
    * Update the inventory area with the updated model.
+   *
    * @param updatedModel
    */
   protected _updateFrom(updatedModel: InventoryAreaModel): void {

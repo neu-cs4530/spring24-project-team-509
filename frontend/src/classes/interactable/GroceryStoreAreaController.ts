@@ -13,6 +13,11 @@ export type GroceryStoreAreaEvents = BaseInteractableEventMap & {
   groceryStoreAreaUpdated: () => void;
 };
 
+/**
+ * GroceryStoreAreaController is a class that extends InteractableAreaController.
+ * It is responsible for handling the grocery store area.
+ * It contains methods to open the grocery store, add an item to the cart, remove an item from the cart, and checkout.
+ */
 export default class GroceryStoreAreaController extends InteractableAreaController<
   GroceryStoreAreaEvents,
   GroceryStoreAreaModel
@@ -79,6 +84,11 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
     return this._history;
   }
 
+  /**
+   * To update the grocery store area with the updated model.
+   *
+   * @param updatedModel is the updated model of the grocery store area
+   */
   protected _updateFrom(updatedModel: GroceryStoreAreaModel): void {
     this._totalPrice = updatedModel.totalPrice;
     this._storeInventory = updatedModel.storeInventory;
@@ -103,6 +113,9 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
     }
   }
 
+  /**
+   * To handle checkout.
+   */
   public async handleCheckout(): Promise<void> {
     await this._townController.sendInteractableCommand(this.id, {
       type: 'CheckOut',
