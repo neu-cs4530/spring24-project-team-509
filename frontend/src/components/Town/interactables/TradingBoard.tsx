@@ -288,29 +288,6 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
           </Table>
         </Container>
       )}
-      <Container>
-        <Accordion allowToggle>
-          <AccordionItem>
-            <Heading as='h2'>
-              <AccordionButton>
-                <Box flex='1' textAlign='left'>
-                  Chat with others
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-              <AccordionPanel>
-                <Box
-                  style={{
-                    height: '200px',
-                    overflowY: 'scroll',
-                  }}>
-                  <ChatChannel interactableID={interactableID} />
-                </Box>
-              </AccordionPanel>
-            </Heading>
-          </AccordionItem>
-        </Accordion>
-      </Container>
     </Container>
   );
 }
