@@ -97,4 +97,16 @@ describe('InventoryArea', () => {
       expect(val.occupantsByID).toEqual([]);
     });
   });
+  describe('handleCommand', () => {
+    it('should open inventory', async () => {
+      await testArea.handleCommand({ type: 'OpenInventory' }, newPlayer);
+      const lastEmittedUpdate = getLastEmittedEvent(townEmitter, 'interactableUpdate');
+      expect(lastEmittedUpdate).toEqual({
+        id,
+        occupants: [newPlayer.id],
+        type: 'InventoryArea',
+        playerInventory: [],
+      });
+    });
+  });
 });
