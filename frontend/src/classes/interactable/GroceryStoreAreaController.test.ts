@@ -1,7 +1,11 @@
 import { mock, mockClear, MockProxy } from 'jest-mock-extended';
 import TownController from '../TownController';
 import GroceryStoreAreaController, { GroceryStoreAreaEvents } from './GroceryStoreAreaController';
-import { GroceryStoreArea as GroceryStoreAreaModel, InteractableID, PlayerLocation } from '../../types/CoveyTownSocket';
+import {
+  GroceryStoreArea as GroceryStoreAreaModel,
+  InteractableID,
+  PlayerLocation,
+} from '../../types/CoveyTownSocket';
 import PlayerController from '../PlayerController';
 
 describe('[GroceryStoreAreaController]', () => {
@@ -10,22 +14,22 @@ describe('[GroceryStoreAreaController]', () => {
   const townController: MockProxy<TownController> = mock<TownController>();
   const mockListeners = mock<GroceryStoreAreaEvents>();
   const interactableID: InteractableID = 'groceryStore001';
-  
-beforeEach(() => {
+
+  beforeEach(() => {
     groceryStoreModel = {
-        id: interactableID,
-        occupants: [],
-        type: 'GroceryStoreArea',
-        totalPrice: 0,
-        storeInventory: [],
-        cart: [],
-        balance: 0,
-        history: [], // Add the 'history' property here
+      id: interactableID,
+      occupants: [],
+      type: 'GroceryStoreArea',
+      totalPrice: 0,
+      storeInventory: [],
+      cart: [],
+      balance: 0,
+      history: [], // Add the 'history' property here
     };
     groceryStoreArea = new GroceryStoreAreaController(interactableID, townController);
     mockClear(townController);
     groceryStoreArea.addListener('groceryStoreAreaUpdated', mockListeners.groceryStoreAreaUpdated);
-});
+  });
 
   describe('Initialization', () => {
     it('should initialize with the correct ID and empty state', () => {
@@ -36,23 +40,23 @@ beforeEach(() => {
     });
   });
 
-describe('isActive method', () => {
+  describe('isActive method', () => {
     it('should return true if there are occupants', () => {
-        const playerLocation: PlayerLocation = {
-            moving: false,
-            x: 0,
-            y: 0,
-            rotation: 'front',
-          };
-        groceryStoreArea.occupants = [new PlayerController('player001', 'player001', playerLocation)];
-        groceryStoreArea['_updateFrom'](groceryStoreModel);
-        expect(groceryStoreArea.isActive()).toBeTruthy();
+      const playerLocation: PlayerLocation = {
+        moving: false,
+        x: 0,
+        y: 0,
+        rotation: 'front',
+      };
+      groceryStoreArea.occupants = [new PlayerController('player001', 'player001', playerLocation)];
+      groceryStoreArea['_updateFrom'](groceryStoreModel);
+      expect(groceryStoreArea.isActive()).toBeTruthy();
     });
 
     it('should return false if there are no occupants', () => {
-        expect(groceryStoreArea.isActive()).toBeFalsy();
+      expect(groceryStoreArea.isActive()).toBeFalsy();
     });
-});
+  });
 
   describe('handleOpenGroceryStore method', () => {
     it('should call sendInteractableCommand with the correct command type', async () => {
@@ -102,7 +106,7 @@ describe('isActive method', () => {
       expect(mockListeners.groceryStoreAreaUpdated).toHaveBeenCalled();
     });
     it('should update everything with the updateFrom', () => {
-    const updatedGroceryStore: GroceryStoreAreaModel = {
+      const updatedGroceryStore: GroceryStoreAreaModel = {
         id: interactableID,
         occupants: [],
         type: 'GroceryStoreArea',
@@ -110,13 +114,13 @@ describe('isActive method', () => {
         storeInventory: [{ name: 'Milk', price: 3 }],
         cart: [{ name: 'Milk', price: 3, quantity: 1 }],
         balance: 20,
-        history: []
-    };
-    groceryStoreArea['_updateFrom'](updatedGroceryStore);
-    expect(groceryStoreArea.totalPrice).toEqual(20);
-    expect(groceryStoreArea.storeInventory).toEqual([{ name: 'Milk', price: 3 }]);
-    expect(groceryStoreArea.cart).toEqual([{ name: 'Milk', price: 3, quantity: 1 }]);
-    expect(groceryStoreArea.balance).toEqual(20);
+        history: [],
+      };
+      groceryStoreArea['_updateFrom'](updatedGroceryStore);
+      expect(groceryStoreArea.totalPrice).toEqual(20);
+      expect(groceryStoreArea.storeInventory).toEqual([{ name: 'Milk', price: 3 }]);
+      expect(groceryStoreArea.cart).toEqual([{ name: 'Milk', price: 3, quantity: 1 }]);
+      expect(groceryStoreArea.balance).toEqual(20);
     });
   });
 });
