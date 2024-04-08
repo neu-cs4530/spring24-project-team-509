@@ -13,6 +13,11 @@ import {
 } from '../types/CoveyTownSocket';
 import { supabase } from '../../supabaseClient';
 
+
+/**
+ * Represents a trading area in the town.
+ * This class extends the `InteractableArea` class and provides functionality for trading items between players.
+ */
 export default class TradingArea extends InteractableArea {
   protected _tradingBoard: TradingOffer[] = [];
 
@@ -20,6 +25,12 @@ export default class TradingArea extends InteractableArea {
 
   protected _name = '';
 
+  /**
+   * Creates a new instance of the TradingArea class.
+   * @param id - The ID of the trading area.
+   * @param coordinates - The coordinates of the trading area.
+   * @param townEmitter - The town emitter for broadcasting events.
+   */
   public constructor(
     { id }: Omit<TradingAreaModel, 'type'>,
     coordinates: BoundingBox,
@@ -28,6 +39,10 @@ export default class TradingArea extends InteractableArea {
     super(id, coordinates, townEmitter);
   }
 
+  /**
+   * Convert this TradingArea instance to a simple TradingAreaModel suitable for
+   * transporting over a socket to a client.
+   */
   public toModel(): TradingAreaModel {
     return {
       id: this.id,
@@ -39,6 +54,12 @@ export default class TradingArea extends InteractableArea {
     };
   }
 
+  /**
+   * Creates a new TradingArea object that will represent a Trading Area object in the town map.
+   * @param mapObject An ITiledMapObject that represents a rectangle in which this trading area exists
+   * @param broadcastEmitter An emitter that can be used by this trading area to broadcast updates
+   * @returns
+   */
   public static fromMapObject(
     mapObject: ITiledMapObject,
     broadcastEmitter: TownEmitter,
@@ -55,6 +76,25 @@ export default class TradingArea extends InteractableArea {
     );
   }
 
+  /**
+   * Handle a command from a player in this trading area.
+   * Supported commands:
+   * - PostTradingOfferCommand 
+   * - AcceptTradingOfferCommand
+   * - OpenTradingBoardCommand
+   * - DeleteOfferCommand
+   *
+   * If the command is successful (does not throw an error), calls this._emitAreaChanged (necessary
+   * to notify any listeners of a state update, including any change to tradingboard, inventory, etc.)
+   * If the command is unsuccessful (throws an error), the error is propagated to the caller
+   *
+   * @see InteractableCommand
+   *
+   * @param command command to handle
+   * @param player player making the request
+   * @returns response to the command, @see InteractableCommandResponse
+   * @throws InvalidParametersError if the command is not supported or is invalid.
+   */
   public handleCommand<CommandType extends InteractableCommand>(
     command: CommandType,
     player: Player,
@@ -96,6 +136,9 @@ export default class TradingArea extends InteractableArea {
     throw new Error('Method not implemented.');
   }
 
+  /**
+   * Fetches the trading board from the database and updates the trading board with the fetched data.
+   */
   private async _openTradingBoard(): Promise<void> {
     const { data, error } = await supabase.from('tradingBoard').select();
     if (data) {
@@ -107,6 +150,10 @@ export default class TradingArea extends InteractableArea {
     }
   }
 
+  /**
+   * Fetches the inventory of the player from the database and updates the inventory with the fetched data.
+   * @param playerID The ID of the player whose inventory is to be fetched.
+   */
   private async _fetchInventory(playerID: string): Promise<void> {
     const { data } = await supabase.from('playerInventory').select().eq('playerID', playerID);
     let inventoryList: GroceryItem[] = [];
@@ -119,6 +166,10 @@ export default class TradingArea extends InteractableArea {
     this._emitAreaChanged();
   }
 
+  /**
+   * Deletes the offer from the trading board of the player with the given player ID.
+   * @param playerID The ID of the player whose offer is to be deleted.
+   */
   private async _deleteOffer(playerID: string): Promise<void> {
     const { data: items } = await supabase.from('tradingBoard').select().eq('playerID', playerID);
     if (items && items.length > 0) {
@@ -135,6 +186,14 @@ export default class TradingArea extends InteractableArea {
     this._emitAreaChanged();
   }
 
+  /**
+   * Modifies the inventory of the player who accepts the trading offer.
+   * @param playerID The ID of the player who accepts the trading offer.
+   * @param item The name of the item to be added to the inventory.
+   * @param quantity The quantity of the item to be added to the inventory.
+   * @param itemDesire The name of the item to be removed from the inventory.
+   * @param quantityDesire The quantity of the item to be removed from the inventory.
+   */
   private async _modifyAcceptingPlayerInventory(
     playerID: string,
     item: string,
@@ -188,6 +247,12 @@ export default class TradingArea extends InteractableArea {
       .upsert([{ playerID, itemList: JSON.stringify(inventoryList), balance }]);
   }
 
+  /**
+   * Removes the item from the inventory of the player with the given player ID.
+   * @param playerID The ID of the player whose inventory is to be modified.
+   * @param item The name of the item to be removed from the inventory.
+   * @param quantity The quantity of the item to be removed from the inventory.
+   */
   private async _removeFromOfferMakerInventory(
     playerID: string,
     item: string,
@@ -230,6 +295,12 @@ export default class TradingArea extends InteractableArea {
       .upsert([{ playerID, itemList: JSON.stringify(inventoryList), balance }]);
   }
 
+  /**
+   * Adds the item to the inventory of the player with the given player ID.
+   * @param playerID The ID of the player who accepts the trading offer.
+   * @param item The name of the item to be added to the inventory.
+   * @param quantity The quantity of the item to be added to the inventory.
+   */
   private async _addToOfferMakerInventory(
     playerID: string,
     item: string,
@@ -273,6 +344,15 @@ export default class TradingArea extends InteractableArea {
       .upsert([{ playerID, itemList: JSON.stringify(inventoryList), balance }]);
   }
 
+  /**
+   * Modifies the inventory of the player who accepts the trading offer.
+   * 
+   * @param playerID The ID of the player who accepts the trading offer.
+   * @param item The name of the item to be added to the inventory.
+   * @param quantity The quantity of the item to be added to the inventory.
+   * @param itemDesire The name of the item to be removed from the inventory.
+   * @param quantityDesire The quantity of the item to be removed from the inventory.
+   */
   private async _acceptTradingOffer(
     playerID: string,
     offerId: string,
@@ -303,6 +383,17 @@ export default class TradingArea extends InteractableArea {
     }
   }
 
+  /**
+   * Posts a trading offer from the player with the given player ID.
+   * @param playerID The ID of the player who posts the trading offer.
+   * @param playerName The name of the player who posts the trading offer.
+   * @param item The name of the item to be traded.
+   * @param quantity The quantity of the item to be traded.
+   * @param itemDesire The name of the item desired in return.
+   * @param quantityDesire The quantity of the item desired in return.
+   * @throws InvalidParametersError if the item is not found in the inventory or the quantity is less than requested.
+   * @throws InvalidParametersError if there is an error posting the trading offer.
+   */
   private async _postTradingOffer(
     playerID: string,
     playerName: string,
@@ -311,8 +402,10 @@ export default class TradingArea extends InteractableArea {
     itemDesire: string,
     quantityDesire: number,
   ): Promise<void> {
+    // Remove the item from the inventory
     this._removeFromOfferMakerInventory(playerID, item, quantity);
 
+    // Update the table entry
     await supabase.from('tradingBoard').insert([
       {
         playerID,
