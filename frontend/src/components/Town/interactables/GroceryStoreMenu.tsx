@@ -78,13 +78,6 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
       setTotalPrice(groceryStoreAreaController.totalPrice);
       setPlayerBalance(groceryStoreAreaController.balance);
       setHistory(groceryStoreAreaController.history);
-      if (totalPrice > playerBalance) {
-        toast({
-          title: 'Error adding item',
-          description: 'Not enough balance',
-          status: 'error',
-        });
-      }
     };
     groceryStoreAreaController.addListener('groceryStoreAreaUpdated', updateGroceryStoreAreaModel);
 
@@ -237,14 +230,19 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
                   size='md'
                   borderRadius='md'
                   onClick={async () => {
-                    try {
-                      await groceryStoreAreaController.handleCheckout();
-                    } catch (err) {
-                      console.log('this is the error in menu');
+                    if (playerBalance < totalPrice || totalPrice === 0) {
                       toast({
-                        title: 'Error adding item',
-                        description: (err as Error).toString(),
+                        title: 'Error checking out',
+                        description: 'Insufficient funds',
                         status: 'error',
+                      });
+                      return;
+                    } else {
+                      await groceryStoreAreaController.handleCheckout();
+                      toast({
+                        title: 'Nice work checking out',
+                        description: 'Congratz on new items',
+                        status: 'success',
                       });
                     }
                   }}>

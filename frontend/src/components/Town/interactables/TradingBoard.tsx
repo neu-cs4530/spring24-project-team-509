@@ -258,7 +258,7 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
                       variant='solid'
                       size='md'
                       borderRadius='md'
-                      disabled={item.playerID === tradingAreaController.playerID}
+                      disabled={item.playerID === tradingAreaController.playerID || !(item.itemDesire in iconMap)}
                       onClick={async () => {
                         try {
                           await tradingAreaController.handleAcceptTradingOffer(
