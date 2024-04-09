@@ -1,8 +1,14 @@
 import GroceryStoreAreaController from '../../../classes/interactable/GroceryStoreAreaController';
 import { useInteractable, useInteractableAreaController } from '../../../classes/TownController';
-import { InteractableID } from '../../../types/CoveyTownSocket';
+import { GroceryItem, InteractableID } from '../../../types/CoveyTownSocket';
 import { useCallback, useEffect, useState } from 'react';
 import {
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
+  Box,
   Button,
   Container,
   Heading,
@@ -23,17 +29,38 @@ import {
 import GroceryStoreAreaInteractable from './GroceryStoreArea';
 import useTownController from '../../../hooks/useTownController';
 import React from 'react';
+import AppleIcon from './icons/AppleIcon';
+import BaconIcon from './icons/BaconIcon';
+import BananaIcon from './icons/BananaIcon';
+import BreadIcon from './icons/BreadIcon';
+import CarrotIcon from './icons/CarrotIcon';
+import DonutIcon from './icons/DonutIcon';
+import EggIcon from './icons/EggIcon';
+import FishIcon from './icons/FishIcon';
+import PizzaIcon from './icons/PizzaIcon';
+import NoIcon from './icons/NoIcon';
 
 export function GroceryMenu({ interactableID }: { interactableID: InteractableID }): JSX.Element {
+  const iconMap: { [key: string]: React.ComponentType } = {
+    apple: AppleIcon,
+    bacon: BaconIcon,
+    banana: BananaIcon,
+    pizza: PizzaIcon,
+    bread: BreadIcon,
+    carrot: CarrotIcon,
+    donut: DonutIcon,
+    fish: FishIcon,
+    egg: EggIcon,
+  };
   const groceryStoreAreaController =
     useInteractableAreaController<GroceryStoreAreaController>(interactableID);
-
-  const [storeInventory, setStoreInventory] = useState<any[] | null>(
+  const [storeInventory, setStoreInventory] = useState<GroceryItem[] | null>(
     groceryStoreAreaController.storeInventory,
   );
-  const [storeCart, setStoreCart] = useState<any[] | null>(groceryStoreAreaController.cart);
+  const [storeCart, setStoreCart] = useState<GroceryItem[] | null>(groceryStoreAreaController.cart);
   const [totalPrice, setTotalPrice] = useState<number>(groceryStoreAreaController.totalPrice);
   const [playerBalance, setPlayerBalance] = useState<number>(groceryStoreAreaController.balance);
+  const [history, setHistory] = useState<GroceryItem[]>(groceryStoreAreaController.history);
   const toast = useToast();
 
   const handleRemoveItem = async (itemName: string) => {
@@ -44,27 +71,13 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
     await groceryStoreAreaController.handleAddItem(itemName, price);
   };
 
-  const handleCheckout2 = async () => {
-    await groceryStoreAreaController.handleCheckout();
-  };
-
-  const fetchStore = () => {
-    setStoreInventory(groceryStoreAreaController.storeInventory);
-    setStoreCart(groceryStoreAreaController.cart);
-    setTotalPrice(groceryStoreAreaController.totalPrice);
-    setPlayerBalance(groceryStoreAreaController.balance);
-    if (totalPrice > playerBalance) {
-      toast({
-        title: 'Error adding item',
-        description: 'Not enough balance',
-        status: 'error',
-      });
-    }
-  };
-
   useEffect(() => {
     const updateGroceryStoreAreaModel = () => {
-      fetchStore();
+      setStoreInventory(groceryStoreAreaController.storeInventory);
+      setStoreCart(groceryStoreAreaController.cart);
+      setTotalPrice(groceryStoreAreaController.totalPrice);
+      setPlayerBalance(groceryStoreAreaController.balance);
+      setHistory(groceryStoreAreaController.history);
     };
     groceryStoreAreaController.addListener('groceryStoreAreaUpdated', updateGroceryStoreAreaModel);
 
@@ -74,17 +87,63 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
         updateGroceryStoreAreaModel,
       );
     };
-  }, [groceryStoreAreaController, storeCart, totalPrice, storeInventory, playerBalance, toast]);
+  }, [
+    groceryStoreAreaController,
+    storeCart,
+    totalPrice,
+    storeInventory,
+    playerBalance,
+    toast,
+    history,
+  ]);
 
   return (
     <Container className='GroceryStoreMenu'>
+      <Container>
+        <Accordion allowToggle>
+          <AccordionItem>
+            <AccordionButton>
+              <Box flex='1' textAlign='left'>
+                Want to look at your last purchase?
+              </Box>
+              <AccordionIcon />
+            </AccordionButton>
+            <AccordionPanel>
+              <Table variant='striped' colorScheme='yellow'>
+                <Thead>
+                  <Tr>
+                    <Th>Item Name</Th>
+                    <Th></Th>
+                    <Th>Price</Th>
+                    <Th>Quantity</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {history.map((item: GroceryItem) => (
+                    <Tr key={item.name}>
+                      <Td>{item.name}</Td>
+                      <Td>
+                        {iconMap[item.name] ? React.createElement(iconMap[item.name]) : <NoIcon />}
+                      </Td>
+                      <Td>{item.price}</Td>
+                      <Td>{item.quantity}</Td>
+                      <Td></Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
+      </Container>
       {storeInventory && (
         <Container>
-          <Heading as='h3'>GroceryStore</Heading>
+          <Heading as='h3'>Grocery Store</Heading>
           <Table variant='striped' colorScheme='yellow'>
             <Thead>
               <Tr>
                 <Th>Item Name</Th>
+                <Th></Th>
                 <Th>Price</Th>
                 <Th>Quantity</Th>
               </Tr>
@@ -92,9 +151,12 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
             <Tbody>
               {storeInventory
                 .sort((a, b) => a.name.localeCompare(b.name))
-                .map((item: any) => (
+                .map((item: GroceryItem) => (
                   <Tr key={item.name}>
                     <Td>{item.name}</Td>
+                    <Td>
+                      {iconMap[item.name] ? React.createElement(iconMap[item.name]) : <NoIcon />}
+                    </Td>
                     <Td>{item.price}</Td>
                     <Td>{item.quantity}</Td>
                     <Td>
@@ -119,51 +181,78 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
           </Table>
         </Container>
       )}
-      {storeCart && (
-        <Container>
-          <Heading as='h3'>Cart</Heading>
-          <Table variant='striped' colorScheme='yellow'>
-            <Thead>
-              <Tr>
-                <Th>Item Name</Th>
-                <Th>Price</Th>
-                <Th>Quantity</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {storeCart
-                .sort((a, b) => a.name.localeCompare(b.name))
-                .map((item: any) => (
-                  <Tr key={item.name}>
-                    <Td>{item.name}</Td>
-                    <Td>{item.price}</Td>
-                    <Td>{item.quantity}</Td>
-                    <Td>
-                      <Button onClick={() => handleRemoveItem(item.name)}>Return</Button>
-                    </Td>
-                  </Tr>
-                ))}
-            </Tbody>
-          </Table>
-        </Container>
-      )}
-      <p>Total Price: {totalPrice}</p>
-      <p>Your Balance: {playerBalance}</p>
-      <Button
-        onClick={async () => {
-          try {
-            await groceryStoreAreaController.handleCheckout();
-          } catch (err) {
-            console.log('this is the error in menu');
-            toast({
-              title: 'Error adding item',
-              description: (err as Error).toString(),
-              status: 'error',
-            });
-          }
-        }}>
-        Checkout
-      </Button>
+      <Container>
+        <Accordion allowToggle>
+          <AccordionItem>
+            <AccordionButton>
+              <Box flex='1' textAlign='left'>
+                Check out here!
+              </Box>
+              <AccordionIcon />
+            </AccordionButton>
+            <AccordionPanel>
+              {storeCart && (
+                <Container>
+                  <Heading as='h4'>Cart</Heading>
+                  <Table variant='striped' colorScheme='yellow'>
+                    <Thead>
+                      <Tr>
+                        <Th>Item Name</Th>
+                        <Th>Price</Th>
+                        <Th>Quantity</Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      {storeCart
+                        .sort((a, b) => a.name.localeCompare(b.name))
+                        .map((item: GroceryItem) => (
+                          <Tr key={item.name}>
+                            <Td>{item.name}</Td>
+                            <Td>{item.price}</Td>
+                            <Td>{item.quantity}</Td>
+                            <Td>
+                              <Button onClick={() => handleRemoveItem(item.name)}>Return</Button>
+                            </Td>
+                          </Tr>
+                        ))}
+                    </Tbody>
+                  </Table>
+                </Container>
+              )}
+              <Box display='flex' justifyContent='space-between' alignItems='center' mt={4}>
+                <Box>
+                  <p>Total Price: {totalPrice}</p>
+                  <p>Your Balance: {playerBalance}</p>
+                </Box>
+                <Button
+                  colorScheme='green'
+                  variant='solid'
+                  size='md'
+                  borderRadius='md'
+                  onClick={async () => {
+                    if (playerBalance < totalPrice || totalPrice === 0) {
+                      toast({
+                        title: 'Error checking out',
+                        description: 'Insufficient funds',
+                        status: 'error',
+                      });
+                      return;
+                    } else {
+                      await groceryStoreAreaController.handleCheckout();
+                      toast({
+                        title: 'Nice work checking out',
+                        description: 'Congratz on new items',
+                        status: 'success',
+                      });
+                    }
+                  }}>
+                  Checkout
+                </Button>
+              </Box>
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
+      </Container>
     </Container>
   );
 }
@@ -201,10 +290,10 @@ export default function GroceryStoreAreaWrapper(): JSX.Element {
         closeOnOverlayClick={false}
         size='xl'>
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent minWidth='fit-content' minHeight='fit-content'>
           <ModalHeader>{groceryStoreArea.name}</ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
+          <ModalBody overflow='auto'>
             <GroceryMenu interactableID={groceryStoreArea.id} />
           </ModalBody>
         </ModalContent>

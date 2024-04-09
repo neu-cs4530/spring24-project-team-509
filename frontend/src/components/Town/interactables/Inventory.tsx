@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useInteractable, useInteractableAreaController } from '../../../classes/TownController';
 import InventoryAreaController from '../../../classes/interactable/InventoryAreaController';
-import { InteractableID } from '../../../types/CoveyTownSocket';
+import { GroceryItem, InteractableID } from '../../../types/CoveyTownSocket';
 import useTownController from '../../../hooks/useTownController';
 import InventoryAreaInteractable from './InventoryArea';
 import {
@@ -20,31 +20,42 @@ import {
   Thead,
   Tr,
 } from '@chakra-ui/react';
-import { InventoryArea as InventoryAreaModel } from '../../../types/CoveyTownSocket';
 import React from 'react';
+import AppleIcon from './icons/AppleIcon';
+import BaconIcon from './icons/BaconIcon';
+import BananaIcon from './icons/BananaIcon';
+import BreadIcon from './icons/BreadIcon';
+import CarrotIcon from './icons/CarrotIcon';
+import DonutIcon from './icons/DonutIcon';
+import EggIcon from './icons/EggIcon';
+import FishIcon from './icons/FishIcon';
+import PizzaIcon from './icons/PizzaIcon';
+import NoIcon from './icons/NoIcon';
 
 export function Inventory({ interactableID }: { interactableID: InteractableID }): JSX.Element {
+  const iconMap: { [key: string]: React.ComponentType } = {
+    apple: AppleIcon,
+    bacon: BaconIcon,
+    banana: BananaIcon,
+    pizza: PizzaIcon,
+    bread: BreadIcon,
+    carrot: CarrotIcon,
+    donut: DonutIcon,
+    fish: FishIcon,
+    egg: EggIcon,
+  };
+
   const inventoryAreaController =
     useInteractableAreaController<InventoryAreaController>(interactableID);
-  const [playerInventory, setPlayerInventory] = useState<null[] | null>(
+  const [playerInventory, setPlayerInventory] = useState<GroceryItem[] | null>(
     inventoryAreaController.playerInventory,
   );
 
-  const [inventoryAreaModel, setInventoryAreaModel] = useState<InventoryAreaModel>(
-    inventoryAreaController.toInteractableAreaModel(),
-  );
-
-  const fetchInventory = async () => {
-    //await inventoryAreaController.handleOpenInventory();
-    setPlayerInventory(inventoryAreaController.playerInventory);
-  };
-
   useEffect(() => {
     const updateInventoryAreaModel = () => {
-      fetchInventory();
+      setPlayerInventory(inventoryAreaController.playerInventory);
       console.log('inventoryArea', playerInventory);
     };
-    console.log('here');
     inventoryAreaController.addListener('inventoryAreaUpdated', updateInventoryAreaModel);
     return () => {
       inventoryAreaController.removeListener('inventoryAreaUpdated', updateInventoryAreaModel);
@@ -59,14 +70,16 @@ export function Inventory({ interactableID }: { interactableID: InteractableID }
           <Thead>
             <Tr>
               <Th>Item Name</Th>
+              <Th></Th>
               <Th>Price</Th>
               <Th>Quantity</Th>
             </Tr>
           </Thead>
           <Tbody>
-            {playerInventory.map((item: any) => (
+            {playerInventory.map((item: GroceryItem) => (
               <Tr key={item.name}>
                 <Td>{item.name}</Td>
+                <Td>{iconMap[item.name] ? React.createElement(iconMap[item.name]) : <NoIcon />}</Td>
                 <Td>{item.price}</Td>
                 <Td>{item.quantity}</Td>
               </Tr>

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useInteractable, useInteractableAreaController } from '../../../classes/TownController';
 import TradingAreaController from '../../../classes/interactable/TradingAreaController';
-import { InteractableID } from '../../../types/CoveyTownSocket';
+import { InteractableID, TradingOffer, GroceryItem } from '../../../types/CoveyTownSocket';
 import useTownController from '../../../hooks/useTownController';
 import TradingAreaInteractable from './TradingArea';
 import {
@@ -27,31 +27,45 @@ import {
   Th,
   Thead,
   Tr,
-  useDisclosure,
   useToast,
 } from '@chakra-ui/react';
 import React from 'react';
 import { InputLabel } from '@material-ui/core';
-import ChatChannel from './ChatChannel';
-import Inventory from './Inventory';
+import DonutIcon from './icons/DonutIcon';
+import AppleIcon from './icons/AppleIcon';
+import BaconIcon from './icons/BaconIcon';
+import BananaIcon from './icons/BananaIcon';
+import BreadIcon from './icons/BreadIcon';
+import CarrotIcon from './icons/CarrotIcon';
+import EggIcon from './icons/EggIcon';
+import FishIcon from './icons/FishIcon';
+import PizzaIcon from './icons/PizzaIcon';
+import NoIcon from './icons/NoIcon';
 
 export function TradingBoard({ interactableID }: { interactableID: InteractableID }): JSX.Element {
-  const [tradingBoard, setTradingBoard] = useState<any[] | null>([]);
+  const iconMap: { [key: string]: React.ComponentType } = {
+    apple: AppleIcon,
+    bacon: BaconIcon,
+    banana: BananaIcon,
+    pizza: PizzaIcon,
+    bread: BreadIcon,
+    carrot: CarrotIcon,
+    donut: DonutIcon,
+    fish: FishIcon,
+    egg: EggIcon,
+  };
+
+  const [tradingBoard, setTradingBoard] = useState<TradingOffer[] | null>([]);
   const [postItem, setPostItem] = useState<string>('');
   const [postQuantity, setPostQuantity] = useState<number>(0);
   const [desireItem, setDesiteItem] = useState<string>('');
   const [desireQuantity, setDesireQuantity] = useState<number>(0);
-  const [playerInventory, setPlayerInventory] = useState<any[] | null>([]);
+  const [playerInventory, setPlayerInventory] = useState<GroceryItem[] | null>([]);
 
   const toast = useToast();
 
   const tradingAreaController =
     useInteractableAreaController<TradingAreaController>(interactableID);
-
-  const fetchTradingBoard = async () => {
-    setTradingBoard(tradingAreaController.tradingBoard);
-    setPlayerInventory(tradingAreaController.inventory);
-  };
 
   const handlePostItem = async (
     item: string,
@@ -59,7 +73,6 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
     wantedItem: string,
     wantedQuantity: number,
   ) => {
-    console.log('posting item', item, quantity, wantedItem, wantedQuantity);
     await tradingAreaController.handlePostTradingOffer(item, quantity, wantedItem, wantedQuantity);
     setPostItem('');
     setPostQuantity(0);
@@ -69,17 +82,18 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
 
   useEffect(() => {
     const updateInventoryAreaModel = () => {
-      fetchTradingBoard();
+      setTradingBoard(tradingAreaController.tradingBoard);
+      setPlayerInventory(tradingAreaController.inventory);
     };
     tradingAreaController.addListener('tradingAreaUpdated', updateInventoryAreaModel);
 
     return () => {
       tradingAreaController.removeListener('tradingAreaUpdated', updateInventoryAreaModel);
     };
-  }, [tradingAreaController, tradingBoard]);
+  }, [tradingAreaController, tradingBoard, playerInventory]);
 
   return (
-    <Container className='TradingBoard' display='grid' grid-template-columns='70% 30%' gap='10px'>
+    <Container className='TradingBoard' marginLeft='0!important'>
       <Container>
         <Heading>Trading Board</Heading>
         <Accordion allowToggle>
@@ -122,14 +136,39 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
                 <Button
                   colorScheme='blue'
                   onClick={async () => {
-                    try {
-                      await handlePostItem(postItem, postQuantity, desireItem, desireQuantity);
-                    } catch (err) {
+                    if (!playerInventory) {
                       toast({
-                        title: 'Error post item',
-                        description: (err as Error).toString(),
+                        title: 'You dont have any items in your inventory',
+                        description: 'You dont have any items in your inventory',
                         status: 'error',
                       });
+                    } else {
+                      const selectedItem = playerInventory.find(item => item.name === postItem);
+                      if (
+                        selectedItem &&
+                        postQuantity <= selectedItem.quantity &&
+                        postItem in iconMap &&
+                        desireItem in iconMap &&
+                        postQuantity > 0 &&
+                        desireQuantity > 0
+                      ) {
+                        try {
+                          await handlePostItem(postItem, postQuantity, desireItem, desireQuantity);
+                        } catch (err) {
+                          toast({
+                            title: 'Error post item',
+                            description: (err as Error).toString(),
+                            status: 'error',
+                          });
+                        }
+                      } else {
+                        toast({
+                          title: 'Error post item',
+                          description:
+                            'There is an error in posting the item. Please check the item name and quantity',
+                          status: 'error',
+                        });
+                      }
                     }
                   }}>
                   Post
@@ -138,74 +177,144 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
             </Heading>
           </AccordionItem>
         </Accordion>
+      </Container>
+      <Container className='Inventory Table'>
+        <Accordion allowToggle>
+          <AccordionItem>
+            <AccordionButton>
+              <Box flex='1' textAlign='left'>
+                Want to take a look at your inventory?
+              </Box>
+              <AccordionIcon />
+            </AccordionButton>
+            <AccordionPanel>
+              {playerInventory && (
+                <Table>
+                  <Thead>
+                    <Tr>
+                      <Th>Item Name</Th>
+                      <Th></Th>
+                      <Th>Price</Th>
+                      <Th>Quantity</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {playerInventory.map((item: GroceryItem) => (
+                      <Tr key={item.name}>
+                        <Td>{item.name}</Td>
+                        <Td>
+                          {iconMap[item.name] ? (
+                            React.createElement(iconMap[item.name])
+                          ) : (
+                            <NoIcon />
+                          )}
+                        </Td>
+                        <Td>{item.price}</Td>
+                        <Td>{item.quantity}</Td>
+                      </Tr>
+                    ))}
+                  </Tbody>
+                </Table>
+              )}
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
+      </Container>
+      {tradingBoard && (
+        <Container>
+          <Table>
+            <Thead>
+              <Tr>
+                <Th>Name</Th>
+                <Th>Item</Th>
+                <Th></Th>
+                <Th>Quantity</Th>
+                <Th>Wanted</Th>
+                <Th></Th>
+                <Th>Wanted Num</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {tradingBoard.map((item: TradingOffer) => (
+                <Tr key={item.playerName}>
+                  <Td>{item.playerName}</Td>
+                  <Td>{item.item}</Td>
+                  <Td>
+                    {iconMap[item.item] ? React.createElement(iconMap[item.item]) : <NoIcon />}
+                  </Td>
+                  <Td>{item.quantity}</Td>
+                  <Td>{item.itemDesire}</Td>
+                  <Td>
+                    {iconMap[item.itemDesire] ? (
+                      React.createElement(iconMap[item.itemDesire])
+                    ) : (
+                      <NoIcon />
+                    )}
+                  </Td>
+                  <Td>{item.quantityDesire}</Td>
+                  <Td>
+                    <Button
+                      colorScheme='green'
+                      variant='solid'
+                      size='md'
+                      borderRadius='md'
+                      disabled={
+                        item.playerID === tradingAreaController.playerID ||
+                        !(
+                          playerInventory &&
+                          playerInventory.find(
+                            itemInInventory => itemInInventory.name === item.itemDesire,
+                          )
+                        )
+                      }
+                      onClick={async () => {
+                        try {
+                          await tradingAreaController.handleAcceptTradingOffer(
+                            item.playerID,
+                            item.item,
+                            item.quantity,
+                            item.itemDesire,
+                            item.quantityDesire,
+                          );
+                        } catch (err) {
+                          toast({
+                            title: 'Error accept item',
+                            description: (err as Error).toString(),
+                            status: 'error',
+                          });
+                        }
+                      }}>
+                      Accept
+                    </Button>
+                  </Td>
 
-        {tradingBoard && (
-          <Container>
-            <Table>
-              <Thead>
-                <Tr>
-                  <Th>Name</Th>
-                  <Th>Item</Th>
-                  <Th>Quantity</Th>
-                  <Th>Wanted</Th>
-                  <Th>Wanted Num</Th>
+                  <Td>
+                    <Button
+                      colorScheme='red'
+                      variant='solid'
+                      size='md'
+                      borderRadius='md'
+                      disabled={item.playerID !== tradingAreaController.playerID}
+                      onClick={async () => {
+                        try {
+                          await tradingAreaController.handleDeleteOffer(item.playerID);
+                        } catch (err) {
+                          toast({
+                            title: 'Error post item',
+                            description: (err as Error).toString(),
+                            status: 'error',
+                          });
+                        }
+                      }}>
+                      Delete
+                    </Button>
+                  </Td>
                 </Tr>
-              </Thead>
-              <Tbody>
-                {tradingBoard.map((item: any) => (
-                  <Tr key={item.playerName}>
-                    <Td>{item.playerName}</Td>
-                    <Td>{item.item}</Td>
-                    <Td>{item.quantity}</Td>
-                    <Td>{item.itemDesire}</Td>
-                    <Td>{item.quantityDesire}</Td>
-                    <Td>
-                      <Button
-                        colorScheme='green'
-                        size='md'
-                        onClick={async () => {
-                          try {
-                            await tradingAreaController.handleAcceptTradingOffer(
-                              item.playerID,
-                              item.item,
-                              item.quantity,
-                              item.itemDesire,
-                              item.quantityDesire,
-                            );
-                          } catch (err) {
-                            toast({
-                              title: 'Error post item',
-                              description: (err as Error).toString(),
-                              status: 'error',
-                            });
-                          }
-                        }}>
-                        Accept
-                      </Button>
-                    </Td>
-                  </Tr>
-                ))}
-              </Tbody>
-            </Table>
-          </Container>
-        )}
-      </Container>
-      <Container>
-        <Box
-          style={{
-            height: '400px',
-            overflowY: 'scroll',
-          }}>
-          <div
-            style={{
-              height: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-            }}>
-            <ChatChannel interactableID={interactableID} />
-          </div>
-        </Box>
-      </Container>
+              ))}
+            </Tbody>
+          </Table>
+        </Container>
+      )}
     </Container>
   );
 }
@@ -243,10 +352,10 @@ export default function TradingAreaWrapper(): JSX.Element {
         closeOnOverlayClick={false}
         size='xl'>
         <ModalOverlay />
-        <ModalContent minWidth='fit-content' minHeight='fit-content'>
+        <ModalContent minWidth='fit-content' minHeight='fit-content' marginLeft='0!important'>
           <ModalHeader>{tradingArea.name}</ModalHeader>
           <ModalCloseButton />
-          <ModalBody width='100vh' height='80vh' overflow='auto'>
+          <ModalBody width='130vh' height='100vh' overflow='auto' marginLeft='0!important'>
             <TradingBoard interactableID={tradingArea.id} />
           </ModalBody>
         </ModalContent>

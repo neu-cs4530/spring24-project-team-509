@@ -1,6 +1,7 @@
 import {
   GroceryStoreArea as GroceryStoreAreaModel,
   InteractableID,
+  GroceryItem,
 } from '../../types/CoveyTownSocket';
 import InteractableAreaController, {
   BaseInteractableEventMap,
@@ -12,6 +13,11 @@ export type GroceryStoreAreaEvents = BaseInteractableEventMap & {
   groceryStoreAreaUpdated: () => void;
 };
 
+/**
+ * GroceryStoreAreaController is a class that extends InteractableAreaController.
+ * It is responsible for handling the grocery store area.
+ * It contains methods to open the grocery store, add an item to the cart, remove an item from the cart, and checkout.
+ */
 export default class GroceryStoreAreaController extends InteractableAreaController<
   GroceryStoreAreaEvents,
   GroceryStoreAreaModel
@@ -20,11 +26,13 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
 
   protected _totalPrice = 0;
 
-  protected _storeInventory: any[] = [];
+  protected _storeInventory: GroceryItem[] = [];
 
   protected _totalBalance = 0;
 
-  protected _cart: any[] = [];
+  protected _cart: GroceryItem[] = [];
+
+  protected _history: GroceryItem[] = [];
 
   constructor(id: InteractableID, townController: TownController) {
     super(id);
@@ -40,6 +48,7 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
       storeInventory: this._storeInventory,
       cart: this._cart,
       balance: this._totalBalance,
+      history: this._history,
     };
   }
 
@@ -63,21 +72,30 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
     return this._totalPrice;
   }
 
-  get storeInventory(): any[] {
+  get storeInventory(): GroceryItem[] {
     return this._storeInventory;
   }
 
-  get cart(): any[] {
+  get cart(): GroceryItem[] {
     return this._cart;
   }
 
+  get history(): GroceryItem[] {
+    return this._history;
+  }
+
+  /**
+   * To update the grocery store area with the updated model.
+   *
+   * @param updatedModel is the updated model of the grocery store area
+   */
   protected _updateFrom(updatedModel: GroceryStoreAreaModel): void {
     this._totalPrice = updatedModel.totalPrice;
     this._storeInventory = updatedModel.storeInventory;
     this._cart = updatedModel.cart;
     this._totalBalance = updatedModel.balance;
-    console.log('grocConroller updates', this._storeInventory, this._cart, this._totalPrice);
-    console.log('balance', this._totalBalance);
+    this._history = updatedModel.history;
+    console.log('grocConroller updates', this._history, this._storeInventory);
     this.emit('groceryStoreAreaUpdated');
   }
 
@@ -86,7 +104,6 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
    * To initialize the store inventory and cart.
    */
   public async handleOpenGroceryStore(): Promise<void> {
-    console.log('controller opens');
     try {
       await this._townController.sendInteractableCommand(this.id, {
         type: 'OpenGroceryStore',
@@ -96,6 +113,9 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
     }
   }
 
+  /**
+   * To handle checkout.
+   */
   public async handleCheckout(): Promise<void> {
     await this._townController.sendInteractableCommand(this.id, {
       type: 'CheckOut',

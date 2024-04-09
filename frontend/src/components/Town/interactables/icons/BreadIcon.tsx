@@ -1,20 +1,15 @@
-// icon:bread | Tabler Icons https://tablericons.com/ | Csaba Kissi
+// icon:bread-slice | Fontawesome https://fontawesome.com/ | Fontawesome
 import * as React from 'react';
 
 function BreadIcon() {
   return (
     <svg
-      fill='none'
-      stroke='currentColor'
-      strokeLinecap='round'
-      strokeLinejoin='round'
-      strokeWidth={2}
-      viewBox='0 0 24 24'
-      height='1em'
-      width='1em'
+      viewBox='0 0 512 512'
+      fill='burlywood'
+      height='3em'
+      width='3em'
       xmlns='http://www.w3.org/2000/svg'>
-      <path stroke='none' d='M0 0h24v24H0z' />
-      <path d='M17 5a3 3 0 012 5.235V17a2 2 0 01-2 2H7a2 2 0 01-2-2v-6.764a3 3 0 011.824-5.231L7 5h10z' />
+      <path d='M256 32C192 32 0 64 0 192c0 35.3 28.7 64 64 64v176c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V256c35.3 0 64-28.7 64-64C512 64 320 32 256 32z' />
     </svg>
   );
 }
