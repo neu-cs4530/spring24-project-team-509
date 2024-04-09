@@ -263,7 +263,6 @@ GameMoveCommand<ConnectFourMove> |
 StartGameCommand | 
 LeaveGameCommand |
 OpenGroceryStoreCommand |
-// CalculateTotalCartPriceCommand |
 AddToCartCommand |
 RemoveFromCartCommand |
 CheckOutCommand |

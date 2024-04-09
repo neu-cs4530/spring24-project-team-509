@@ -1,4 +1,4 @@
-import { InventoryArea as InventoryAreaModel } from '../../types/CoveyTownSocket';
+import { InventoryArea as InventoryAreaModel, GroceryItem } from '../../types/CoveyTownSocket';
 import InteractableAreaController, {
   BaseInteractableEventMap,
   INVENTORY_AREA_TYPE,
@@ -8,14 +8,18 @@ import TownController from '../TownController';
 export type InventoryAreaEvents = BaseInteractableEventMap & {
   inventoryAreaUpdated: () => void;
 };
-
+/**
+ * InventoryAreaController is a class that extends InteractableAreaController.
+ * It is responsible for handling the inventory area.
+ * It contains methods to open the inventory area.
+ */
 export default class InventoryAreaController extends InteractableAreaController<
   InventoryAreaEvents,
   InventoryAreaModel
 > {
   protected _townController: TownController;
 
-  protected _playerInventory: any[] = [];
+  protected _playerInventory: GroceryItem[] = [];
 
   constructor(id: string, townController: TownController) {
     super(id);
@@ -44,10 +48,15 @@ export default class InventoryAreaController extends InteractableAreaController<
     return this.id;
   }
 
-  get playerInventory(): any[] {
+  get playerInventory(): GroceryItem[] {
     return this._playerInventory;
   }
 
+  /**
+   * Update the inventory area with the updated model.
+   *
+   * @param updatedModel
+   */
   protected _updateFrom(updatedModel: InventoryAreaModel): void {
     this._playerInventory = updatedModel.playerInventory;
     console.log('invencontrol updates', this._playerInventory);

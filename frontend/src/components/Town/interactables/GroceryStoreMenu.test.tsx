@@ -104,8 +104,6 @@ describe('GroceryStoreArea', () => {
   const townController = mock<TownController>();
   Object.defineProperty(townController, 'ourPlayer', { get: () => ourPlayer });
   let groceryStoreAreaController = new MockGroceryStoreAreaController();
-  let joinAreaResolve: () => void;
-  let joinAreaReject: (err: Error) => void;
 
   function renderGroceryStoreArea() {
     return render(
@@ -204,7 +202,7 @@ describe('GroceryStoreArea', () => {
 
   it('Displays the grocery store area', () => {
     const { getByText } = renderGroceryStoreArea();
-    expect(getByText('GroceryStore')).toBeInTheDocument();
+    expect(getByText('Grocery Store')).toBeInTheDocument();
   });
 
   it('Displays the cart', () => {

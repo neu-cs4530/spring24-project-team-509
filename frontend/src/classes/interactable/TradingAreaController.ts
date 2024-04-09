@@ -2,18 +2,27 @@ import InteractableAreaController, {
   BaseInteractableEventMap,
   TRADING_AREA_TYPE,
 } from './InteractableAreaController';
-import { TradingArea as TradingAreaModel, GroceryItem } from '../../types/CoveyTownSocket';
+import {
+  TradingArea as TradingAreaModel,
+  GroceryItem,
+  TradingOffer,
+} from '../../types/CoveyTownSocket';
 import TownController from '../TownController';
 
 export type TradingAreaEvents = BaseInteractableEventMap & {
   tradingAreaUpdated: () => void;
 };
 
+/**
+ * TradingAreaController is a class that extends InteractableAreaController.
+ * It is responsible for handling the trading area.
+ * It contains methods to open the trading board, post a trading offer, delete a trading offer, and accept a trading offer.
+ */
 export default class TradingAreaController extends InteractableAreaController<
   TradingAreaEvents,
   TradingAreaModel
 > {
-  protected _tradingBoard: any[] = [];
+  protected _tradingBoard: TradingOffer[] = [];
 
   protected _error: string | undefined = undefined;
 
@@ -64,10 +73,15 @@ export default class TradingAreaController extends InteractableAreaController<
     return this._playerID;
   }
 
-  get tradingBoard(): any[] {
+  get tradingBoard(): TradingOffer[] {
     return this._tradingBoard;
   }
 
+  /**
+   * To update the trading area with the updated model.
+   *
+   * @param updatedModel is the updated model of the trading area
+   */
   protected _updateFrom(updatedModel: TradingAreaModel): void {
     this._tradingBoard = updatedModel.tradingBoard;
     this._inventory = updatedModel.inventory;
@@ -76,6 +90,9 @@ export default class TradingAreaController extends InteractableAreaController<
     this.emit('tradingAreaUpdated');
   }
 
+  /**
+   * To open the trading board.
+   */
   public async handleOpenTradingBoard(): Promise<void> {
     console.log('tradingControl opens');
     await this._townController.sendInteractableCommand(this.id, {
@@ -83,6 +100,11 @@ export default class TradingAreaController extends InteractableAreaController<
     });
   }
 
+  /**
+   * To delete the trading board offer.
+   *
+   * @param playerID is the player ID of the player who posted the offer
+   */
   public async handleDeleteOffer(playerID: string): Promise<void> {
     console.log('tradingControl closes');
     await this._townController.sendInteractableCommand(this.id, {
@@ -91,6 +113,14 @@ export default class TradingAreaController extends InteractableAreaController<
     });
   }
 
+  /**
+   * To post a trading offer.
+   *
+   * @param item is the item that the player wants to trade
+   * @param quantity is the quantity of the item that the player wants to trade
+   * @param itemDesire is the item that the player wants to receive
+   * @param quantityDesire is the quantity of the item that the player wants to receive
+   */
   public async handlePostTradingOffer(
     item: string,
     quantity: number,
@@ -106,6 +136,15 @@ export default class TradingAreaController extends InteractableAreaController<
     });
   }
 
+  /**
+   * To accept a trading offer.
+   *
+   * @param playerID is the player ID of the player who posted the offer
+   * @param item is the item that the player wants to trade
+   * @param quantity is the quantity of the item that the player wants to trade
+   * @param itemDesire is the item that the player wants to receive
+   * @param quantityDesire is the quantity of the item that the player wants to receive
+   */
   public async handleAcceptTradingOffer(
     playerID: string,
     item: string,

@@ -1,6 +1,7 @@
 import {
   GroceryStoreArea as GroceryStoreAreaModel,
   InteractableID,
+  GroceryItem,
 } from '../../types/CoveyTownSocket';
 import InteractableAreaController, {
   BaseInteractableEventMap,
@@ -12,6 +13,11 @@ export type GroceryStoreAreaEvents = BaseInteractableEventMap & {
   groceryStoreAreaUpdated: () => void;
 };
 
+/**
+ * GroceryStoreAreaController is a class that extends InteractableAreaController.
+ * It is responsible for handling the grocery store area.
+ * It contains methods to open the grocery store, add an item to the cart, remove an item from the cart, and checkout.
+ */
 export default class GroceryStoreAreaController extends InteractableAreaController<
   GroceryStoreAreaEvents,
   GroceryStoreAreaModel
@@ -20,13 +26,13 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
 
   protected _totalPrice = 0;
 
-  protected _storeInventory: any[] = [];
+  protected _storeInventory: GroceryItem[] = [];
 
   protected _totalBalance = 0;
 
-  protected _cart: any[] = [];
+  protected _cart: GroceryItem[] = [];
 
-  protected _history: any[] = [];
+  protected _history: GroceryItem[] = [];
 
   constructor(id: InteractableID, townController: TownController) {
     super(id);
@@ -66,18 +72,23 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
     return this._totalPrice;
   }
 
-  get storeInventory(): any[] {
+  get storeInventory(): GroceryItem[] {
     return this._storeInventory;
   }
 
-  get cart(): any[] {
+  get cart(): GroceryItem[] {
     return this._cart;
   }
 
-  get history(): any[] {
+  get history(): GroceryItem[] {
     return this._history;
   }
 
+  /**
+   * To update the grocery store area with the updated model.
+   *
+   * @param updatedModel is the updated model of the grocery store area
+   */
   protected _updateFrom(updatedModel: GroceryStoreAreaModel): void {
     this._totalPrice = updatedModel.totalPrice;
     this._storeInventory = updatedModel.storeInventory;
@@ -102,6 +113,9 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
     }
   }
 
+  /**
+   * To handle checkout.
+   */
   public async handleCheckout(): Promise<void> {
     await this._townController.sendInteractableCommand(this.id, {
       type: 'CheckOut',

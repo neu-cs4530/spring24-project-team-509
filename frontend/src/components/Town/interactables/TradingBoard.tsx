@@ -31,7 +31,6 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 import { InputLabel } from '@material-ui/core';
-import ChatChannel from './ChatChannel';
 import DonutIcon from './icons/DonutIcon';
 import AppleIcon from './icons/AppleIcon';
 import BaconIcon from './icons/BaconIcon';
@@ -155,14 +154,39 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
                 <Button
                   colorScheme='blue'
                   onClick={async () => {
-                    try {
-                      await handlePostItem(postItem, postQuantity, desireItem, desireQuantity);
-                    } catch (err) {
+                    if (!playerInventory) {
                       toast({
-                        title: 'Error post item',
-                        description: (err as Error).toString(),
+                        title: 'You dont have any items in your inventory',
+                        description: 'You dont have any items in your inventory',
                         status: 'error',
                       });
+                    } else {
+                      const selectedItem = playerInventory.find(item => item.name === postItem);
+                      if (
+                        selectedItem &&
+                        postQuantity <= selectedItem.quantity &&
+                        postItem in iconMap &&
+                        desireItem in iconMap &&
+                        postQuantity > 0 &&
+                        desireQuantity > 0
+                      ) {
+                        try {
+                          await handlePostItem(postItem, postQuantity, desireItem, desireQuantity);
+                        } catch (err) {
+                          toast({
+                            title: 'Error post item',
+                            description: (err as Error).toString(),
+                            status: 'error',
+                          });
+                        }
+                      } else {
+                        toast({
+                          title: 'Error post item',
+                          description:
+                            'There is an error in posting the item. Please check the item name and quantity',
+                          status: 'error',
+                        });
+                      }
                     }
                   }}>
                   Post
@@ -177,7 +201,7 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
           <AccordionItem>
             <AccordionButton>
               <Box flex='1' textAlign='left'>
-                Want to take a look at your inventory?
+                Your Inventory
               </Box>
               <AccordionIcon />
             </AccordionButton>
@@ -252,6 +276,15 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
                       variant='solid'
                       size='md'
                       borderRadius='md'
+                      disabled={
+                        item.playerID === tradingAreaController.playerID ||
+                        !(
+                          playerInventory &&
+                          playerInventory.find(
+                            itemInInventory => itemInInventory.name === item.itemDesire,
+                          )
+                        )
+                      }
                       onClick={async () => {
                         try {
                           await tradingAreaController.handleAcceptTradingOffer(
@@ -263,7 +296,7 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
                           );
                         } catch (err) {
                           toast({
-                            title: 'Error post item',
+                            title: 'Error accept item',
                             description: (err as Error).toString(),
                             status: 'error',
                           });
@@ -282,13 +315,7 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
                       disabled={item.playerID !== tradingAreaController.playerID}
                       onClick={async () => {
                         try {
-                          await tradingAreaController.handleAcceptTradingOffer(
-                            item.playerID,
-                            item.item,
-                            item.quantity,
-                            item.itemDesire,
-                            item.quantityDesire,
-                          );
+                          await tradingAreaController.handleDeleteOffer(item.playerID);
                         } catch (err) {
                           toast({
                             title: 'Error post item',

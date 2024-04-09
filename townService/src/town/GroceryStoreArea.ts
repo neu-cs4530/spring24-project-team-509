@@ -70,6 +70,25 @@ export default class GroceryStoreArea extends InteractableArea {
     );
   }
 
+  /**
+   * Handle a command from a player in this grocery store area.
+   * Supported commands:
+   * - OpenGroceryStoreCommand
+   * - AddToCartCommand
+   * - RemoveFromCartCommand
+   * - CheckOutCommand
+   *
+   * If the command is successful (does not throw an error), calls this._emitAreaChanged (necessary
+   * to notify any listeners of a state update, including any change to store inventory)
+   * If the command is unsuccessful (throws an error), the error is propagated to the caller
+   *
+   * @see InteractableCommand
+   *
+   * @param command command to handle
+   * @param player player making the request
+   * @returns response to the command, @see InteractableCommandResponse
+   * @throws InvalidParametersError if the command is not supported or is invalid.
+   */
   public handleCommand<CommandType extends InteractableCommand>(
     command: CommandType,
     player: Player,
@@ -99,7 +118,8 @@ export default class GroceryStoreArea extends InteractableArea {
   }
 
   /**
-   *
+   * To update the balance of the player.
+   * If the player is new, the balance is set to 100.
    */
   private async _updateBalance(playerID: string): Promise<void> {
     const { data } = await supabase
@@ -116,6 +136,7 @@ export default class GroceryStoreArea extends InteractableArea {
 
   /**
    * To update the store inventory.
+   * To do this, we fetch the store inventory from the database.
    */
   private async _updateStoreInventory(): Promise<void> {
     const { data, error } = await supabase.from('StoreInventory').select();
@@ -130,6 +151,7 @@ export default class GroceryStoreArea extends InteractableArea {
 
   /**
    * To update the cart.
+   * To do this, we fetch the items in the cart from the database.
    */
   private async _updateCart(): Promise<void> {
     const { data, error } = await supabase.from('storeCart').select();
@@ -142,6 +164,10 @@ export default class GroceryStoreArea extends InteractableArea {
     }
   }
 
+  /**
+   * Update the purchase history of the player.
+   * @param playerID The ID of the player whose history to update.
+   */
   private async _updateHistory(playerID: string): Promise<void> {
     const { data } = await supabase.from('playerInventory').select().eq('playerID', playerID);
     let historyList: { name: string; price: number; quantity: number }[] = [];
@@ -149,6 +175,7 @@ export default class GroceryStoreArea extends InteractableArea {
       historyList = JSON.parse(data[0].itemList);
     }
     this._history = historyList;
+    this._emitAreaChanged();
   }
 
   /**
@@ -168,6 +195,13 @@ export default class GroceryStoreArea extends InteractableArea {
     this._totalPrice = totalPrice;
   }
 
+  /**
+   * To add the purchase history of the player.
+   * @param playerID The ID of the player whose history to update.
+   * @param itemList The list of items to add to the history.
+   * @returns A promise that resolves when the history is updated.
+   * @throws Error if there is an error updating the history.
+   */
   private async _addHistory(playerID: string, itemList: GroceryItem[]): Promise<void> {
     await supabase.from('playerHistory').upsert([
       {
@@ -177,6 +211,17 @@ export default class GroceryStoreArea extends InteractableArea {
     ]);
   }
 
+  /**
+   * To checkout the items in the cart.
+   * To do this, we first fetch the items in the cart.
+   * Then fetch the player's inventory.
+   *  - update the player's inventory with the items in the cart.
+   *  - update the player's balance.
+   *  - delete the items in the cart.
+   *  - update the cart.
+   *  - update the history.
+   * @param playerID The ID of the player checking out.
+   */
   private async _handleCheckout(playerID: string): Promise<void> {
     const { data: cartData, error: cartError } = await supabase.from('storeCart').select();
     if (cartError) {
