@@ -183,7 +183,7 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
           <AccordionItem>
             <AccordionButton>
               <Box flex='1' textAlign='left'>
-                Want to take a look at your inventory?
+                Your Inventory
               </Box>
               <AccordionIcon />
             </AccordionButton>
