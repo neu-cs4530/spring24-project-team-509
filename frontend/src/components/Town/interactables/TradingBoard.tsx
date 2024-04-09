@@ -258,7 +258,15 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
                       variant='solid'
                       size='md'
                       borderRadius='md'
-                      disabled={item.playerID === tradingAreaController.playerID || !(item.itemDesire in iconMap)}
+                      disabled={
+                        item.playerID === tradingAreaController.playerID ||
+                        !(
+                          playerInventory &&
+                          playerInventory.find(
+                            itemInInventory => itemInInventory.name === item.itemDesire,
+                          )
+                        )
+                      }
                       onClick={async () => {
                         try {
                           await tradingAreaController.handleAcceptTradingOffer(
@@ -270,7 +278,7 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
                           );
                         } catch (err) {
                           toast({
-                            title: 'Error post item',
+                            title: 'Error accept item',
                             description: (err as Error).toString(),
                             status: 'error',
                           });
