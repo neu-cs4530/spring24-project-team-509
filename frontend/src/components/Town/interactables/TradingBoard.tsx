@@ -148,7 +148,9 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
                         selectedItem &&
                         postQuantity <= selectedItem.quantity &&
                         postItem in iconMap &&
-                        desireItem in iconMap
+                        desireItem in iconMap &&
+                        postQuantity > 0 &&
+                        desireQuantity > 0
                       ) {
                         try {
                           await handlePostItem(postItem, postQuantity, desireItem, desireQuantity);
@@ -256,6 +258,7 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
                       variant='solid'
                       size='md'
                       borderRadius='md'
+                      disabled={item.playerID === tradingAreaController.playerID}
                       onClick={async () => {
                         try {
                           await tradingAreaController.handleAcceptTradingOffer(
