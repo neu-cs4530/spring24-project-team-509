@@ -49,7 +49,7 @@ describe('[GroceryStoreAreaController]', () => {
         rotation: 'front',
       };
       groceryStoreArea.occupants = [new PlayerController('player001', 'player001', playerLocation)];
-      groceryStoreArea['_updateFrom'](groceryStoreModel);
+      groceryStoreArea["_updateFrom"](groceryStoreModel);
       expect(groceryStoreArea.isActive()).toBeTruthy();
     });
 
@@ -102,7 +102,7 @@ describe('[GroceryStoreAreaController]', () => {
 
   describe('Event Emissions on Update', () => {
     it('should emit groceryStoreAreaUpdated event on update', () => {
-      groceryStoreArea['_updateFrom']({ ...groceryStoreModel, totalPrice: 20 });
+      groceryStoreArea["_updateFrom"]({ ...groceryStoreModel, totalPrice: 20 });
       expect(mockListeners.groceryStoreAreaUpdated).toHaveBeenCalled();
     });
     it('should update everything with the updateFrom', () => {
@@ -116,7 +116,7 @@ describe('[GroceryStoreAreaController]', () => {
         balance: 20,
         history: [],
       };
-      groceryStoreArea['_updateFrom'](updatedGroceryStore);
+      groceryStoreArea["_updateFrom"](updatedGroceryStore);
       expect(groceryStoreArea.totalPrice).toEqual(20);
       expect(groceryStoreArea.storeInventory).toEqual([{ name: 'Milk', price: 3 }]);
       expect(groceryStoreArea.cart).toEqual([{ name: 'Milk', price: 3, quantity: 1 }]);
