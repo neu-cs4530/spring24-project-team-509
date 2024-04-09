@@ -32,6 +32,12 @@ import FishIcon from './icons/FishIcon';
 import PizzaIcon from './icons/PizzaIcon';
 import NoIcon from './icons/NoIcon';
 
+/**
+ * Renders the inventory component
+ * @param {Object} props - The component props
+ * @param {string} props.interactableID - The ID of the interactable
+ * @returns {JSX.Element} The rendered inventory component
+ */
 export function Inventory({ interactableID }: { interactableID: InteractableID }): JSX.Element {
   const iconMap: { [key: string]: React.ComponentType } = {
     apple: AppleIcon,
@@ -51,6 +57,9 @@ export function Inventory({ interactableID }: { interactableID: InteractableID }
     inventoryAreaController.playerInventory,
   );
 
+  /**
+   * Fetches the player's inventory
+   */
   const fetchInventory = async () => {
     //await inventoryAreaController.handleOpenInventory();
     setPlayerInventory(inventoryAreaController.playerInventory);

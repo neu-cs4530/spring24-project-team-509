@@ -1,6 +1,11 @@
 // icon:food-apple-outline | Material Design Icons https://materialdesignicons.com/ | Austin Andrews
 import * as React from 'react';
 
+/**
+ * Renders an SVG icon of an apple
+ *
+ * @returns The AppleIcon component
+ */
 function AppleIcon() {
   return (
     <svg viewBox='0 0 24 24' fill='red' height='3em' width='3em' xmlns='http://www.w3.org/2000/svg'>

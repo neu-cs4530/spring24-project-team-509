@@ -1,6 +1,11 @@
 // icon:bacon | Fontawesome https://fontawesome.com/ | Fontawesome
 import * as React from 'react';
 
+/**
+ * Renders a bacon icon
+ *
+ * @returns The JSX element representing the bacon icon
+ */
 function BaconIcon() {
   return (
     <svg

@@ -40,6 +40,13 @@ import FishIcon from './icons/FishIcon';
 import PizzaIcon from './icons/PizzaIcon';
 import NoIcon from './icons/NoIcon';
 
+/**
+ * Renders the Grocery Store menu component
+ * 
+ * @param {Object} props - The component props
+ * @param {string} props.interactableID - The ID of the interactable
+ * @returns {JSX.Element} The rendered Grocery Store menu component
+ */
 export function GroceryMenu({ interactableID }: { interactableID: InteractableID }): JSX.Element {
   const iconMap: { [key: string]: React.ComponentType } = {
     apple: AppleIcon,

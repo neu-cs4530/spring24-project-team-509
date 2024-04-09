@@ -1,6 +1,11 @@
 // icon:pizza | Lucide https://lucide.dev/ | Lucide
 import * as React from 'react';
 
+/**
+ * Renders a pizza icon
+ *
+ * @returns The pizza icon SVG element
+ */
 function PizzaIcon() {
   return (
     <svg

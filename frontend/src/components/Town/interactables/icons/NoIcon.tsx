@@ -1,6 +1,11 @@
 // icon:null | Material Design Icons https://materialdesignicons.com/ | Austin Andrews
 import * as React from 'react';
 
+/**
+ * Renders a SVG icon representing a "No" symbol
+ *
+ * @returns The JSX element representing the "No" icon
+ */
 function NoIcon() {
   return (
     <svg

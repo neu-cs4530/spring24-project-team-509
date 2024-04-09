@@ -43,7 +43,15 @@ import FishIcon from './icons/FishIcon';
 import PizzaIcon from './icons/PizzaIcon';
 import NoIcon from './icons/NoIcon';
 
+/**
+ * TradingBoard component represents a trading board in the town
+ * It allows players to post trading offers and view other players' offers
+ *
+ * @param interactableID - The ID of the trading board interactable
+ * @returns The TradingBoard component
+ */
 export function TradingBoard({ interactableID }: { interactableID: InteractableID }): JSX.Element {
+  // Icon map for mapping item names to their corresponding icons
   const iconMap: { [key: string]: React.ComponentType } = {
     apple: AppleIcon,
     bacon: BaconIcon,
@@ -56,6 +64,7 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
     egg: EggIcon,
   };
 
+  // State variables
   const [tradingBoard, setTradingBoard] = useState<TradingOffer[] | null>([]);
   const [postItem, setPostItem] = useState<string>('');
   const [postQuantity, setPostQuantity] = useState<number>(0);
@@ -65,9 +74,18 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
 
   const toast = useToast();
 
+  // Trading area controller for interacting with the trading area
   const tradingAreaController =
     useInteractableAreaController<TradingAreaController>(interactableID);
 
+  /**
+   * Handles posting a trading offer
+   *
+   * @param item - The item to offer
+   * @param quantity - The quantity of the item to offer
+   * @param wantedItem - The item desired in exchange
+   * @param wantedQuantity - The desired quantity of the item
+   */
   const handlePostItem = async (
     item: string,
     quantity: number,

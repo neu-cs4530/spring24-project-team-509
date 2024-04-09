@@ -1,6 +1,9 @@
 import InventoryAreaController from '../../../classes/interactable/InventoryAreaController';
 import Interactable, { KnownInteractableTypes } from '../Interactable';
 
+/**
+ * Represents an inventory area in the game
+ */
 export default class InventoryArea extends Interactable {
   private _isInteracting = false;
 
@@ -8,10 +11,17 @@ export default class InventoryArea extends Interactable {
 
   private _inventoryArea?: InventoryAreaController;
 
+  /**
+   * Gets the type of the interactable
+   * @returns The type of the interactable
+   */
   getType(): KnownInteractableTypes {
     return 'inventoryArea';
   }
 
+  /**
+   * Called when the inventory area is added to the scene
+   */
   addedToScene(): void {
     super.addedToScene();
     this.setTintFill();
@@ -27,6 +37,9 @@ export default class InventoryArea extends Interactable {
     //console.log(this.townController.nearbyPlayers)
   }
 
+  /**
+   * Called when the inventory area overlaps with the player's exit area
+   */
   overlapExit(): void {
     // No action needed
     if (this._isInteracting) {
@@ -36,6 +49,9 @@ export default class InventoryArea extends Interactable {
     this._infoTextBox?.setVisible(false);
   }
 
+  /**
+   * Called when the player interacts with the inventory area
+   */
   interact(): void {
     // No action needed
     this._isInteracting = true;
@@ -57,6 +73,9 @@ export default class InventoryArea extends Interactable {
     this._infoTextBox.x = this.scene.scale.width / 2 - this._infoTextBox.width / 2;
   }
 
+  /**
+   * Called when the player overlaps with the inventory area
+   */
   overlap(): void {
     this._showInfoBox();
   }
