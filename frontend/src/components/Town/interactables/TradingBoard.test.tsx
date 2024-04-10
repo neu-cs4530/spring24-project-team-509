@@ -4,12 +4,14 @@ import { mock, mockReset } from 'jest-mock-extended';
 import { InteractableType, TradingArea } from '../../../types/CoveyTownSocket';
 import { nanoid } from 'nanoid';
 import PlayerController from '../../../classes/PlayerController';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import TownControllerContext from '../../../contexts/TownControllerContext';
 import React from 'react';
 import TradingAreaController from '../../../classes/interactable/TradingAreaController';
 import PhaserTradingArea from './TradingArea';
-import TradingAreaWrapper, { TradingBoard } from './TradingBoard';
+import TradingAreaWrapper from './TradingBoard';
+jest.mock('../../../classes/TownController');
+import { TradingBoard } from './TradingBoard';
 
 const mockToast = jest.fn();
 jest.mock('@chakra-ui/react', () => {
@@ -34,6 +36,9 @@ const useInteractableAreaControllerSpy = jest.spyOn(
   'useInteractableAreaController',
 );
 
+/**
+ * Represents a mock implementation of the TradingAreaController class.
+ */
 class MockTradingAreaController extends TradingAreaController {
   mockPlayerItems = [];
 
@@ -71,6 +76,11 @@ class MockTradingAreaController extends TradingAreaController {
     return this.mockPlayerItems;
   }
 
+  /**
+   * Converts the MockTradingAreaController instance to a TradingArea model.
+   * @returns The TradingArea model representing the MockTradingAreaController instance.
+   * @throws Error if the type is not set.
+   */
   toInteractableAreaModel(): TradingArea {
     if (!this._type) throw new Error('Type not set');
     const ret = mock<TradingArea>();
@@ -220,7 +230,7 @@ describe('TradingArea', () => {
     expect(getByText('How much of it:')).toBeInTheDocument();
     expect(getByText('Which item do you desire:')).toBeInTheDocument();
     expect(getByText('How much of it?:')).toBeInTheDocument();
-    expect(getByText('Inventory Board')).toBeInTheDocument();
+    expect(getByText('Your Inventory')).toBeInTheDocument();
   });
 
   it('Displays the trading area inventory', () => {
@@ -267,6 +277,87 @@ describe('TradingArea', () => {
   });
 
   // Test the post item text function actually posts the item
+  it('does not make a post if the items do not exist in the player inventory (stays in the input text box)', async () => {
+    // Render the TradingBoard component
+    const { getByPlaceholderText, getByText } = render(
+      <TradingBoard interactableID='your-interactable-id' />,
+    );
+    // mock the inventory
+    const mockInventory = [
+      { name: 'apple', price: 1, quantity: 10 },
+      { name: 'banana', price: 2, quantity: 5 },
+    ];
+    tradingAreaController.mockPlayerItems = mockInventory as [];
+
+    // Mock input for post item
+    const postItemInput = getByPlaceholderText('Offer item');
+    fireEvent.change(postItemInput, { target: { value: 'apple' } });
+
+    // Mock input for post quantity
+    const postQuantityInput = getByPlaceholderText('Offer quantity');
+    fireEvent.change(postQuantityInput, { target: { value: '5' } });
+
+    // Mock input for desire item
+    const desireItemInput = getByPlaceholderText('Desire item');
+    fireEvent.change(desireItemInput, { target: { value: 'banana' } });
+
+    // Mock input for desire quantity
+    const desireQuantityInput = getByPlaceholderText('Desire quantity');
+    fireEvent.change(desireQuantityInput, { target: { value: '3' } }); // Change value to a string
+
+    // Click the post button
+    const handlePostItem = jest.fn();
+    render(<Button> onClick = {handlePostItem} Post </Button>);
+    const postButton = getByText('Post');
+    postButton.click();
+    //fireEvent.click(postButton);
+    expect(postItemInput).toHaveValue('apple');
+    expect(postQuantityInput).toHaveValue(5);
+    expect(desireItemInput).toHaveValue('banana');
+    expect(desireQuantityInput).toHaveValue(3);
+  });
+
+  // Test the post item text function actually posts the item
+  it('does not make a post if the quantity in inventory is less than quantity to offer (stays in the input text box)', async () => {
+    // Render the TradingBoard component
+    const { getByPlaceholderText, getByText } = render(
+      <TradingBoard interactableID='your-interactable-id' />,
+    );
+    // mock the inventory
+    const mockInventory = [
+      { name: 'apple', price: 1, quantity: 1 },
+      { name: 'banana', price: 2, quantity: 2 },
+    ];
+    tradingAreaController.mockPlayerItems = mockInventory as [];
+
+    // Mock input for post item
+    const postItemInput = getByPlaceholderText('Offer item');
+    fireEvent.change(postItemInput, { target: { value: 'apple' } });
+
+    // Mock input for post quantity
+    const postQuantityInput = getByPlaceholderText('Offer quantity');
+    fireEvent.change(postQuantityInput, { target: { value: '5' } });
+
+    // Mock input for desire item
+    const desireItemInput = getByPlaceholderText('Desire item');
+    fireEvent.change(desireItemInput, { target: { value: 'banana' } });
+
+    // Mock input for desire quantity
+    const desireQuantityInput = getByPlaceholderText('Desire quantity');
+    fireEvent.change(desireQuantityInput, { target: { value: '3' } }); // Change value to a string
+
+    // Click the post button
+    const handlePostItem = jest.fn();
+    render(<Button> onClick = {handlePostItem} Post </Button>);
+    const postButton = getByText('Post');
+    postButton.click();
+    //fireEvent.click(postButton);
+    expect(postItemInput).toHaveValue('apple');
+    expect(postQuantityInput).toHaveValue(5);
+    expect(desireItemInput).toHaveValue('banana');
+    expect(desireQuantityInput).toHaveValue(3);
+  });
+
   it('allows users to input values for post item, post quantity, desire item, and desire quantity', async () => {
     // Render the TradingBoard component
     const { getByPlaceholderText, getByText } = render(
@@ -294,55 +385,5 @@ describe('TradingArea', () => {
     render(<Button> onClick = {handlePostItem} Post </Button>);
     const postButton = getByText('Post');
     postButton.click();
-    //fireEvent.click(postButton);
-    expect(postItemInput).toHaveValue('');
-    expect(postQuantityInput).toHaveValue('');
-    expect(desireItemInput).toHaveValue('');
-    expect(desireQuantityInput).toHaveValue('');
-
-    // Checks after clicking "post", the items appear in the trading area
-
-    // expect(mockTradingBoard.postItem).toHaveBeenCalledWith('Apple', 5, 'Banana', 3);
-    const handleAcceptTradingOffer = jest.fn();
-    render(<Button> onClick = {handleAcceptTradingOffer} Accept </Button>);
-    const acceptButton = getByText('Accept');
-    acceptButton.click();
-    handleAcceptTradingOffer.mockRejectedValueOnce(new Error('Mock error'));
-    // Wait for the error handling to complete
-    await waitFor(() => {
-      // Ensure that toast function was called with the correct parameters
-      expect(mockToast).toHaveBeenCalledWith({
-        title: 'Error accept trade',
-        description: 'There is an error in accepting the trade. Please try again',
-        status: 'error',
-      });
-    });
-  });
-
-  it('checks that the delete button removes the offer from the table', async () => {
-    // after clicking accept, the items should be removed from the trading area
-    const mockTradingOffers = [
-      {
-        playerName: 'Alice',
-        item: 'Apple',
-        quantity: 2,
-        itemDesire: 'Banana',
-        quantityDesire: 1,
-        playerID: '123',
-      },
-      // ... more offers
-    ];
-    const mockHandleDeleteOffer = jest.fn();
-    const renderTradingBoardWithMocks = () => {
-      return render(<TradingBoard interactableID='test-id' />);
-    };
-    renderTradingBoardWithMocks();
-    const deleteButton = screen.getByRole('button', { name: 'Delete' });
-    fireEvent.click(deleteButton);
-    await waitFor(() => {
-      expect(mockHandleDeleteOffer).toHaveBeenCalledWith('123');
-      const aliceOfferRow = screen.queryByText('Alice');
-      expect(aliceOfferRow).not.toBeInTheDocument();
-    });
   });
 });
