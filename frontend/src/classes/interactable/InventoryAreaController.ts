@@ -59,7 +59,6 @@ export default class InventoryAreaController extends InteractableAreaController<
    */
   protected _updateFrom(updatedModel: InventoryAreaModel): void {
     this._playerInventory = updatedModel.playerInventory;
-    console.log('invencontrol updates', this._playerInventory);
     this.emit('inventoryAreaUpdated');
   }
 
@@ -68,7 +67,6 @@ export default class InventoryAreaController extends InteractableAreaController<
    * To initialize the store inventory and cart.
    */
   public async handleOpenInventory(): Promise<void> {
-    console.log('controller opens');
     await this._townController.sendInteractableCommand(this.id, {
       type: 'OpenInventory',
     });
