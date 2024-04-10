@@ -4,7 +4,7 @@ import { mock, mockReset } from 'jest-mock-extended';
 import { InteractableType, TradingArea } from '../../../types/CoveyTownSocket';
 import { nanoid } from 'nanoid';
 import PlayerController from '../../../classes/PlayerController';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
 import TownControllerContext from '../../../contexts/TownControllerContext';
 import React from 'react';
 import TradingAreaController from '../../../classes/interactable/TradingAreaController';
@@ -114,19 +114,6 @@ describe('TradingArea', () => {
   const townController = mock<TownController>();
   Object.defineProperty(townController, 'ourPlayer', { get: () => ourPlayer });
   let tradingAreaController = new MockTradingAreaController();
-  async function checkBoard({
-    clickable,
-    checkMakeMove,
-    checkToast,
-  }: {
-    clickable?: boolean;
-    checkMakeMove?: boolean;
-    checkToast?: boolean;
-  }) {
-    tradingAreaController.mockReset();
-    const buttons = screen.getAllByRole('button');
-    expect(buttons.length).toBeGreaterThanOrEqual(3);
-  }
 
   function renderTradingArea() {
     return render(

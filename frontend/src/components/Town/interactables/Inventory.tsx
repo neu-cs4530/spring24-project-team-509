@@ -33,10 +33,17 @@ import PizzaIcon from './icons/PizzaIcon';
 import NoIcon from './icons/NoIcon';
 
 /**
- * Renders the inventory component
- * @param {Object} props - The component props
- * @param {string} props.interactableID - The ID of the interactable
- * @returns {JSX.Element} The rendered inventory component
+ * A component that renders a inventory area.
+ *
+ * It uses Chakra-UI components (does not use other GUI widgets)
+ *
+ * It uses the InventoryAreaController corresponding to the provided interactableID to get the current state of the inventory. (@see useInteractableAreaController)
+ *
+ * It renders the following:
+ *  - an Inventory table with the following columns:
+ *   + Item Name
+ *   + Icon
+ *   + Price
  */
 export function Inventory({ interactableID }: { interactableID: InteractableID }): JSX.Element {
   const iconMap: { [key: string]: React.ComponentType } = {
@@ -57,18 +64,9 @@ export function Inventory({ interactableID }: { interactableID: InteractableID }
     inventoryAreaController.playerInventory,
   );
 
-  /**
-   * Fetches the player's inventory
-   */
-  const fetchInventory = async () => {
-    //await inventoryAreaController.handleOpenInventory();
-    setPlayerInventory(inventoryAreaController.playerInventory);
-  };
-
   useEffect(() => {
     const updateInventoryAreaModel = () => {
       setPlayerInventory(inventoryAreaController.playerInventory);
-      console.log('inventoryArea', playerInventory);
     };
     inventoryAreaController.addListener('inventoryAreaUpdated', updateInventoryAreaModel);
     return () => {
@@ -105,6 +103,12 @@ export function Inventory({ interactableID }: { interactableID: InteractableID }
   );
 }
 
+/**
+ * A wrapper component for the Inventory components.
+ * Determines if the player is currently in a inventory area on the map, and if so,
+ * renders the Inventory component in a modal.
+ *
+ */
 export default function InventoryAreaWrapper(): JSX.Element {
   const inventoryArea = useInteractable<InventoryAreaInteractable>('inventoryArea');
   const townController = useTownController();

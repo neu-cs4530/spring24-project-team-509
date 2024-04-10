@@ -44,7 +44,19 @@ import NoIcon from './icons/NoIcon';
 
 /**
  * TradingBoard component represents a trading board in the town
+ *
  * It allows players to post trading offers and view other players' offers
+ *
+ * It uses Chakra-UI components (does not use other GUI widgets)
+ *
+ * It uses the TradingAreaController corresponding to the provided interactableID to get the current state of the tradingboard. (@see useInteractableAreaController)
+ *
+ * It renders the following:
+ *  - A trading board that displays the current trading offers
+ *  - A form to post a trading offer
+ *  - A table that displays the player's inventory
+ *  - A button to accept a trading offer
+ *  - A button to delete your own trading offer
  *
  * @param interactableID - The ID of the trading board interactable
  * @returns The TradingBoard component
@@ -337,6 +349,12 @@ export function TradingBoard({ interactableID }: { interactableID: InteractableI
   );
 }
 
+/**
+ * A wrapper component for the TradingBoard components.
+ * Determines if the player is currently in the trading area on the map, and if so,
+ * renders the trading board component in a modal.
+ *
+ */
 export default function TradingAreaWrapper(): JSX.Element {
   const tradingArea = useInteractable<TradingAreaInteractable>('tradingArea');
   const townController = useTownController();

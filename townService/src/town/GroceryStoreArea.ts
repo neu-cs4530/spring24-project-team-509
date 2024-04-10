@@ -11,6 +11,18 @@ import {
 import Player from '../lib/Player';
 import { supabase } from '../../supabaseClient';
 
+/**
+ * A class representing a grocery store area.
+ * A grocery store area is an area in the town where players can buy items.
+ * Players can interact with the grocery store area by opening the store, adding items to the cart,
+ * removing items from the cart, and checking out.
+ * The grocery store area has a store inventory, a cart, a total price, and a total balance.
+ * The store inventory is a list of items available in the store.
+ * The cart is a list of items that the player has added to the cart.
+ * The total price is the total price of the items in the cart.
+ * The total balance is the total balance of the player.
+ * The grocery store area also has a purchase history, which is a list of items that the player has purchased.
+ */
 export default class GroceryStoreArea extends InteractableArea {
   protected _totalPrice = 0;
 
@@ -22,6 +34,13 @@ export default class GroceryStoreArea extends InteractableArea {
 
   protected _history: GroceryItem[] = [];
 
+  /**
+   * Creates a new GroceryStoreArea
+   *
+   * @param GroceryStoreAreaModel model containing this area's current topic and its ID
+   * @param coordinates  the bounding box that defines this grocery store area
+   * @param townEmitter a broadcast emitter that can be used to emit updates to players
+   */
   public constructor(
     { id }: Omit<GroceryStoreAreaModel, 'type'>,
     coordinates: BoundingBox,
@@ -33,6 +52,10 @@ export default class GroceryStoreArea extends InteractableArea {
     this._updateCartTotalPrice();
   }
 
+  /**
+   * Convert this GroceryStoreArea instance to a simple GroceryStoreAreaModel suitable for
+   * transporting over a socket to a client.
+   */
   public toModel(): GroceryStoreAreaModel {
     return {
       id: this.id,
@@ -46,6 +69,12 @@ export default class GroceryStoreArea extends InteractableArea {
     };
   }
 
+  /**
+   * Creates a new GroceryStoreArea object that will represent a Grocery Store Area object in the town map.
+   * @param mapObject An ITiledMapObject that represents a rectangle in which this conversation area exists
+   * @param broadcastEmitter An emitter that can be used by this conversation area to broadcast updates
+   * @returns
+   */
   public static fromMapObject(
     mapObject: ITiledMapObject,
     broadcastEmitter: TownEmitter,
