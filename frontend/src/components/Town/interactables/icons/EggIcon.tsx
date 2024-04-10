@@ -1,6 +1,11 @@
 // icon:egg | Fontawesome https://fontawesome.com/ | Fontawesome
 import * as React from 'react';
 
+/**
+ * Renders an SVG icon of an egg
+ *
+ * @returns The JSX element representing the egg icon
+ */
 function EggIcon() {
   return (
     <svg

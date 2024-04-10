@@ -1,6 +1,11 @@
 // icon:bread-slice | Fontawesome https://fontawesome.com/ | Fontawesome
 import * as React from 'react';
 
+/**
+ * Renders an SVG icon of a bread
+ *
+ * @returns The BreadIcon component
+ */
 function BreadIcon() {
   return (
     <svg

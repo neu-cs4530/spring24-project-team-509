@@ -40,6 +40,20 @@ import FishIcon from './icons/FishIcon';
 import PizzaIcon from './icons/PizzaIcon';
 import NoIcon from './icons/NoIcon';
 
+/**
+ * A component that renders a grocery store area.
+ *
+ * It uses Chakra-UI components (does not use other GUI widgets)
+ *
+ * It uses the GroceryStoreController corresponding to the provided interactableID to get the current state of the groceryStore. (@see useInteractableAreaController)
+ *
+ * It renders the following:
+ *  - A list of items in the store inventory that allow adding item to cart
+ *  - The purchase history that displays the purchases made by the player
+ *  - The cart that allows returning items and checking out
+ *  - The total price of the cart and the player's balance
+ *  - A checkout button that allows the player to checkout with error checking that does not allow the player to checkout if they have insufficient funds
+ */
 export function GroceryMenu({ interactableID }: { interactableID: InteractableID }): JSX.Element {
   const iconMap: { [key: string]: React.ComponentType } = {
     apple: AppleIcon,
@@ -257,6 +271,12 @@ export function GroceryMenu({ interactableID }: { interactableID: InteractableID
   );
 }
 
+/**
+ * A wrapper component for the GroceryMenu components.
+ * Determines if the player is currently in a grocerystore area on the map, and if so,
+ * renders the grocery menu component in a modal.
+ *
+ */
 export default function GroceryStoreAreaWrapper(): JSX.Element {
   const groceryStoreArea = useInteractable<GroceryStoreAreaInteractable>('groceryStoreArea');
   const townController = useTownController();

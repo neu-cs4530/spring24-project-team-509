@@ -1,6 +1,11 @@
 // icon:carrot | Fontawesome https://fontawesome.com/ | Fontawesome
 import * as React from 'react';
 
+/**
+ * Renders a carrot icon
+ *
+ * @returns The carrot icon component
+ */
 function CarrotIcon() {
   return (
     <svg

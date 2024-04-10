@@ -1,6 +1,11 @@
 // icon:banana | Lucide https://lucide.dev/ | Lucide
 import * as React from 'react';
 
+/**
+ * Renders a banana icon as an SVG element
+ *
+ * @returns The JSX element representing the banana icon
+ */
 function BananaIcon() {
   return (
     <svg

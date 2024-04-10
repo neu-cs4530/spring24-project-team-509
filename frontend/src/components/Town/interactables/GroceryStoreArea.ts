@@ -1,6 +1,9 @@
 import GroceryStoreAreaController from '../../../classes/interactable/GroceryStoreAreaController';
 import Interactable, { KnownInteractableTypes } from '../Interactable';
 
+/**
+ * Represents a grocery store area in the town
+ */
 export default class GroceryStoreArea extends Interactable {
   private _isInteracting = false;
 
@@ -8,10 +11,17 @@ export default class GroceryStoreArea extends Interactable {
 
   private _groceryStoreArea?: GroceryStoreAreaController;
 
+  /**
+   * Gets the type of the interactable
+   * @returns The type of the interactable
+   */
   getType(): KnownInteractableTypes {
     return 'groceryStoreArea';
   }
 
+  /**
+   * Called when the interactable is added to the scene
+   */
   addedToScene(): void {
     super.addedToScene();
     this.setTintFill();
@@ -26,6 +36,9 @@ export default class GroceryStoreArea extends Interactable {
     this._groceryStoreArea = this.townController.getGroceryStoreAreaController(this);
   }
 
+  /**
+   * Called when the interactable overlaps with the exit area
+   */
   overlapExit(): void {
     // No action needed
     if (this._isInteracting) {
@@ -35,6 +48,9 @@ export default class GroceryStoreArea extends Interactable {
     this._infoTextBox?.setVisible(false);
   }
 
+  /**
+   * Called when the interactable is interacted with
+   */
   interact(): void {
     // No action needed
     this._isInteracting = true;
@@ -56,6 +72,9 @@ export default class GroceryStoreArea extends Interactable {
     this._infoTextBox.x = this.scene.scale.width / 2 - this._infoTextBox.width / 2;
   }
 
+  /**
+   * Called when the interactable overlaps with another object
+   */
   overlap(): void {
     this._showInfoBox();
   }

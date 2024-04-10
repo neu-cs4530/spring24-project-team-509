@@ -32,6 +32,19 @@ import FishIcon from './icons/FishIcon';
 import PizzaIcon from './icons/PizzaIcon';
 import NoIcon from './icons/NoIcon';
 
+/**
+ * A component that renders a inventory area.
+ *
+ * It uses Chakra-UI components (does not use other GUI widgets)
+ *
+ * It uses the InventoryAreaController corresponding to the provided interactableID to get the current state of the inventory. (@see useInteractableAreaController)
+ *
+ * It renders the following:
+ *  - an Inventory table with the following columns:
+ *   + Item Name
+ *   + Icon
+ *   + Price
+ */
 export function Inventory({ interactableID }: { interactableID: InteractableID }): JSX.Element {
   const iconMap: { [key: string]: React.ComponentType } = {
     apple: AppleIcon,
@@ -54,7 +67,6 @@ export function Inventory({ interactableID }: { interactableID: InteractableID }
   useEffect(() => {
     const updateInventoryAreaModel = () => {
       setPlayerInventory(inventoryAreaController.playerInventory);
-      console.log('inventoryArea', playerInventory);
     };
     inventoryAreaController.addListener('inventoryAreaUpdated', updateInventoryAreaModel);
     return () => {
@@ -91,6 +103,12 @@ export function Inventory({ interactableID }: { interactableID: InteractableID }
   );
 }
 
+/**
+ * A wrapper component for the Inventory components.
+ * Determines if the player is currently in a inventory area on the map, and if so,
+ * renders the Inventory component in a modal.
+ *
+ */
 export default function InventoryAreaWrapper(): JSX.Element {
   const inventoryArea = useInteractable<InventoryAreaInteractable>('inventoryArea');
   const townController = useTownController();

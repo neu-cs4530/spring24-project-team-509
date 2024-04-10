@@ -1,7 +1,12 @@
 // icon:fish-fins | Fontawesome https://fontawesome.com/ | Fontawesome
 import * as React from 'react';
 
-function IconFishFins() {
+/**
+ * Renders a fish icon
+ *
+ * @returns The fish icon component
+ */
+function FishIcon() {
   return (
     <svg
       viewBox='0 0 576 512'
@@ -14,4 +19,4 @@ function IconFishFins() {
   );
 }
 
-export default IconFishFins;
+export default FishIcon;

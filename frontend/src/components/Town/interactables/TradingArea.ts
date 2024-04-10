@@ -1,6 +1,9 @@
 import TradingAreaController from '../../../classes/interactable/TradingAreaController';
 import Interactable, { KnownInteractableTypes } from '../Interactable';
 
+/**
+ * Represents a Trading Area interactable in the game.
+ */
 export default class TradingArea extends Interactable {
   private _isInteracting = false;
 
@@ -8,10 +11,17 @@ export default class TradingArea extends Interactable {
 
   private _tradingArea?: TradingAreaController;
 
+  /**
+   * Gets the type of the interactable.
+   * @returns The type of the interactable.
+   */
   getType(): KnownInteractableTypes {
     return 'tradingArea';
   }
 
+  /**
+   * Called when the TradingArea is added to the scene.
+   */
   addedToScene(): void {
     super.addedToScene();
     this.setTintFill();
@@ -26,6 +36,9 @@ export default class TradingArea extends Interactable {
     this._tradingArea = this.townController.getTradingAreaController(this);
   }
 
+  /**
+   * Called when the TradingArea overlaps with the player's exit area.
+   */
   overlapExit(): void {
     // No action needed
     if (this._isInteracting) {
@@ -35,6 +48,9 @@ export default class TradingArea extends Interactable {
     this._infoTextBox?.setVisible(false);
   }
 
+  /**
+   * Called when the player interacts with the TradingArea.
+   */
   interact(): void {
     // No action needed
     this._isInteracting = true;
@@ -56,6 +72,9 @@ export default class TradingArea extends Interactable {
     this._infoTextBox.x = this.scene.scale.width / 2 - this._infoTextBox.width / 2;
   }
 
+  /**
+   * Called when the TradingArea overlaps with the player.
+   */
   overlap(): void {
     this._showInfoBox();
   }

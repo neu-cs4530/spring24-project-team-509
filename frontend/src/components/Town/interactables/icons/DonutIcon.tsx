@@ -1,6 +1,11 @@
 // icon:donut | Lucide https://lucide.dev/ | Lucide
 import * as React from 'react';
 
+/**
+ * Renders a donut icon
+ *
+ * @returns The JSX element representing the donut icon
+ */
 function DonutIcon() {
   return (
     <svg
