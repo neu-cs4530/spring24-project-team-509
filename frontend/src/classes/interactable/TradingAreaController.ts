@@ -86,7 +86,6 @@ export default class TradingAreaController extends InteractableAreaController<
     this._tradingBoard = updatedModel.tradingBoard;
     this._inventory = updatedModel.inventory;
     this._playerID = updatedModel.name;
-    console.log('tradingControl updates', this._tradingBoard, this._inventory);
     this.emit('tradingAreaUpdated');
   }
 
@@ -94,7 +93,6 @@ export default class TradingAreaController extends InteractableAreaController<
    * To open the trading board.
    */
   public async handleOpenTradingBoard(): Promise<void> {
-    console.log('tradingControl opens');
     await this._townController.sendInteractableCommand(this.id, {
       type: 'OpenTradingBoard',
     });
@@ -106,7 +104,6 @@ export default class TradingAreaController extends InteractableAreaController<
    * @param playerID is the player ID of the player who posted the offer
    */
   public async handleDeleteOffer(playerID: string): Promise<void> {
-    console.log('tradingControl closes');
     await this._townController.sendInteractableCommand(this.id, {
       type: 'DeleteOffer',
       playerID,

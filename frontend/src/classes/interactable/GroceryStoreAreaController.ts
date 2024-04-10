@@ -95,7 +95,6 @@ export default class GroceryStoreAreaController extends InteractableAreaControll
     this._cart = updatedModel.cart;
     this._totalBalance = updatedModel.balance;
     this._history = updatedModel.history;
-    console.log('grocConroller updates', this._history, this._storeInventory);
     this.emit('groceryStoreAreaUpdated');
   }
 
